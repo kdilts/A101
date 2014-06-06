@@ -7,9 +7,13 @@ var lmbDown = false;
 var dragging = false;
 var decX = 215;
 
+var canvas;
+
 window.onload = function(){
 
 	render();
+
+	canvas = document.getElementById('myCanvas');
 
 	document.getElementById('myCanvas').onmousedown = mouseDown;
 	document.getElementById('myCanvas').onmouseup = mouseUp;
@@ -19,12 +23,13 @@ window.onload = function(){
 
 mouseMove = function(e){
 		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.x-10; mY = e.y-10;
+			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX-10; mY = e.clientY-10; // TODO does the constant offset come from how it is position on the page?
-												  // if thats the case, then a better solution is called for.
+			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
 		}
 
 		if(dragging){
@@ -39,11 +44,13 @@ mouseDown = function(e){
 	if(e.button === 0){
 		
 		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.x-10; mY = e.y-10;
+			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX-10; mY = e.clientY-10;
+			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
 		}
 
 		lmbDown = true;
@@ -60,11 +67,13 @@ mouseUp = function(e){
 	if(e.button === 0){
 		
 		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.x-10; mY = e.y-10;
+			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX-10; mY = e.clientY-10;
+			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
+			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
 		}
 
 		lmbDown = false;
