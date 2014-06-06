@@ -13,7 +13,9 @@ window.onload = function(){
 
 	ctx.fillStyle = 'rgb(255,25,25)';
 	ctx.font = '35px Verdana';
-	ctx.fillText('' + num + ' x 10  = ' + numStr, 15, 50);
+	ctx.fillText('' + num + ' x 10  = ' + numStr, 15, 110);
+	ctx.fillText('                     10  = ' + Math.pow(10,exp), 5, 55);
 	ctx.font = '30px Verdana';
-	ctx.fillText('' + exp, 300,28);
+	ctx.fillText('' + exp, 300,88);
+	ctx.fillText('' + exp, 300,33);
 }
