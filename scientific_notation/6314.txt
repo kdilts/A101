@@ -1,0 +1,14 @@
+6/3/14
+
+access hammered out
+	ftp + account on site
+
+gmail linked to phone
+
+attempted lobomail forward to gmail
+	tech support + testing on other computers
+
+small ammount of research on javascript compatibility on different browsers
+	http://html5test.com/results/desktop.html
+
+safari downloaded and installed
