@@ -28,9 +28,11 @@ mouseMove = function(e){
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
+			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
+			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
 		}
+
+		console.log(mX + ' ' + mY);
 
 		if(dragging){
 			decX = mX;
@@ -49,8 +51,8 @@ mouseDown = function(e){
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
+			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
+			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
 		}
 
 		lmbDown = true;
@@ -72,8 +74,8 @@ mouseUp = function(e){
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.clientY - document.body.offsetTop - canvas.offsetTop;
+			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
+			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
 		}
 
 		lmbDown = false;
