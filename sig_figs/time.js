@@ -2,6 +2,9 @@ var roundCtx;
 var minCtx;
 var secCtx;
 
+var rot = .523598776; // 30 degrees converted to radians, because javascript's rotate uses radians
+var ninety = 1.57079633; // 90 degrees converted to radians
+
 window.onload = function(){
 
 	// get time
@@ -34,14 +37,29 @@ window.onload = function(){
 	roundCtx.stroke();
 	roundCtx.fill();
 
+	for(i = 0; i < 4; i++){
+		roundCtx.save();
+		roundCtx.translate(75,75);
+		roundCtx.rotate(i*ninety);
+		dots();
+		roundCtx.restore();
+	}
+
+	roundCtx.font = '16px Verdana';
+	roundCtx.fillText('12',65,25);
+	roundCtx.fillText('3',132,80);
+	roundCtx.fillText('9',8,80);
+	roundCtx.fillText('6',70,140);
+
+
+
 	// draw digital clock with minutes
 	minCtx.fillStyle = 'rgb(0,0,0)';
 	minCtx.fillRect(0,0,200,200);
+
 	minCtx.fillStyle = 'rgb(200,200,200)';
 	minCtx.font = '30px Verdana';
 	minCtx.fillText(hour + ':' + minute,10,35);
-
-	minCtx.fillStyle = 'rgb(200,200,200)';
 
 	// draw digital clock with seconds
 	secCtx.fillStyle = 'rgb(0,0,0)';
@@ -50,4 +68,28 @@ window.onload = function(){
 	secCtx.fillStyle = 'rgb(200,200,200)';
 	secCtx.font = '30px Verdana';
 	secCtx.fillText(hour + ':' + minute + ':' + second,10,35);
+}
+
+dots = function(){
+		roundCtx.save();
+		roundCtx.rotate(rot);
+		roundCtx.translate(0,-60);
+		roundCtx.beginPath();
+		roundCtx.arc(0,0,1,0,Math.PI*2);
+		roundCtx.stroke();
+		roundCtx.fill();
+		roundCtx.restore();
+
+		roundCtx.save();
+		roundCtx.rotate(2*rot);
+		roundCtx.translate(0,-60);
+		roundCtx.beginPath();
+		roundCtx.arc(0,0,1,0,Math.PI*2);
+		roundCtx.stroke();
+		roundCtx.fill();
+		roundCtx.restore();
+}
+
+degToRad = function(){
+	
 }
