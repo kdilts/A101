@@ -57,9 +57,16 @@ render = function(){
 	
 	// calculate exp based on decimal position
 	temp = decX - 15; // decX is 15 - 215, shift to 0 - 200
-	temp = temp / 10;
-	temp = Math.floor(temp);
-	if(temp % 2 === 0){ exp = (10 - temp/2); }
+	if(temp > 182){ exp = 0; }
+	else if(temp < 182 && temp > 162){ exp = 1; }
+	else if(temp < 162 && temp > 142){ exp = 2; }
+	else if(temp < 142 && temp > 118){ exp = 3; }
+	else if(temp < 118 && temp > 97){ exp = 4; }
+	else if(temp < 97 && temp > 72){ exp = 5; }
+	else if(temp < 72 && temp > 52){ exp = 6; }
+	else if(temp < 52 && temp > 32){ exp = 7; }
+	else if(temp < 32 && temp > 12){ exp = 8; }
+	else if(temp < 12){ exp = 9; }
 
 	// black background
 	ctx.fillStyle = 'rgb(0,0,0)';
