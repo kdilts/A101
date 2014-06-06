@@ -1,5 +1,3 @@
-// TODO ensure cross browser compatibility
-
 var ctx;
 var num = 149597870;
 var numStr = '149,597,870';
@@ -20,7 +18,14 @@ window.onload = function(){
 }
 
 mouseMove = function(e){
-		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
+			mX = e.x-10; mY = e.y-10;
+		}
+		else // if the browser is firefox
+		{
+			mX = e.clientX-10; mY = e.clientY-10; // TODO does the constant offset come from how it is position on the page?
+												  // if thats the case, then a better solution is called for.
+		}
 
 		if(dragging){
 			decX = mX;
@@ -32,7 +37,15 @@ mouseMove = function(e){
 
 mouseDown = function(e){
 	if(e.button === 0){
-		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
+		
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
+			mX = e.x-10; mY = e.y-10;
+		}
+		else // if the browser is firefox
+		{
+			mX = e.clientX-10; mY = e.clientY-10;
+		}
+
 		lmbDown = true;
 
 		if(mX >= decX - 2 && mX <= decX + 2){
@@ -45,7 +58,15 @@ mouseDown = function(e){
 
 mouseUp = function(e){
 	if(e.button === 0){
-		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
+		
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
+			mX = e.x-10; mY = e.y-10;
+		}
+		else // if the browser is firefox
+		{
+			mX = e.clientX-10; mY = e.clientY-10;
+		}
+
 		lmbDown = false;
 		dragging = false;
 	}
