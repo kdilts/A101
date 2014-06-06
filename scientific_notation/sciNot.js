@@ -1,3 +1,5 @@
+// TODO ensure cross browser compatibility
+
 var ctx;
 var num = 149597870;
 var numStr = '149,597,870';
@@ -19,17 +21,22 @@ window.onload = function(){
 }
 
 mouseMove = function(e){
-		mX = e.x-10; mY = e.y-10;
+		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
+
+		if(dragging){
+			decX = mX;
+			render();
+		}
 }
 
 mouseDown = function(e){
 	if(e.button === 0){
-		mX = e.x-10; mY = e.y-10;
+		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
 		lmbDown = true;
 
 		if(mX >= decX - 2 && mX <= decX + 2){
 			if(mY >= 108 && mY <= 112){
-				console.log('a');
+				dragging = true;
 			}
 		}
 	}
@@ -37,7 +44,7 @@ mouseDown = function(e){
 
 mouseUp = function(e){
 	if(e.button === 0){
-		mX = e.x-10; mY = e.y-10;
+		mX = e.x-10; mY = e.y-10; // don't like the constant offset. make sure this works across browsers and computers
 		lmbDown = false;
 		dragging = false;
 	}
