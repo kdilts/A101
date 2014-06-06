@@ -6,6 +6,29 @@ var place = 0;
 
 window.onload = function(){
 
+	render();
+
+	document.getElementById('myCanvas').onmousedown = mouseDown;
+	document.getElementById('myCanvas').onmouseup = mouseUp;
+
+}
+
+mouseDown = function(e){
+	if(e.button === 0){
+		mX = e.x; mY = e.y;
+
+	}
+}
+
+mouseUp = function(e){
+	if(e.button === 0){
+		mX = e.x; mY = e.y;
+		
+	}
+}
+
+render = function(){
+
 	ctx = document.getElementById('myCanvas').getContext('2d');
 	
 	ctx.fillStyle = 'rgb(0,0,0)';
@@ -18,4 +41,5 @@ window.onload = function(){
 	ctx.font = '30px Verdana';
 	ctx.fillText('' + exp, 300,88);
 	ctx.fillText('' + exp, 300,33);
+
 }
