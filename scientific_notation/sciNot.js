@@ -4,7 +4,6 @@ var ctx;
 var num = 149597870;
 var numStr = '149,597,870';
 var exp = 0;
-var place = 0;
 
 var lmbDown = false;
 var dragging = false;
@@ -25,6 +24,8 @@ mouseMove = function(e){
 
 		if(dragging){
 			decX = mX;
+			if(decX < 15){ decX = 15; }
+			if(decX > 215){ decX = 215; }
 			render();
 		}
 }
@@ -54,6 +55,12 @@ render = function(){
 
 	ctx = document.getElementById('myCanvas').getContext('2d');
 	
+	// calculate exp based on decimal position
+	temp = decX - 15; // decX is 15 - 215, shift to 0 - 200
+	temp = temp / 10;
+	temp = Math.floor(temp);
+	if(temp % 2 === 0){ exp = (10 - temp/2); }
+
 	// black background
 	ctx.fillStyle = 'rgb(0,0,0)';
 	ctx.fillRect(0,0,800,150);
