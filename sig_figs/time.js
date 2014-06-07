@@ -2,9 +2,6 @@ var roundCtx;
 var minCtx;
 var secCtx;
 
-var rot = .523598776; // 30 degrees converted to radians, because javascript's rotate uses radians
-var ninety = 1.57079633; // 90 degrees converted to radians
-
 window.onload = function(){
 
 	// get time
@@ -40,7 +37,7 @@ window.onload = function(){
 	for(i = 0; i < 4; i++){
 		roundCtx.save();
 		roundCtx.translate(75,75);
-		roundCtx.rotate(i*ninety);
+		roundCtx.rotate(i*degToRad(90));
 		dots();
 		roundCtx.restore();
 	}
@@ -51,7 +48,27 @@ window.onload = function(){
 	roundCtx.fillText('9',8,80);
 	roundCtx.fillText('6',70,140);
 
+	// calculate angles of hands
+	var hAngle = degToRad( (hour) * 30);
+	var mAngle = degToRad( (minute) * 6);
 
+	roundCtx.save();
+	roundCtx.translate(75,75);
+	roundCtx.rotate(hAngle);
+	roundCtx.beginPath();
+	roundCtx.moveTo(0,0);
+	roundCtx.lineTo(0,-30);
+	roundCtx.stroke();
+	roundCtx.restore();
+
+	roundCtx.save();
+	roundCtx.translate(75,75);
+	roundCtx.rotate(mAngle);
+	roundCtx.beginPath();
+	roundCtx.moveTo(0,0);
+	roundCtx.lineTo(0,-45);
+	roundCtx.stroke();
+	roundCtx.restore();
 
 	// draw digital clock with minutes
 	minCtx.fillStyle = 'rgb(0,0,0)';
@@ -72,7 +89,7 @@ window.onload = function(){
 
 dots = function(){
 		roundCtx.save();
-		roundCtx.rotate(rot);
+		roundCtx.rotate(degToRad(30));
 		roundCtx.translate(0,-60);
 		roundCtx.beginPath();
 		roundCtx.arc(0,0,1,0,Math.PI*2);
@@ -81,7 +98,7 @@ dots = function(){
 		roundCtx.restore();
 
 		roundCtx.save();
-		roundCtx.rotate(2*rot);
+		roundCtx.rotate(2*degToRad(30));
 		roundCtx.translate(0,-60);
 		roundCtx.beginPath();
 		roundCtx.arc(0,0,1,0,Math.PI*2);
@@ -90,6 +107,6 @@ dots = function(){
 		roundCtx.restore();
 }
 
-degToRad = function(){
-	
+degToRad = function(x){
+	return x*Math.PI/180;
 }
