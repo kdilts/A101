@@ -44,18 +44,6 @@ displayGridPage = function(){
 	canvas.setAttribute('style','position:absolute; left:240; top:180');
 	h.appendChild(canvas);
 
-	gfx = canvas.getContext('2d');
-	gfx.fillStyle='rgb(200,200,200)';
-	gfx.fillRect(0,0,450,300);
-
-	gfx.fillStyle='rgb(0,0,0)';
-	gfx.fillRect(2,2,446,48);
-	gfx.fillRect(2,52,446,246);
-
-	gfx.fillStyle='rgb(200,200,200)';
-	gfx.font='20px Verdana';
-	gfx.fillText('FIND the CEPHEIDS in M100', 85,30);
-
 	gif = document.createElement('img');
 	gif.zIndex = 1;
 	gif.src = './gifs/quarter752.gif';
@@ -75,6 +63,19 @@ displayGridPage = function(){
 	canvas2.id = 'fgCanvas'; canvas.zIndex = -1;
 	canvas2.setAttribute('style','position:absolute; left:240; top:180');
 	h.appendChild(canvas2);
+
+	// update canvases
+	gfx = canvas.getContext('2d');
+	gfx.fillStyle='rgb(200,200,200)';
+	gfx.fillRect(0,0,450,300);
+
+	gfx.fillStyle='rgb(0,0,0)';
+	gfx.fillRect(2,2,446,48);
+	gfx.fillRect(2,52,446,246);
+
+	gfx.fillStyle='rgb(200,200,200)';
+	gfx.font='20px Verdana';
+	gfx.fillText('FIND the CEPHEIDS in M100', 85,30);
 
 	gfx2 = canvas2.getContext('2d');
 	gfx2.clearRect(0,0,450,300);
