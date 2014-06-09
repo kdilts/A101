@@ -1,3 +1,7 @@
+// TODO finish hour hand
+// TODO fix digital display. ex: displays "6:3:42" instead of the correct "6:03:42". probably the same w/ seconds
+// TODO compatibility testing
+
 var roundCtx;
 var minCtx;
 var secCtx;
