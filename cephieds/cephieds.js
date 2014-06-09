@@ -59,8 +59,8 @@ displayGridPage = function(){
 	h.appendChild(gif2);
 
 	canvas2 = document.createElement('canvas');
-	canvas2.width = 450; canvas.height = 300;
-	canvas2.id = 'fgCanvas'; canvas.zIndex = -1;
+	canvas2.width = 450; canvas2.height = 300;
+	canvas2.id = 'fgCanvas'; canvas2.zIndex = 2;
 	canvas2.setAttribute('style','position:absolute; left:240; top:180');
 	h.appendChild(canvas2);
 
@@ -79,6 +79,14 @@ displayGridPage = function(){
 
 	gfx2 = canvas2.getContext('2d');
 	gfx2.clearRect(0,0,450,300);
+	gfx2.fillStyle='rgba(255,255,0,1)'; gfx2.strokeStyle='rgba(255,255,0,1)';
+	gfx2.lineWidth=1.5;
+	gfx2.strokeRect(230,80,200,200);
+
+	for(i = 0; i < 8; i++){
+		gfx2.fillRect(230,105+(i*200/8),200,1.5);
+		gfx2.fillRect(230+(i*200/8),80,1.5,200);
+	}
 
 	///////////// bottom text
 	h = document.createElement('B1');
