@@ -84,9 +84,13 @@ displayGridPage = function(){
 	gfx2.strokeRect(230,80,200,200);
 
 	for(i = 0; i < 8; i++){
-		gfx2.fillRect(230,105+(i*200/8),200,1.5);
-		gfx2.fillRect(230+(i*200/8),80,1.5,200);
+		gfx2.fillRect(230,105+(i*25),200,1.5);
+		gfx2.fillRect(230+(i*25),80,1.5,200);
 	}
+
+	gfx2.font = '12px Verdana'; // coords for top left are: 237, 97. Cell size is 25.
+	gfx2.fillText('48', 310, 97); gfx2.fillText('68', 360, 97);	gfx2.fillText('78', 385, 97);
+	gfx2.fillText('88', 410, 97); gfx2.fillText('17', 235, 122);
 
 	///////////// bottom text
 	h = document.createElement('B1');
