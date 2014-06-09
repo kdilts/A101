@@ -40,16 +40,44 @@ displayGridPage = function(){
 	////////////// middle image
 	canvas = document.createElement('canvas');
 	canvas.width = 450; canvas.height = 300;
-	canvas.id = 'myCanvas';
+	canvas.id = 'bgCanvas'; canvas.zIndex = 0;
 	canvas.setAttribute('style','position:absolute; left:240; top:180');
 	h.appendChild(canvas);
 
 	gfx = canvas.getContext('2d');
 	gfx.fillStyle='rgb(200,200,200)';
 	gfx.fillRect(0,0,450,300);
+
 	gfx.fillStyle='rgb(0,0,0)';
 	gfx.fillRect(2,2,446,48);
 	gfx.fillRect(2,52,446,246);
+
+	gfx.fillStyle='rgb(200,200,200)';
+	gfx.font='20px Verdana';
+	gfx.fillText('FIND the CEPHEIDS in M100', 85,30);
+
+	gif = document.createElement('img');
+	gif.zIndex = 1;
+	gif.src = './gifs/quarter752.gif';
+	gif.width = 200; gif.height = 200;
+	gif.setAttribute('style','position:absolute; left:255; top:260');
+	h.appendChild(gif);
+
+	gif2 = document.createElement('img');
+	gif2.zIndex = 1;
+	gif2.src = './gifs/quarter752.gif';
+	gif2.width = 200; gif2.height = 200;
+	gif2.setAttribute('style','position:absolute; left:470; top:260');
+	h.appendChild(gif2);
+
+	canvas2 = document.createElement('canvas');
+	canvas2.width = 450; canvas.height = 300;
+	canvas2.id = 'fgCanvas'; canvas.zIndex = -1;
+	canvas2.setAttribute('style','position:absolute; left:240; top:180');
+	h.appendChild(canvas2);
+
+	gfx2 = canvas2.getContext('2d');
+	gfx2.clearRect(0,0,450,300);
 
 	///////////// bottom text
 	h = document.createElement('B1');
