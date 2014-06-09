@@ -1,9 +1,22 @@
+var mode = 0; // indicates which page is being displayed. 0 - grid, 1 - beastie, 48, 68, etc - specific cell
+var gridSpots = [];
+var mX; var mY;
+
 window.onload = function(){
 	displayGridPage();
 }
 
-window.onmouseup = function(){
+// TODO make sure mouse stuff is compatible with all browsers
+window.onmousemove = function(e){
+	mX = e.x; mY = e.y;
+}
 
+window.onmouseup = function(e){
+	if(mode === 0){
+		for(var s in gridSpots){
+			gridSpots[s].clicked(mX,mY);
+		}
+	}
 }
 
 displayGridPage = function(){
@@ -89,40 +102,42 @@ displayGridPage = function(){
 	}
 
 	gfx2.font = '12px Verdana'; 
-	gfx2.fillText('48', gridCoords(3,0).x, gridCoords(3,0).y);
-	gfx2.fillText('68', gridCoords(5,0).x, gridCoords(5,0).y);
-	gfx2.fillText('78', gridCoords(6,0).x, gridCoords(6,0).y);
-	gfx2.fillText('88', gridCoords(7,0).x, gridCoords(7,0).y);
-	gfx2.fillText('17', gridCoords(0,1).x, gridCoords(0,1).y);
-	gfx2.fillText('47', gridCoords(3,1).x, gridCoords(3,1).y);
-	gfx2.fillText('67', gridCoords(5,1).x, gridCoords(5,1).y);
-	gfx2.fillText('77', gridCoords(6,1).x, gridCoords(6,1).y);
-	gfx2.fillText('87', gridCoords(7,1).x, gridCoords(7,1).y);
-	gfx2.fillText('26', gridCoords(1,2).x, gridCoords(1,2).y);
-	gfx2.fillText('46', gridCoords(3,2).x, gridCoords(3,2).y);
-	gfx2.fillText('56', gridCoords(4,2).x, gridCoords(4,2).y);
-	gfx2.fillText('66', gridCoords(5,2).x, gridCoords(5,2).y);
-	gfx2.fillText('76', gridCoords(6,2).x, gridCoords(6,2).y);
-	gfx2.fillText('86', gridCoords(7,2).x, gridCoords(7,2).y);
-	gfx2.fillText('55', gridCoords(4,3).x, gridCoords(4,3).y);
-	gfx2.fillText('65', gridCoords(5,3).x, gridCoords(5,3).y);
-	gfx2.fillText('75', gridCoords(6,3).x, gridCoords(6,3).y);
-	gfx2.fillText('85', gridCoords(7,3).x, gridCoords(7,3).y);
-	gfx2.fillText('64', gridCoords(5,4).x, gridCoords(5,4).y);
-	gfx2.fillText('74', gridCoords(6,4).x, gridCoords(6,4).y);
-	gfx2.fillText('84', gridCoords(7,4).x, gridCoords(7,4).y);
-	gfx2.fillText('63', gridCoords(5,5).x, gridCoords(5,5).y);
-	gfx2.fillText('73', gridCoords(6,5).x, gridCoords(6,5).y);
-	gfx2.fillText('83', gridCoords(7,5).x, gridCoords(7,5).y);
-	gfx2.fillText('62', gridCoords(5,6).x, gridCoords(5,6).y);
-	gfx2.fillText('72', gridCoords(6,6).x, gridCoords(6,6).y);
-	gfx2.fillText('82', gridCoords(7,6).x, gridCoords(7,6).y);
-	gfx2.fillText('61', gridCoords(5,7).x, gridCoords(5,7).y);
-	gfx2.fillText('71', gridCoords(6,7).x, gridCoords(6,7).y);
-	gfx2.fillText('81', gridCoords(7,7).x, gridCoords(7,7).y);
-	gfx2.fillText('14', gridCoords(0,4).x, gridCoords(0,4).y);
-	gfx2.fillText('34', gridCoords(2,4).x, gridCoords(2,4).y);
-	gfx2.fillText('33', gridCoords(2,5).x, gridCoords(2,5).y);
+	gfx2.fillText('48', gridCoords(3,0).x+5, gridCoords(3,0).y+7);
+	gridSpots[0] = new hotspot(gridCoords(3,0).x, gridCoords(3,0).y-10, 25,25, 'spot 48');
+	
+	gfx2.fillText('68', gridCoords(5,0).x+5, gridCoords(5,0).y+7);
+	gfx2.fillText('78', gridCoords(6,0).x+5, gridCoords(6,0).y+7);
+	gfx2.fillText('88', gridCoords(7,0).x+5, gridCoords(7,0).y+7);
+	gfx2.fillText('17', gridCoords(0,1).x+5, gridCoords(0,1).y+7);
+	gfx2.fillText('47', gridCoords(3,1).x+5, gridCoords(3,1).y+7);
+	gfx2.fillText('67', gridCoords(5,1).x+5, gridCoords(5,1).y+7);
+	gfx2.fillText('77', gridCoords(6,1).x+5, gridCoords(6,1).y+7);
+	gfx2.fillText('87', gridCoords(7,1).x+5, gridCoords(7,1).y+7);
+	gfx2.fillText('26', gridCoords(1,2).x+5, gridCoords(1,2).y+7);
+	gfx2.fillText('46', gridCoords(3,2).x+5, gridCoords(3,2).y+7);
+	gfx2.fillText('56', gridCoords(4,2).x+5, gridCoords(4,2).y+7);
+	gfx2.fillText('66', gridCoords(5,2).x+5, gridCoords(5,2).y+7);
+	gfx2.fillText('76', gridCoords(6,2).x+5, gridCoords(6,2).y+7);
+	gfx2.fillText('86', gridCoords(7,2).x+5, gridCoords(7,2).y+7);
+	gfx2.fillText('55', gridCoords(4,3).x+5, gridCoords(4,3).y+7);
+	gfx2.fillText('65', gridCoords(5,3).x+5, gridCoords(5,3).y+7);
+	gfx2.fillText('75', gridCoords(6,3).x+5, gridCoords(6,3).y+7);
+	gfx2.fillText('85', gridCoords(7,3).x+5, gridCoords(7,3).y+7);
+	gfx2.fillText('64', gridCoords(5,4).x+5, gridCoords(5,4).y+7);
+	gfx2.fillText('74', gridCoords(6,4).x+5, gridCoords(6,4).y+7);
+	gfx2.fillText('84', gridCoords(7,4).x+5, gridCoords(7,4).y+7);
+	gfx2.fillText('63', gridCoords(5,5).x+5, gridCoords(5,5).y+7);
+	gfx2.fillText('73', gridCoords(6,5).x+5, gridCoords(6,5).y+7);
+	gfx2.fillText('83', gridCoords(7,5).x+5, gridCoords(7,5).y+7);
+	gfx2.fillText('62', gridCoords(5,6).x+5, gridCoords(5,6).y+7);
+	gfx2.fillText('72', gridCoords(6,6).x+5, gridCoords(6,6).y+7);
+	gfx2.fillText('82', gridCoords(7,6).x+5, gridCoords(7,6).y+7);
+	gfx2.fillText('61', gridCoords(5,7).x+5, gridCoords(5,7).y+7);
+	gfx2.fillText('71', gridCoords(6,7).x+5, gridCoords(6,7).y+7);
+	gfx2.fillText('81', gridCoords(7,7).x+5, gridCoords(7,7).y+7);
+	gfx2.fillText('14', gridCoords(0,4).x+5, gridCoords(0,4).y+7);
+	gfx2.fillText('34', gridCoords(2,4).x+5, gridCoords(2,4).y+7);
+	gfx2.fillText('33', gridCoords(2,5).x+5, gridCoords(2,5).y+7);
 
 	///////////// bottom text
 	h = document.createElement('B1');
@@ -144,7 +159,25 @@ displayGridPage = function(){
 	document.body.appendChild(h);
 }
 
+hotspot = function(x,y,sx,sy,ref){
+	this.x = x; this.y = y;
+	this.sx = sx; this.sy = sy;
+	this.ref = ref;
+
+	this.clicked = function(x,y){
+		console.log(this);
+		console.log(mX + ' ' + mY);
+		gfx2.fillStyle='FFFFFF';
+		gfx2.fillRect(this.x,this.y,this.sx,this.sy);
+		if(x >= this.x && x < this.x + this.sx){
+			if(y >= this.y && y < this.y + this.sy){
+				console.log(this.ref);
+			}	
+		}
+	}
+}
+
 gridCoords = function(x,y){ // transforms cell numbers x,y into pixel coordinates
-	// coords for top left are: 235, 97. Cell size is 25
-	return {x:235+25*x, y:97+25*y};
+	// coords for top left are: 230, 90. Cell size is 25
+	return {x:230+25*x, y:90+25*y};
 }
