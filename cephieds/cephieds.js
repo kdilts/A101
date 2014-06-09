@@ -94,6 +94,35 @@ displayGridPage = function(){
 	gfx2.fillText('78', gridCoords(6,0).x, gridCoords(6,0).y);
 	gfx2.fillText('88', gridCoords(7,0).x, gridCoords(7,0).y);
 	gfx2.fillText('17', gridCoords(0,1).x, gridCoords(0,1).y);
+	gfx2.fillText('47', gridCoords(3,1).x, gridCoords(3,1).y);
+	gfx2.fillText('67', gridCoords(5,1).x, gridCoords(5,1).y);
+	gfx2.fillText('77', gridCoords(6,1).x, gridCoords(6,1).y);
+	gfx2.fillText('87', gridCoords(7,1).x, gridCoords(7,1).y);
+	gfx2.fillText('26', gridCoords(1,2).x, gridCoords(1,2).y);
+	gfx2.fillText('46', gridCoords(3,2).x, gridCoords(3,2).y);
+	gfx2.fillText('56', gridCoords(4,2).x, gridCoords(4,2).y);
+	gfx2.fillText('66', gridCoords(5,2).x, gridCoords(5,2).y);
+	gfx2.fillText('76', gridCoords(6,2).x, gridCoords(6,2).y);
+	gfx2.fillText('86', gridCoords(7,2).x, gridCoords(7,2).y);
+	gfx2.fillText('55', gridCoords(4,3).x, gridCoords(4,3).y);
+	gfx2.fillText('65', gridCoords(5,3).x, gridCoords(5,3).y);
+	gfx2.fillText('75', gridCoords(6,3).x, gridCoords(6,3).y);
+	gfx2.fillText('85', gridCoords(7,3).x, gridCoords(7,3).y);
+	gfx2.fillText('64', gridCoords(5,4).x, gridCoords(5,4).y);
+	gfx2.fillText('74', gridCoords(6,4).x, gridCoords(6,4).y);
+	gfx2.fillText('84', gridCoords(7,4).x, gridCoords(7,4).y);
+	gfx2.fillText('63', gridCoords(5,5).x, gridCoords(5,5).y);
+	gfx2.fillText('73', gridCoords(6,5).x, gridCoords(6,5).y);
+	gfx2.fillText('83', gridCoords(7,5).x, gridCoords(7,5).y);
+	gfx2.fillText('62', gridCoords(5,6).x, gridCoords(5,6).y);
+	gfx2.fillText('72', gridCoords(6,6).x, gridCoords(6,6).y);
+	gfx2.fillText('82', gridCoords(7,6).x, gridCoords(7,6).y);
+	gfx2.fillText('61', gridCoords(5,7).x, gridCoords(5,7).y);
+	gfx2.fillText('71', gridCoords(6,7).x, gridCoords(6,7).y);
+	gfx2.fillText('81', gridCoords(7,7).x, gridCoords(7,7).y);
+	gfx2.fillText('14', gridCoords(0,4).x, gridCoords(0,4).y);
+	gfx2.fillText('34', gridCoords(2,4).x, gridCoords(2,4).y);
+	gfx2.fillText('33', gridCoords(2,5).x, gridCoords(2,5).y);
 
 	///////////// bottom text
 	h = document.createElement('B1');
