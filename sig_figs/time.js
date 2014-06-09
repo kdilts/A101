@@ -53,8 +53,8 @@ window.onload = function(){
 	roundCtx.fillText('6',70,140);
 
 	// calculate angles of hands
-	var hAngle = degToRad( (hour) * 30);
-	var mAngle = degToRad( (minute) * 6);
+	var hAngle = degToRad( hour * 30 + minute * .5);
+	var mAngle = degToRad( minute * 6);
 
 	roundCtx.save();
 	roundCtx.translate(75,75);
