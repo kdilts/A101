@@ -1,5 +1,3 @@
-// TODO finish hour hand
-// TODO fix digital display. ex: displays "6:3:42" instead of the correct "6:03:42". probably the same w/ seconds
 // TODO compatibility testing
 
 var roundCtx;
@@ -88,7 +86,19 @@ window.onload = function(){
 
 	secCtx.fillStyle = 'rgb(200,200,200)';
 	secCtx.font = '30px Verdana';
-	secCtx.fillText(hour + ':' + minute + ':' + second,10,35);
+	if(minute < 10){
+		if(second < 10){
+			secCtx.fillText(hour + ':0' + minute + ':0' + second,10,35);
+		}else{
+			secCtx.fillText(hour + ':0' + minute + ':' + second,10,35);
+		}
+	}else{
+		if(second < 10){
+			secCtx.fillText(hour + ':' + minute + ':0' + second,10,35);
+		}else{
+			secCtx.fillText(hour + ':' + minute + ':' + second,10,35);
+		}
+	}
 }
 
 dots = function(){
