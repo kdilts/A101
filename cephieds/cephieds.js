@@ -38,6 +38,18 @@ displayGridPage = function(){
 	document.body.appendChild(h);
 
 	////////////// middle image
+	canvas = document.createElement('canvas');
+	canvas.width = 450; canvas.height = 300;
+	canvas.id = 'myCanvas';
+	canvas.setAttribute('style','position:absolute; left:240; top:180');
+	h.appendChild(canvas);
+
+	gfx = canvas.getContext('2d');
+	gfx.fillStyle='rgb(200,200,200)';
+	gfx.fillRect(0,0,450,300);
+	gfx.fillStyle='rgb(0,0,0)';
+	gfx.fillRect(2,2,446,48);
+	gfx.fillRect(2,52,446,246);
 
 	///////////// bottom text
 	h = document.createElement('B1');
