@@ -88,9 +88,12 @@ displayGridPage = function(){
 		gfx2.fillRect(230+(i*25),80,1.5,200);
 	}
 
-	gfx2.font = '12px Verdana'; // coords for top left are: 237, 97. Cell size is 25.
-	gfx2.fillText('48', 310, 97); gfx2.fillText('68', 360, 97);	gfx2.fillText('78', 385, 97);
-	gfx2.fillText('88', 410, 97); gfx2.fillText('17', 235, 122);
+	gfx2.font = '12px Verdana'; 
+	gfx2.fillText('48', gridCoords(3,0).x, gridCoords(3,0).y);
+	gfx2.fillText('68', gridCoords(5,0).x, gridCoords(5,0).y);
+	gfx2.fillText('78', gridCoords(6,0).x, gridCoords(6,0).y);
+	gfx2.fillText('88', gridCoords(7,0).x, gridCoords(7,0).y);
+	gfx2.fillText('17', gridCoords(0,1).x, gridCoords(0,1).y);
 
 	///////////// bottom text
 	h = document.createElement('B1');
@@ -110,4 +113,9 @@ displayGridPage = function(){
 
 	h.setAttribute('style','position:absolute; left: 40; top:510; color:FFFFFF');
 	document.body.appendChild(h);
+}
+
+gridCoords = function(x,y){ // transforms cell numbers x,y into pixel coordinates
+	// coords for top left are: 235, 97. Cell size is 25
+	return {x:235+25*x, y:97+25*y};
 }
