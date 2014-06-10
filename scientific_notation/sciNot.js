@@ -17,6 +17,8 @@ window.onload = function(){
 
 	render();
 
+	window.scrollTo(0,0);
+
 	canvas = document.getElementById('myCanvas');
 	canvasRect = canvas.getBoundingClientRect();
 
