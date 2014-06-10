@@ -106,8 +106,14 @@ displayGridPage = function(){
 	gridSpots[0] = new hotspot(gridCoords(3,0).x, gridCoords(3,0).y-10, 25,25, 'spot 48');
 	
 	gfx2.fillText('68', gridCoords(5,0).x+5, gridCoords(5,0).y+7);
+	gridSpots[1] = new hotspot(gridCoords(5,0).x, gridCoords(5,0).y-10, 25,25, 'spot 68');
+
 	gfx2.fillText('78', gridCoords(6,0).x+5, gridCoords(6,0).y+7);
+	gridSpots[2] = new hotspot(gridCoords(6,0).x, gridCoords(6,0).y-10, 25,25, 'spot 78');
+
 	gfx2.fillText('88', gridCoords(7,0).x+5, gridCoords(7,0).y+7);
+	gridSpots[3] = new hotspot(gridCoords(7,0).x, gridCoords(7,0).y-10, 25,25, 'spot 88');
+
 	gfx2.fillText('17', gridCoords(0,1).x+5, gridCoords(0,1).y+7);
 	gfx2.fillText('47', gridCoords(3,1).x+5, gridCoords(3,1).y+7);
 	gfx2.fillText('67', gridCoords(5,1).x+5, gridCoords(5,1).y+7);
@@ -147,6 +153,7 @@ displayGridPage = function(){
 		' If you average your two results you will get a more accurate answer. You can use this average as the distance to the galaxy' +
 		' M100. '));
 
+	// TODO fix the link to go to the right page
 	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/Cepheid_check.html';
 	lnk.setAttribute('onclick','window.open(this.href); return false;');
 	lnk.appendChild(document.createTextNode('Use the dimming factor conversion table')); lnk.setAttribute('style', 'color:00FF00');
@@ -165,10 +172,8 @@ hotspot = function(x,y,sx,sy,ref){
 	this.ref = ref;
 
 	this.clicked = function(x,y){
-		console.log(this);
-		console.log(mX + ' ' + mY);
-		gfx2.fillStyle='FFFFFF';
-		gfx2.fillRect(this.x,this.y,this.sx,this.sy);
+		x -= 280; y -= 190;
+
 		if(x >= this.x && x < this.x + this.sx){
 			if(y >= this.y && y < this.y + this.sy){
 				console.log(this.ref);
