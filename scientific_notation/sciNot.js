@@ -1,3 +1,6 @@
+// Kevin Dilts
+// 6/10/2014
+
 var ctx;
 var num = 149597870;
 var numStr = '149,597,870';
@@ -5,15 +8,17 @@ var exp = 0;
 
 var lmbDown = false;
 var dragging = false;
-var decX = 215;
+var decX = 255;
 
 var canvas;
+var canvasRect;
 
 window.onload = function(){
 
 	render();
 
 	canvas = document.getElementById('myCanvas');
+	canvasRect = canvas.getBoundingClientRect();
 
 	document.getElementById('myCanvas').onmousedown = mouseDown;
 	document.getElementById('myCanvas').onmouseup = mouseUp;
@@ -22,43 +27,50 @@ window.onload = function(){
 }
 
 mouseMove = function(e){
-		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
-		}
-		else // if the browser is firefox
-		{
-			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
-			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
-		}
-
-		console.log(mX + ' ' + mY);
-
-		if(dragging){
-			decX = mX;
-			if(decX < 15){ decX = 15; }
-			if(decX > 215){ decX = 215; }
-			render();
-		}
-}
-
-mouseDown = function(e){
+		
 	if(e.button === 0){
 		
 		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
+			mX = e.pageX;
+			mY = e.pageY;
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
-			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
+			mX = e.clientX;
+			mY = e.clientY;
 		}
+
+		mX -= canvasRect.left; mY -= canvasRect.top;
+
+		if(dragging){
+			decX = mX;
+			if(decX < 55){ decX = 55; }
+			if(decX > 255){ decX = 255; }
+			render();
+		}
+	}
+}
+
+mouseDown = function(e){
+
+	if(e.button === 0){
+		
+		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
+			mX = e.pageX;
+			mY = e.pageY;
+		}
+		else // if the browser is firefox
+		{
+			mX = e.clientX;
+			mY = e.clientY;
+		}
+
+		mX -= canvasRect.left; mY -= canvasRect.top;
 
 		lmbDown = true;
 
-		if(mX >= decX - 2 && mX <= decX + 2){
-			if(mY >= 108 && mY <= 112){
+		if(mX >= decX - 3 && mX <= decX + 3){
+			if(mY >= 107 && mY <= 113){
 				dragging = true;
 			}
 		}
@@ -69,14 +81,16 @@ mouseUp = function(e){
 	if(e.button === 0){
 		
 		if(navigator.userAgent.toLowerCase().indexOf('firefox') === -1){ // if the browser is anything but firefox
-			mX = e.pageX - document.body.offsetLeft - canvas.offsetLeft;
-			mY = e.pageY - document.body.offsetTop - canvas.offsetTop;
+			mX = e.pageX;
+			mY = e.pageY;
 		}
 		else // if the browser is firefox
 		{
-			mX = e.clientX + document.body.scrollLeft - canvas.offsetLeft;
-			mY = e.clientY + document.body.scrollTop - canvas.offsetTop;
+			mX = e.clientX;
+			mY = e.clientY;
 		}
+
+		mX -= canvasRect.left; mY -= canvasRect.top;
 
 		lmbDown = false;
 		dragging = false;
@@ -102,18 +116,18 @@ render = function(){
 
 	// black background
 	ctx.fillStyle = 'rgb(0,0,0)';
-	ctx.fillRect(0,0,800,150);
+	ctx.fillRect(0,0,700,150);
 
 	// large text
 	ctx.fillStyle = 'rgb(255,25,25)';
 	ctx.font = '35px Verdana';
-	ctx.fillText('' + num + ' x 10  = ' + numStr, 15, 110);
-	ctx.fillText('                     10  = ' + Math.pow(10,exp), 5, 55);
+	ctx.fillText('' + num + ' x 10  = ' + numStr, 55, 110);
+	ctx.fillText('                     10  = ' + Math.pow(10,exp), 45, 55);
 
 	// small text for exponents
 	ctx.font = '30px Verdana';
-	ctx.fillText('' + exp, 300,88);
-	ctx.fillText('' + exp, 300,33);
+	ctx.fillText('' + exp, 340,88);
+	ctx.fillText('' + exp, 342,33);
 
 	// decimal point
 	ctx.strokeStyle = 'rgb(255,25,25)';
