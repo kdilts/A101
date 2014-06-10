@@ -115,35 +115,94 @@ displayGridPage = function(){
 	gridSpots[3] = new hotspot(gridCoords(7,0).x, gridCoords(7,0).y-10, 25,25, 'spot 88');
 
 	gfx2.fillText('17', gridCoords(0,1).x+5, gridCoords(0,1).y+7);
+	gridSpots[4] = new hotspot(gridCoords(0,1).x, gridCoords(0,1).y-10, 25,25, 'spot 17');
+
 	gfx2.fillText('47', gridCoords(3,1).x+5, gridCoords(3,1).y+7);
+	gridSpots[5] = new hotspot(gridCoords(3,1).x, gridCoords(3,1).y-10, 25,25, 'spot 47');
+
 	gfx2.fillText('67', gridCoords(5,1).x+5, gridCoords(5,1).y+7);
+	gridSpots[6] = new hotspot(gridCoords(5,1).x, gridCoords(5,1).y-10, 25,25, 'spot 67');
+
 	gfx2.fillText('77', gridCoords(6,1).x+5, gridCoords(6,1).y+7);
+	gridSpots[7] = new hotspot(gridCoords(6,1).x, gridCoords(6,1).y-10, 25,25, 'spot 77');
+
 	gfx2.fillText('87', gridCoords(7,1).x+5, gridCoords(7,1).y+7);
+	gridSpots[8] = new hotspot(gridCoords(7,1).x, gridCoords(7,1).y-10, 25,25, 'spot 87');
+
 	gfx2.fillText('26', gridCoords(1,2).x+5, gridCoords(1,2).y+7);
+	gridSpots[9] = new hotspot(gridCoords(1,2).x, gridCoords(1,2).y-10, 25,25, 'spot 26');
+
 	gfx2.fillText('46', gridCoords(3,2).x+5, gridCoords(3,2).y+7);
+	gridSpots[10] = new hotspot(gridCoords(3,2).x, gridCoords(3,2).y-10, 25,25, 'spot 46');
+
 	gfx2.fillText('56', gridCoords(4,2).x+5, gridCoords(4,2).y+7);
+	gridSpots[11] = new hotspot(gridCoords(4,2).x, gridCoords(4,2).y-10, 25,25, 'spot 56');
+
 	gfx2.fillText('66', gridCoords(5,2).x+5, gridCoords(5,2).y+7);
+	gridSpots[12] = new hotspot(gridCoords(5,2).x, gridCoords(5,2).y-10, 25,25, 'spot 66');
+
 	gfx2.fillText('76', gridCoords(6,2).x+5, gridCoords(6,2).y+7);
+	gridSpots[13] = new hotspot(gridCoords(6,2).x, gridCoords(6,2).y-10, 25,25, 'spot 76');
+
 	gfx2.fillText('86', gridCoords(7,2).x+5, gridCoords(7,2).y+7);
+	gridSpots[14] = new hotspot(gridCoords(7,2).x, gridCoords(7,2).y-10, 25,25, 'spot 86');
+
 	gfx2.fillText('55', gridCoords(4,3).x+5, gridCoords(4,3).y+7);
+	gridSpots[15] = new hotspot(gridCoords(4,3).x, gridCoords(4,3).y-10, 25,25, 'spot 55');
+
 	gfx2.fillText('65', gridCoords(5,3).x+5, gridCoords(5,3).y+7);
+	gridSpots[16] = new hotspot(gridCoords(5,3).x, gridCoords(5,3).y-10, 25,25, 'spot 65');
+
 	gfx2.fillText('75', gridCoords(6,3).x+5, gridCoords(6,3).y+7);
+	gridSpots[17] = new hotspot(gridCoords(6,3).x, gridCoords(6,3).y-10, 25,25, 'spot 75');
+
 	gfx2.fillText('85', gridCoords(7,3).x+5, gridCoords(7,3).y+7);
+	gridSpots[18] = new hotspot(gridCoords(7,3).x, gridCoords(7,3).y-10, 25,25, 'spot 85');
+
 	gfx2.fillText('64', gridCoords(5,4).x+5, gridCoords(5,4).y+7);
+	gridSpots[19] = new hotspot(gridCoords(5,4).x, gridCoords(5,4).y-10, 25,25, 'spot 64');
+
 	gfx2.fillText('74', gridCoords(6,4).x+5, gridCoords(6,4).y+7);
+	gridSpots[20] = new hotspot(gridCoords(6,4).x, gridCoords(6,4).y-10, 25,25, 'spot 74');
+
 	gfx2.fillText('84', gridCoords(7,4).x+5, gridCoords(7,4).y+7);
+	gridSpots[21] = new hotspot(gridCoords(7,4).x, gridCoords(7,4).y-10, 25,25, 'spot 84');
+
 	gfx2.fillText('63', gridCoords(5,5).x+5, gridCoords(5,5).y+7);
+	gridSpots[22] = new hotspot(gridCoords(5,5).x, gridCoords(5,5).y-10, 25,25, 'spot 63');
+
 	gfx2.fillText('73', gridCoords(6,5).x+5, gridCoords(6,5).y+7);
+	gridSpots[23] = new hotspot(gridCoords(6,5).x, gridCoords(6,5).y-10, 25,25, 'spot 73');
+
 	gfx2.fillText('83', gridCoords(7,5).x+5, gridCoords(7,5).y+7);
+	gridSpots[24] = new hotspot(gridCoords(7,5).x, gridCoords(7,5).y-10, 25,25, 'spot 83');
+
 	gfx2.fillText('62', gridCoords(5,6).x+5, gridCoords(5,6).y+7);
+	gridSpots[25] = new hotspot(gridCoords(5,6).x, gridCoords(5,6).y-10, 25,25, 'spot 62');
+
 	gfx2.fillText('72', gridCoords(6,6).x+5, gridCoords(6,6).y+7);
+	gridSpots[26] = new hotspot(gridCoords(6,6).x, gridCoords(6,6).y-10, 25,25, 'spot 72');
+
 	gfx2.fillText('82', gridCoords(7,6).x+5, gridCoords(7,6).y+7);
+	gridSpots[27] = new hotspot(gridCoords(7,6).x, gridCoords(7,6).y-10, 25,25, 'spot 82');
+
 	gfx2.fillText('61', gridCoords(5,7).x+5, gridCoords(5,7).y+7);
+	gridSpots[28] = new hotspot(gridCoords(5,7).x, gridCoords(5,7).y-10, 25,25, 'spot 61');
+
 	gfx2.fillText('71', gridCoords(6,7).x+5, gridCoords(6,7).y+7);
+	gridSpots[29] = new hotspot(gridCoords(6,7).x, gridCoords(6,7).y-10, 25,25, 'spot 71');
+
 	gfx2.fillText('81', gridCoords(7,7).x+5, gridCoords(7,7).y+7);
+	gridSpots[30] = new hotspot(gridCoords(7,7).x, gridCoords(7,7).y-10, 25,25, 'spot 81');
+
 	gfx2.fillText('14', gridCoords(0,4).x+5, gridCoords(0,4).y+7);
+	gridSpots[31] = new hotspot(gridCoords(0,4).x, gridCoords(0,4).y-10, 25,25, 'spot 14');
+
 	gfx2.fillText('34', gridCoords(2,4).x+5, gridCoords(2,4).y+7);
+	gridSpots[32] = new hotspot(gridCoords(2,4).x, gridCoords(2,4).y-10, 25,25, 'spot 34');
+
 	gfx2.fillText('33', gridCoords(2,5).x+5, gridCoords(2,5).y+7);
+	gridSpots[33] = new hotspot(gridCoords(2,5).x, gridCoords(2,5).y-10, 25,25, 'spot 33');
 
 	///////////// bottom text
 	h = document.createElement('B1');
