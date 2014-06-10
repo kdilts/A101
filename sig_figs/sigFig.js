@@ -6,8 +6,6 @@ var secCtx;
 
 window.onload = function(){
 
-	console.log('loaded');
-
 	// get time
 	var time = new Date();
 	var hour = time.getHours();
@@ -19,7 +17,8 @@ window.onload = function(){
 	// set up to draw
 	roundCtx = document.getElementById('round').getContext('2d');
 	minCtx = document.getElementById('min').getContext('2d');
-	secCtx = document.getElementById('sec').getContext('2d');
+	secCtx = document.getElementById('sec1').getContext('2d');
+	sec2Ctx = document.getElementById('sec2').getContext('2d');
 
 	// draw round clock
 	roundCtx.fillStyle = 'rgb(0,0,0)';
@@ -79,26 +78,50 @@ window.onload = function(){
 	minCtx.fillRect(0,0,200,200);
 
 	minCtx.fillStyle = 'rgb(200,200,200)';
-	minCtx.font = '30px Verdana';
-	minCtx.fillText(hour + ':' + minute,10,35);
+	minCtx.font = '16px Verdana';
+	if(minute < 10){
+		minCtx.fillText(hour + ':0' + minute,5,15);
+	}else{
+		minCtx.fillText(hour + ':' + minute,5,15);
+	}
 
-	// draw digital clock with seconds
+	// draw first digital clock with seconds
 	secCtx.fillStyle = 'rgb(0,0,0)';
 	secCtx.fillRect(0,0,200,200);
 
 	secCtx.fillStyle = 'rgb(200,200,200)';
-	secCtx.font = '30px Verdana';
+	secCtx.font = '24px Verdana';
 	if(minute < 10){
 		if(second < 10){
-			secCtx.fillText(hour + ':0' + minute + ':0' + second,10,35);
+			secCtx.fillText(hour + ':0' + minute + ':0' + second,1,25);
 		}else{
-			secCtx.fillText(hour + ':0' + minute + ':' + second,10,35);
+			secCtx.fillText(hour + ':0' + minute + ':' + second,1,25);
 		}
 	}else{
 		if(second < 10){
-			secCtx.fillText(hour + ':' + minute + ':0' + second,10,35);
+			secCtx.fillText(hour + ':' + minute + ':0' + second,1,25);
 		}else{
-			secCtx.fillText(hour + ':' + minute + ':' + second,10,35);
+			secCtx.fillText(hour + ':' + minute + ':' + second,1,25);
+		}
+	}
+
+	// draw second digital clock with seconds
+	sec2Ctx.fillStyle = 'rgb(0,0,0)';
+	sec2Ctx.fillRect(0,0,200,200);
+
+	sec2Ctx.fillStyle = 'rgb(200,200,200)';
+	sec2Ctx.font = '16px Verdana';
+	if(minute < 10){
+		if(second < 10){
+			sec2Ctx.fillText(hour + ':0' + minute + ':0' + second,1,17);
+		}else{
+			sec2Ctx.fillText(hour + ':0' + minute + ':' + second,1,17);
+		}
+	}else{
+		if(second < 10){
+			sec2Ctx.fillText(hour + ':' + minute + ':0' + second,1,17);
+		}else{
+			sec2Ctx.fillText(hour + ':' + minute + ':' + second,1,17);
 		}
 	}
 }
