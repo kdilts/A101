@@ -46,22 +46,22 @@ window.onload = function(){
 		roundCtx.restore();
 	}
 
-	roundCtx.font = '16px Verdana';
-	roundCtx.fillText('12',50,17);
-	roundCtx.fillText('3',132,80);
-	roundCtx.fillText('9',8,80);
-	roundCtx.fillText('6',70,140);
+	roundCtx.font = '12px Verdana';
+	roundCtx.fillText('12',50,15);
+	roundCtx.fillText('3',102,60);
+	roundCtx.fillText('9',10,60);
+	roundCtx.fillText('6',55,105);
 
 	// calculate angles of hands
-	var hAngle = degToRad( hour * 30 + minute * .5);
-	var mAngle = degToRad( minute * 6);
+	var hAngle = degToRad(hour * 30 + minute * .5);
+	var mAngle = degToRad(minute * 6);
 
 	roundCtx.save();
 	roundCtx.translate(60,55);
 	roundCtx.rotate(hAngle);
 	roundCtx.beginPath();
 	roundCtx.moveTo(0,0);
-	roundCtx.lineTo(0,-30);
+	roundCtx.lineTo(0,-25);
 	roundCtx.stroke();
 	roundCtx.restore();
 
@@ -70,7 +70,7 @@ window.onload = function(){
 	roundCtx.rotate(mAngle);
 	roundCtx.beginPath();
 	roundCtx.moveTo(0,0);
-	roundCtx.lineTo(0,-45);
+	roundCtx.lineTo(0,-40);
 	roundCtx.stroke();
 	roundCtx.restore();
 
