@@ -204,6 +204,19 @@ displayGridPage = function(){
 	gfx2.fillText('33', gridCoords(2,5).x+5, gridCoords(2,5).y+7);
 	gridSpots[33] = new hotspot(gridCoords(2,5).x, gridCoords(2,5).y-10, 25,25, 'spot 33');
 
+	emptyCoords = [ {x: 0, y:0}, {x: 1, y:0}, {x: 2, y:0}, {x: 4, y:0},
+					{x: 1, y:1}, {x: 2, y:1}, {x: 4, y:1},
+	 				{x: 0, y:2}, {x: 2, y:2},
+	 				{x: 0, y:3}, {x: 1, y:3}, {x: 2, y:3}, {x: 4, y:3},
+	 				{x: 1, y:4}, {x: 3, y:4}, {x: 4, y:4},
+	 				{x: 0, y:5}, {x: 1, y:5}, {x: 3, y:5}, {x: 4, y:5},
+	 				{x: 0, y:6}, {x: 1, y:6}, {x: 2, y:6}, {x: 3, y:6}, {x: 4, y:6},
+	 				{x: 0, y:7}, {x: 1, y:7}, {x: 2, y:7}, {x: 3, y:7}, {x: 4, y:7} ];
+
+	for(var s in emptyCoords){
+		gridSpots[parseInt(s) + 34] = new hotspot(gridCoords(emptyCoords[s].x).x, gridCoords(null, emptyCoords[s].y).y-10, 25,25, 'empty');
+	}
+
 	///////////// bottom text
 	h = document.createElement('B1');
 
