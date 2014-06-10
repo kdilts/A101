@@ -143,9 +143,9 @@ displayGridPage = function(){
 	h = document.createElement('B1');
 
 	h.appendChild(document.createTextNode('For each of the Cepheid stars you found, determine their apparent and absolute magnitudes.' +
-		'From the difference in magnitudes determine the distance to each Cepheid. Remember! The magnitude difference is m-M' +
-		'If you average your two results you will get a more accurate answer. You can use this average as the distance to the galaxy' +
-		'M100. '));
+		' From the difference in magnitudes determine the distance to each Cepheid. Remember! The magnitude difference is m-M' +
+		' If you average your two results you will get a more accurate answer. You can use this average as the distance to the galaxy' +
+		' M100. '));
 
 	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/Cepheid_check.html';
 	lnk.setAttribute('onclick','window.open(this.href); return false;');
@@ -153,7 +153,7 @@ displayGridPage = function(){
 	h.appendChild(lnk);
 
 	h.appendChild(document.createTextNode(' (also linked from the "Period-Luminosity Relation" page) to use the table' +
-		'to convert magnitude differences into distance.'));
+		' to convert magnitude differences into distance.'));
 
 	h.setAttribute('style','position:absolute; left: 40; top:510; color:FFFFFF');
 	document.body.appendChild(h);
