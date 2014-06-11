@@ -26,7 +26,7 @@ window.onmouseup = function(e){
 			gridSpots[s].clicked(mX,mY);
 		}
 	}
-	else if(('' + mode).length === 2){
+	else if(('' + mode).length === 2 && mY <= 320){
 		var idx;
 		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
 		for(var s in cellData[idx].spots){
