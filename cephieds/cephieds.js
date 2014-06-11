@@ -68,14 +68,28 @@ displayBeastie = function(){
 }
 
 displayAnswer = function(cellNum, answerNum){
-	console.log('display answer: ' + cellNum + ' : ' + answerNum);
+	h = document.createElement('H1');
+	h.appendChild(document.createTextNode('C' + cellData[cellNum].solutionNum[answerNum] + ' Light Curve'));
+	h.setAttribute('style','position:absolute; left: 150; top: 0');
+	document.body.appendChild(h);
 
 	h = document.createElement('B1');
+	h.appendChild(document.createTextNode('You have discovered a Cepheid! Ferrarese et al. (1996) name this' +
+		'Cepheid C' + cellData[cellNum].answer[answerNum] + '. Below is their plot of C' + 
+		cellData[cellNum].answer[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
+		'the name of the Cepheid, its grid section number (' + cellNum + '), its '));
 	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 120');
-	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
+	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk.appendChild(document.createTextNode('average apparent V magnitude'));
 	h.appendChild(lnk);
+	h.appendChild(document.createTextNode(' (mv), and its '));
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk.appendChild(document.createTextNode('period'));
+	h.appendChild(lnk);
+	h.appendChild(document.createTextNode(' (P). (Careful: the numbers decrease going up the vertical axis!)' +
+		'When you\'re done, '));
+	h.setAttribute('style','position:absolute; left: 20; top: 70');
 	document.body.appendChild(h);
 }
 
@@ -470,6 +484,7 @@ changeMode = function(n){
 	}else if(('' + mode).length === 3){
 		var answerNum = ('' + mode)[0];
 		var cellNum = ('' + mode).substr(1,2);
+		console.log(cellNum + ' ' + answerNum);
 		displayAnswer(cellNum, answerNum);
 	}
 }
