@@ -4,6 +4,7 @@
 var mode = 0; // indicates which page is being displayed.
 			  // 0 - grid
 			  // 1 - beastie
+			  // 2 - wrong answer
 			  // 48, 68, etc - specific cell
 			  // X48, X68, etc - correct anser, specific cell, X refers to the solution number
 
@@ -30,6 +31,11 @@ window.onmouseup = function(e){
 		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
 		for(var s in cellData[idx].spots){
 			cellData[idx].spots[s].clicked(mX,mY);
+		}
+		if(('' + mode).length === 2){
+			clearPage();
+			displayWrong(mode);
+			mode = 2;
 		}
 	}
 }
@@ -59,6 +65,30 @@ displayBeastie = function(){
 	img.width = 400; img.height = 400;
 	img.setAttribute('style','position:absolute; left:60; top:120');
 	document.body.appendChild(img);
+}
+
+displayAnswer = function(cellNum, answerNum){
+	console.log('display answer: ' + cellNum + ' : ' + answerNum);
+
+	h = document.createElement('B1');
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick','window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left: 20; top: 120');
+	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
+	h.appendChild(lnk);
+	document.body.appendChild(h);
+}
+
+displayWrong = function(cellNum){
+	console.log('display wrong ' + cellNum);
+
+	h = document.createElement('B1');
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick','window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left: 20; top: 120');
+	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
+	h.appendChild(lnk);
+	document.body.appendChild(h);
 }
 
 displayEmptyCell = function(){
@@ -416,7 +446,9 @@ changeMode = function(n){
 			displayBeastie();
 		}
 	}else if(('' + mode).length === 3){
-
+		var answerNum = ('' + mode)[0];
+		var cellNum = ('' + mode).substr(1,2);
+		displayAnswer(cellNum, answerNum);
 	}
 }
 
@@ -457,6 +489,6 @@ cellData = [
 	{cellNum:14, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 
 	///// TODO the rest don't work on their side. ask about correct answers
-	{cellNum:34, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]}
+	//{cellNum:34, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]}
 
 ];
