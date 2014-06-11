@@ -51,9 +51,26 @@ displayBeastie = function(){
 	document.body.appendChild(img);
 }
 
+displayEmptyCell = function(){
+	h = document.createElement('H1');
+	h.appendChild(document.createTextNode('Sorry, no Cepheids in this image!'));
+	h.setAttribute('style','position:absolute; left: 250; top: 10');
+	document.body.appendChild(h);
+
+	h = document.createElement('B1');
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick','window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left: 20; top: 120');
+	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
+	h.appendChild(lnk);
+	document.body.appendChild(h);
+}
+
 displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 
 	document.body.setAttribute('bgcolor','white');
+
+	if(cepheidNum == -1){ displayEmptyCell(); return; }
 
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('Grid section ' + cellNum + '. Find the Cepheids!'));
@@ -364,9 +381,13 @@ changeMode = function(n){
 	if(mode === 0){ displayGridPage(); }
 	else if(mode === 1){ displayBeastie(); }
 	else if(('' + mode).length === 2){ // specific cell
-		var idx;
+		var idx = -1;
 		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
-		displayCell(cellData[idx].cellNum, cellData[idx].solutionNum, cellData[idx].enhance, cellData[idx].cepheidNum);
+		if(idx !== -1) {
+			displayCell(cellData[idx].cellNum, cellData[idx].solutionNum, cellData[idx].enhance, cellData[idx].cepheidNum);
+		}else{
+			displayBeastie();
+		}
 	}else if(('' + mode).length === 3){
 
 	}
