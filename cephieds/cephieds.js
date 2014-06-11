@@ -2,7 +2,7 @@ var mode = 0; // indicates which page is being displayed.
 			  // 0 - grid
 			  // 1 - beastie
 			  // 48, 68, etc - specific cell
-			  // 148, 168, etc - correct anser, specific cell
+			  // X48, X68, etc - correct anser, specific cell, X refers to the solution number
 
 var gridSpots = [];
 var mX; var mY;
@@ -20,6 +20,14 @@ window.onmouseup = function(e){
 	if(mode === 0){
 		for(var s in gridSpots){
 			gridSpots[s].clicked(mX,mY);
+		}
+	}
+	else if(('' + mode).length === 2){
+		var idx;
+		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
+		console.log(cellData[idx]);
+		for(var s in cellData[idx].spots){
+			cellData[idx].spots[s].clicked(mX,mY);
 		}
 	}
 }
@@ -362,6 +370,10 @@ hotcircle = function(x,y,diam,ref){
 	this.diam = diam; this.ref = ref;
 
 	this.clicked = function(x,y){
+		x -= 360; y -= 120;
+
+		console.log('mouse: ' + x + ' ' + y);
+		console.log('spot: ' + this.x + ' ' + this.y);
 		if(dist(this.x,this.y,x,y) <= this.diam){
 			changeMode(this.ref);
 		}
@@ -418,31 +430,31 @@ gridCoords = function(x,y){ // transforms cell numbers x,y into pixel coordinate
 // data for cell pages
 cellData = [
 
-	{cellNum:48, solutionNum:[10], enhance:false, cepheidNum:1},
-	{cellNum:68, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:78, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:88, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:48, solutionNum:[10], enhance:false, cepheidNum:1, spots:[new hotcircle(64,179,13,148)]},
+	{cellNum:68, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:78, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:88, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 
-	{cellNum:17, solutionNum:[18], enhance:false, cepheidNum:1},
-	{cellNum:47, solutionNum:[7,15,46], enhance:false, cepheidNum:3},
-	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2},
-	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1},
-	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1},
+	{cellNum:17, solutionNum:[18], enhance:false, cepheidNum:1, spots:[new hotcircle(45,77,10,117)]},
+	{cellNum:47, solutionNum:[7,15,46], enhance:false, cepheidNum:3, spots:[new hotcircle(11,71,13,147), new hotcircle(8,41,9,247), new hotcircle(29,107,9,347)]},
+	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2, spots:[]},
+	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1, spots:[]},
 
-	{cellNum:26, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:46, solutionNum:[47], enhance:false, cepheidNum:1},
-	{cellNum:56, solutionNum:[48], enhance:false, cepheidNum:1},
-	{cellNum:66, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:86, solutionNum:[4,28], enhance:false, cepheidNum:2},
+	{cellNum:26, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:46, solutionNum:[47], enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:56, solutionNum:[48], enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:66, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:86, solutionNum:[4,28], enhance:false, cepheidNum:2, spots:[]},
 
-	{cellNum:55, solutionNum:[54], enhance:false, cepheidNum:1},
-	{cellNum:65, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:75, solutionNum:[], enhance:false, cepheidNum:-1},
-	{cellNum:85, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:55, solutionNum:[54], enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:65, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:75, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
+	{cellNum:85, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 
-	{cellNum:14, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:14, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 
 	///// TODO the rest don't work on their side. ask about correct answers
-	{cellNum:34, solutionNum:[], enhance:false, cepheidNum:-1}
+	{cellNum:34, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]}
 
 ];
