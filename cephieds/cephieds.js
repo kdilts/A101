@@ -78,8 +78,8 @@ displayAnswer = function(cellNum, answerNum){
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('You have discovered a Cepheid! Ferrarese et al. (1996) name this' +
-		'Cepheid C' + cellData[idx].answer[answerNum] + '. Below is their plot of C' + 
-		cellData[idx].answer[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
+		'Cepheid C' + cellData[idx].solutionNum[answerNum] + '. Below is their plot of C' + 
+		cellData[idx].solutionNum[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
 		'the name of the Cepheid, its grid section number (' + cellNum + '), its '));
 	lnk = document.createElement('a'); lnk.href = './page.html';
 	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
