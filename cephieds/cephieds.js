@@ -12,6 +12,7 @@ var gridSpots = [];
 var mX; var mY;
 
 window.onload = function(){
+	window.scrollTo(0,0);
 	displayGridPage();
 }
 
@@ -59,12 +60,17 @@ displayBeastie = function(){
 	h.setAttribute('style','position:absolute; left: 80; top: 60');
 	document.body.appendChild(h);
 
-	img = document.createElement('img');
-	img.zIndex = 1;
-	img.src = './gifs/beastie.gif';
-	img.width = 400; img.height = 400;
-	img.setAttribute('style','position:absolute; left:60; top:120');
+	addImage('./gifs/beastie.gif', 400, 400, 'position:absolute; left:60; top:120', 1);
+}
+
+addImage = function(src, w, h, style, z){
+	var img = document.createElement('img');
+	img.zIndex = z;
+	img.src = src;
+	img.width = w; img.height = h;
+	img.setAttribute('style', style);
 	document.body.appendChild(img);
+	return img;
 }
 
 displayAnswer = function(cellNum, answerNum){
@@ -104,17 +110,9 @@ displayAnswer = function(cellNum, answerNum){
 	h.setAttribute('style','position:absolute; left: 20; top: 70');
 	document.body.appendChild(h);
 
-	img = document.createElement('img');
-	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'light.gif';
-	img.width = 237; img.height = 172;
-	img.setAttribute('style','position:absolute; left:160; top:200');
-	document.body.appendChild(img);
+	addImage('./gifs/C' + cellData[idx].solutionNum[answerNum] + 'light.gif', 237, 172, 'position:absolute; left:160; top:200', 1);
 
-	img = document.createElement('img');
-	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif';
-	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:460; top:200');
-	document.body.appendChild(img);
+	addImage('./gifs/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif', 200, 200, 'position:absolute; left:460; top:200', 1);
 }
 
 displayWrong = function(cellNum){
@@ -136,11 +134,7 @@ displayWrong = function(cellNum){
 	h.setAttribute('style','position:absolute; left: 20; top: 70');
 	document.body.appendChild(h);
 
-	img = document.createElement('img');
-	img.src = './gifs/anim' + cellNum + '.gif';
-	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:360; top:180');
-	document.body.appendChild(img);
+	addImage('./gifs/anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:180', 1);
 
 	h = document.createElement('B1');
 	lnk = document.createElement('a'); lnk.href = './page.html';
@@ -202,11 +196,7 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 		document.body.appendChild(h);
 	}
 
-	img = document.createElement('img');
-	img.src = './gifs/anim' + cellNum + '.gif';
-	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:360; top:120');
-	document.body.appendChild(img);
+	addImage('./gifs/anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:120', 1);
 
 	h = document.createElement('B1');
 	lnk = document.createElement('a'); lnk.href = './page.html';
