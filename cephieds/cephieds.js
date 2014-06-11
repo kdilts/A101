@@ -73,7 +73,7 @@ displayAnswer = function(cellNum, answerNum){
 
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('C' + cellData[idx].solutionNum[answerNum] + ' Light Curve'));
-	h.setAttribute('style','position:absolute; left: 150; top: 0');
+	h.setAttribute('style','position:absolute; left: 250; top: 0');
 	document.body.appendChild(h);
 
 	h = document.createElement('B1');
@@ -94,6 +94,18 @@ displayAnswer = function(cellNum, answerNum){
 		'When you\'re done, '));
 	h.setAttribute('style','position:absolute; left: 20; top: 70');
 	document.body.appendChild(h);
+
+	img = document.createElement('img');
+	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'light.gif';
+	img.width = 237; img.height = 172;
+	img.setAttribute('style','position:absolute; left:160; top:380');
+	document.body.appendChild(img);
+
+	img = document.createElement('img');
+	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif';
+	img.width = 200; img.height = 200;
+	img.setAttribute('style','position:absolute; left:460; top:380');
+	document.body.appendChild(img);
 }
 
 displayWrong = function(cellNum){
