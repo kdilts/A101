@@ -1,3 +1,6 @@
+// Kevin Dilts
+// 6/11/2014
+
 var mode = 0; // indicates which page is being displayed.
 			  // 0 - grid
 			  // 1 - beastie
@@ -25,7 +28,6 @@ window.onmouseup = function(e){
 	else if(('' + mode).length === 2){
 		var idx;
 		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
-		console.log(cellData[idx]);
 		for(var s in cellData[idx].spots){
 			cellData[idx].spots[s].clicked(mX,mY);
 		}
@@ -372,8 +374,8 @@ hotcircle = function(x,y,diam,ref){
 	this.clicked = function(x,y){
 		x -= 360; y -= 120;
 
-		console.log('mouse: ' + x + ' ' + y);
-		console.log('spot: ' + this.x + ' ' + this.y);
+		//console.log('spot: ' + this.x + ' ' + this.y + ' mouse: ' + x + ' ' + y);
+
 		if(dist(this.x,this.y,x,y) <= this.diam){
 			changeMode(this.ref);
 		}
@@ -437,17 +439,17 @@ cellData = [
 
 	{cellNum:17, solutionNum:[18], enhance:false, cepheidNum:1, spots:[new hotcircle(45,77,10,117)]},
 	{cellNum:47, solutionNum:[7,15,46], enhance:false, cepheidNum:3, spots:[new hotcircle(11,71,13,147), new hotcircle(8,41,9,247), new hotcircle(29,107,9,347)]},
-	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2, spots:[]},
-	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1, spots:[]},
-	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2, spots:[new hotcircle(72,53,9,167), new hotcircle(18,18,9,267)]},
+	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1, spots:[new hotcircle(47,117,9,177)]},
+	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1, spots:[new hotcircle(110,94,13,187)]},
 
 	{cellNum:26, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
-	{cellNum:46, solutionNum:[47], enhance:false, cepheidNum:1, spots:[]},
-	{cellNum:56, solutionNum:[48], enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:46, solutionNum:[47], enhance:false, cepheidNum:1, spots:[new hotcircle(176,76,9,146)]},
+	{cellNum:56, solutionNum:[48], enhance:false, cepheidNum:1, spots:[new hotcircle(14,150,9,156)]},
 	{cellNum:66, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
-	{cellNum:86, solutionNum:[4,28], enhance:false, cepheidNum:2, spots:[]},
+	{cellNum:86, solutionNum:[4,28], enhance:false, cepheidNum:2, spots:[new hotcircle(132,8,9,186), new hotcircle(61,88,9,286)]},
 
-	{cellNum:55, solutionNum:[54], enhance:false, cepheidNum:1, spots:[]},
+	{cellNum:55, solutionNum:[54], enhance:false, cepheidNum:1, spots:[new hotcircle(141,27,9,155)]},
 	{cellNum:65, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 	{cellNum:75, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
 	{cellNum:85, solutionNum:[], enhance:false, cepheidNum:-1, spots:[]},
