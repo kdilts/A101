@@ -92,6 +92,15 @@ displayAnswer = function(cellNum, answerNum){
 	h.appendChild(lnk);
 	h.appendChild(document.createTextNode(' (P). (Careful: the numbers decrease going up the vertical axis!)' +
 		'When you\'re done, '));
+	lnk = document.createElement('a'); lnk.href = '#';
+	lnk.setAttribute('onclick', 'changeMode(' + cellNum + ')');
+	lnk.appendChild(document.createTextNode('return to the main grid section ' + cellNum + ' page'));
+	h.appendChild(lnk);
+	h.appendChild(document.createTextNode(', or '));
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk.appendChild(document.createTextNode('return to the main WF4 8x8 grid.'));
+	h.appendChild(lnk);
 	h.setAttribute('style','position:absolute; left: 20; top: 70');
 	document.body.appendChild(h);
 
