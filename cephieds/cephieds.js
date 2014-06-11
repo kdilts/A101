@@ -52,7 +52,6 @@ displayBeastie = function(){
 }
 
 displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
-	console.log('>> ' + cellNum);
 
 	document.body.setAttribute('bgcolor','white');
 
@@ -78,7 +77,7 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 	if(enhance){
 		h = document.createElement('B1');
 		h.appendChild(document.createTextNode('One is easy to find; the other will be easier to detect in a set of '));
-		lnk = document.createElement('a'); ;
+		lnk = document.createElement('a'); lnk.href = '#';
 		lnk.setAttribute('onclick', 'enhance()');
 		h.setAttribute('style','position:absolute; left: 20; top: 80');
 		lnk.appendChild(document.createTextNode('enhanced images.')); lnk.setAttribute('style', 'color:FF0000');
@@ -102,12 +101,24 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 }
 
 enhance = function(){
-	console.log('asdf');
 	img = document.createElement('img');
 	img.src = './gifs/anim67enh5.gif';
 	img.width = 200; img.height = 200;
 	img.setAttribute('style','position:absolute; left:360; top:120');
 	document.body.appendChild(img);
+
+	h = document.createElement('B1');
+	h.appendChild(document.createTextNode('The image has enhanced contrast to make the fainter Cepheid easier to discern.'));
+	h.setAttribute('style','position:absolute; left: 250; top: 320');
+	document.body.appendChild(h);
+
+	h = document.createElement('B1');
+	lnk = document.createElement('a'); lnk.href = '#';
+	lnk.setAttribute('onclick','changeMode(67)');
+	h.setAttribute('style','position:absolute; left: 20; top: 350');
+	lnk.appendChild(document.createTextNode('Standard contrast image')); lnk.setAttribute('style', 'color:FF0000');
+	h.appendChild(lnk);
+	document.body.appendChild(h);
 }
 
 displayGridPage = function(){
