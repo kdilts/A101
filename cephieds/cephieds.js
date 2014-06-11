@@ -80,12 +80,34 @@ displayAnswer = function(cellNum, answerNum){
 }
 
 displayWrong = function(cellNum){
-	console.log('display wrong ' + cellNum);
+
+	h = document.createElement('H1');
+	h.appendChild(document.createTextNode('Nope, not a known Cepheid... Try Again!'));
+	h.setAttribute('style','position:absolute; left: 150; top: 0');
+	document.body.appendChild(h);
+
+	h = document.createElement('B1');
+	h.appendChild(document.createTextNode('The object on which you clicked is not a known Cepheid.' +
+		' It might be a different type of variable star, a bad pixel event, or a completely different phenomenon. Keep hunting!' +
+		' If you really want to ask your teaching assistant or professor about an object, you can get the' +
+		'  coordinates of the object on a '));
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk.appendChild(document.createTextNode('separate page.'));
+	h.appendChild(lnk);
+	h.setAttribute('style','position:absolute; left: 20; top: 70');
+	document.body.appendChild(h);
+
+	img = document.createElement('img');
+	img.src = './gifs/anim' + cellNum + '.gif';
+	img.width = 200; img.height = 200;
+	img.setAttribute('style','position:absolute; left:360; top:180');
+	document.body.appendChild(img);
 
 	h = document.createElement('B1');
 	lnk = document.createElement('a'); lnk.href = './page.html';
 	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 120');
+	h.setAttribute('style','position:absolute; left: 20; top: 400');
 	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
 	h.appendChild(lnk);
 	document.body.appendChild(h);
