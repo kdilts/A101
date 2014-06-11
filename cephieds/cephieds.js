@@ -68,15 +68,18 @@ displayBeastie = function(){
 }
 
 displayAnswer = function(cellNum, answerNum){
+	var idx = -1;
+	for(var c in cellData){ if(cellData[c].cellNum === parseInt(cellNum)){ idx = c;  } }
+
 	h = document.createElement('H1');
-	h.appendChild(document.createTextNode('C' + cellData[cellNum].solutionNum[answerNum] + ' Light Curve'));
+	h.appendChild(document.createTextNode('C' + cellData[idx].solutionNum[answerNum] + ' Light Curve'));
 	h.setAttribute('style','position:absolute; left: 150; top: 0');
 	document.body.appendChild(h);
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('You have discovered a Cepheid! Ferrarese et al. (1996) name this' +
-		'Cepheid C' + cellData[cellNum].answer[answerNum] + '. Below is their plot of C' + 
-		cellData[cellNum].answer[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
+		'Cepheid C' + cellData[idx].answer[answerNum] + '. Below is their plot of C' + 
+		cellData[idx].answer[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
 		'the name of the Cepheid, its grid section number (' + cellNum + '), its '));
 	lnk = document.createElement('a'); lnk.href = './page.html';
 	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
@@ -484,8 +487,7 @@ changeMode = function(n){
 	}else if(('' + mode).length === 3){
 		var answerNum = ('' + mode)[0];
 		var cellNum = ('' + mode).substr(1,2);
-		console.log(cellNum + ' ' + answerNum);
-		displayAnswer(cellNum, answerNum);
+		displayAnswer(cellNum, answerNum-1);
 	}
 }
 
