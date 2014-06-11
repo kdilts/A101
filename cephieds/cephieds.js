@@ -2,8 +2,7 @@ var mode = 0; // indicates which page is being displayed.
 			  // 0 - grid
 			  // 1 - beastie
 			  // 48, 68, etc - specific cell
-			  // 148, 168, etc - enhanced image, specific cell
-			  // 248, 268, etc - correct anser, specific cell
+			  // 148, 168, etc - correct anser, specific cell
 
 var gridSpots = [];
 var mX; var mY;
@@ -76,19 +75,39 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 		document.body.appendChild(h);
 	}
 
+	if(enhance){
+		h = document.createElement('B1');
+		h.appendChild(document.createTextNode('One is easy to find; the other will be easier to detect in a set of '));
+		lnk = document.createElement('a'); ;
+		lnk.setAttribute('onclick', 'enhance()');
+		h.setAttribute('style','position:absolute; left: 20; top: 80');
+		lnk.appendChild(document.createTextNode('enhanced images.')); lnk.setAttribute('style', 'color:FF0000');
+		h.appendChild(lnk);
+		document.body.appendChild(h);
+	}
+
 	img = document.createElement('img');
 	img.src = './gifs/anim' + cellNum + '.gif';
 	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:260; top:100');
+	img.setAttribute('style','position:absolute; left:360; top:120');
 	document.body.appendChild(img);
 
 	h = document.createElement('B1');
 	lnk = document.createElement('a'); lnk.href = './page.html';
 	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 310');
+	h.setAttribute('style','position:absolute; left: 20; top: 370');
 	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
 	h.appendChild(lnk);
 	document.body.appendChild(h);	
+}
+
+enhance = function(){
+	console.log('asdf');
+	img = document.createElement('img');
+	img.src = './gifs/anim67enh5.gif';
+	img.width = 200; img.height = 200;
+	img.setAttribute('style','position:absolute; left:360; top:120');
+	document.body.appendChild(img);
 }
 
 displayGridPage = function(){
@@ -334,14 +353,11 @@ changeMode = function(n){
 	if(mode === 0){ displayGridPage(); }
 	else if(mode === 1){ displayBeastie(); }
 	else if(('' + mode).length === 2){ // specific cell
-		displayCell(mode, null, null, 2);
+		var idx;
+		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
+		displayCell(cellData[idx].cellNum, cellData[idx].solutionNum, cellData[idx].enhance, cellData[idx].cepheidNum);
 	}else if(('' + mode).length === 3){
-		if(mode[0] === 1){ // enhanced image
 
-		}
-		else{ // solution page
-
-		}
 	}
 }
 
