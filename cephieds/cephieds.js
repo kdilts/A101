@@ -357,6 +357,19 @@ displayGridPage = function(){
 	document.body.appendChild(h);
 }
 
+hotcircle = function(x,y,diam,ref){
+	this.x = x; this.y = y;
+	this.diam = diam; this.ref = ref;
+
+	this.clicked = function(x,y){
+		if(dist(this.x,this.y,x,y) <= this.diam){
+			changeMode(this.ref);
+		}
+	}
+}
+
+dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)); }
+
 hotspot = function(x,y,sx,sy,ref){
 	this.x = x; this.y = y;
 	this.sx = sx; this.sy = sy;
