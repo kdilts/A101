@@ -279,7 +279,7 @@ displayGridPage = function(){
 	emptyCoords = [ {x: 0, y:0}, {x: 1, y:0}, {x: 2, y:0}, {x: 4, y:0},
 					{x: 1, y:1}, {x: 2, y:1}, {x: 4, y:1},
 	 				{x: 0, y:2}, {x: 2, y:2},
-	 				{x: 0, y:3}, {x: 1, y:3}, {x: 2, y:3}, {x: 4, y:3},
+	 				{x: 0, y:3}, {x: 1, y:3}, {x: 2, y:3}, {x: 3, y:3},
 	 				{x: 1, y:4}, {x: 3, y:4}, {x: 4, y:4},
 	 				{x: 0, y:5}, {x: 1, y:5}, {x: 3, y:5}, {x: 4, y:5},
 	 				{x: 0, y:6}, {x: 1, y:6}, {x: 2, y:6}, {x: 3, y:6}, {x: 4, y:6},
@@ -333,9 +333,9 @@ changeMode = function(n){
 
 	if(mode === 0){ displayGridPage(); }
 	else if(mode === 1){ displayBeastie(); }
-	else if(('' + mode).length){ // specific cell
+	else if(('' + mode).length === 2){ // specific cell
 		displayCell(mode, null, null, 2);
-	}else if(('' + mode).length){
+	}else if(('' + mode).length === 3){
 		if(mode[0] === 1){ // enhanced image
 
 		}
