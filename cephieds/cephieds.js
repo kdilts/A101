@@ -1,4 +1,10 @@
-var mode = 0; // indicates which page is being displayed. 0 - grid, 1 - beastie, 48, 68, etc - specific cell
+var mode = 0; // indicates which page is being displayed.
+			  // 0 - grid
+			  // 1 - beastie
+			  // 48, 68, etc - specific cell
+			  // 148, 168, etc - enhanced image, specific cell
+			  // 248, 268, etc - correct anser, specific cell
+
 var gridSpots = [];
 var mX; var mY;
 
@@ -22,7 +28,7 @@ window.onmouseup = function(e){
 displayBeastie = function(){
 	document.body.setAttribute('bgcolor','white');
 	h = document.createElement('H1');
-	h.appendChild(document.createTextNode('You are no longer in Federation space.'))
+	h.appendChild(document.createTextNode('You are no longer in Federation space.'));
 	h.setAttribute('style','position:absolute; left: 50; top: 20');
 	document.body.appendChild(h);
 
@@ -44,6 +50,36 @@ displayBeastie = function(){
 	img.width = 400; img.height = 400;
 	img.setAttribute('style','position:absolute; left:60; top:120');
 	document.body.appendChild(img);
+}
+
+displayCell = function(cellNum, solutionNum, enhance){
+	console.log('>> ' + cellNum);
+
+	document.body.setAttribute('bgcolor','white');
+
+	h = document.createElement('H1');
+	h.appendChild(document.createTextNode('Grid section ' + cellNum + '. Find the Cepheids!'));
+	h.setAttribute('style','position:absolute; left: 50; top: 0');
+	document.body.appendChild(h);
+
+	h = document.createElement('B1');
+	h.appendChild(document.createTextNode('Click on what you believe to be a Cepheid...'));
+	h.setAttribute('style','position:absolute; left: 20; top: 60');
+	document.body.appendChild(h);
+
+	img = document.createElement('img');
+	img.src = './gifs/anim' + cellNum + '.gif';
+	img.width = 200; img.height = 200;
+	img.setAttribute('style','position:absolute; left:260; top:100');
+	document.body.appendChild(img);
+
+	h = document.createElement('B1');
+	lnk = document.createElement('a'); lnk.href = './page.html';
+	lnk.setAttribute('onclick','window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left: 20; top: 310');
+	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
+	h.appendChild(lnk);
+	document.body.appendChild(h);	
 }
 
 displayGridPage = function(){
@@ -288,7 +324,16 @@ changeMode = function(n){
 
 	if(mode === 0){ displayGridPage(); }
 	else if(mode === 1){ displayBeastie(); }
-	else{  } // TODO show section page
+	else if(('' + mode).length){ // specific cell
+		displayCell(mode, null, null);
+	}else if(('' + mode).length){
+		if(mode[0] === 1){ // enhanced image
+
+		}
+		else{ // solution page
+
+		}
+	}
 }
 
 clearPage = function(){
