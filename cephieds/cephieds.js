@@ -357,14 +357,31 @@ gridCoords = function(x,y){ // transforms cell numbers x,y into pixel coordinate
 // data for cell pages
 cellData = [
 
-	{cellNum:48, solutionNum:10, enhance:false, cepheidNum:1},
-	{cellNum:68, solutionNum:-1, enhance:false, cepheidNum:-1},
-	{cellNum:78, solutionNum:-1, enhance:false, cepheidNum:-1},
-	{cellNum:88, solutionNum:-1, enhance:false, cepheidNum:-1},
+	{cellNum:48, solutionNum:[10], enhance:false, cepheidNum:1},
+	{cellNum:68, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:78, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:88, solutionNum:[], enhance:false, cepheidNum:-1},
 
-	{cellNum:17, solutionNum:18, enhance:false, cepheidNum:1},
+	{cellNum:17, solutionNum:[18], enhance:false, cepheidNum:1},
 	{cellNum:47, solutionNum:[7,15,46], enhance:false, cepheidNum:3},
 	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2},
 	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1},
-	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1}
- ];
+	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1},
+
+	{cellNum:26, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:46, solutionNum:[47], enhance:false, cepheidNum:1},
+	{cellNum:56, solutionNum:[48], enhance:false, cepheidNum:1},
+	{cellNum:66, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:86, solutionNum:[4,28], enhance:false, cepheidNum:2},
+
+	{cellNum:55, solutionNum:[54], enhance:false, cepheidNum:1},
+	{cellNum:65, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:75, solutionNum:[], enhance:false, cepheidNum:-1},
+	{cellNum:85, solutionNum:[], enhance:false, cepheidNum:-1},
+
+	{cellNum:14, solutionNum:[], enhance:false, cepheidNum:-1},
+
+	///// TODO the rest don't work on their side. ask about correct answers
+	{cellNum:34, solutionNum:[], enhance:false, cepheidNum:-1}
+
+];
