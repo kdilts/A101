@@ -52,7 +52,7 @@ displayBeastie = function(){
 	document.body.appendChild(img);
 }
 
-displayCell = function(cellNum, solutionNum, enhance){
+displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 	console.log('>> ' + cellNum);
 
 	document.body.setAttribute('bgcolor','white');
@@ -62,10 +62,19 @@ displayCell = function(cellNum, solutionNum, enhance){
 	h.setAttribute('style','position:absolute; left: 50; top: 0');
 	document.body.appendChild(h);
 
-	h = document.createElement('B1');
-	h.appendChild(document.createTextNode('Click on what you believe to be a Cepheid...'));
-	h.setAttribute('style','position:absolute; left: 20; top: 60');
-	document.body.appendChild(h);
+	if(cepheidNum === 1){
+		h = document.createElement('B1');
+		h.appendChild(document.createTextNode('There is one known Cepheid in this image from WF4.' + 
+			' See if you can find it! Click on what you believe to be a Cepheid...'));
+		h.setAttribute('style','position:absolute; left: 20; top: 60');
+		document.body.appendChild(h);
+	}else{
+		h = document.createElement('B1');
+		h.appendChild(document.createTextNode('There are ' + cepheidNum + ' known Cepheids in this image from WF4.' + 
+			' See if you can find them! Click on what you believe to be a Cepheid...'));
+		h.setAttribute('style','position:absolute; left: 20; top: 60');
+		document.body.appendChild(h);
+	}
 
 	img = document.createElement('img');
 	img.src = './gifs/anim' + cellNum + '.gif';
@@ -325,7 +334,7 @@ changeMode = function(n){
 	if(mode === 0){ displayGridPage(); }
 	else if(mode === 1){ displayBeastie(); }
 	else if(('' + mode).length){ // specific cell
-		displayCell(mode, null, null);
+		displayCell(mode, null, null, 2);
 	}else if(('' + mode).length){
 		if(mode[0] === 1){ // enhanced image
 
@@ -344,3 +353,18 @@ gridCoords = function(x,y){ // transforms cell numbers x,y into pixel coordinate
 	// coords for top left are: 230, 90. Cell size is 25
 	return {x:230+25*x, y:90+25*y};
 }
+
+// data for cell pages
+cellData = [
+
+	{cellNum:48, solutionNum:10, enhance:false, cepheidNum:1},
+	{cellNum:68, solutionNum:-1, enhance:false, cepheidNum:-1},
+	{cellNum:78, solutionNum:-1, enhance:false, cepheidNum:-1},
+	{cellNum:88, solutionNum:-1, enhance:false, cepheidNum:-1},
+
+	{cellNum:17, solutionNum:18, enhance:false, cepheidNum:1},
+	{cellNum:47, solutionNum:[7,15,46], enhance:false, cepheidNum:3},
+	{cellNum:67, solutionNum:[13,56], enhance:true, cepheidNum:2},
+	{cellNum:77, solutionNum:11, enhance:false, cepheidNum:1},
+	{cellNum:87, solutionNum:63, enhance:false, cepheidNum:1}
+ ];
