@@ -253,7 +253,7 @@ displayGridPage = function(){
 		' M100. '));
 
 	// TODO fix the link to go to the right page
-	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/Cepheid_check.html';
+	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/userfiles/html/table2.html';
 	lnk.setAttribute('onclick','window.open(this.href); return false;');
 	lnk.appendChild(document.createTextNode('Use the dimming factor conversion table')); lnk.setAttribute('style', 'color:00FF00');
 	h.appendChild(lnk);
