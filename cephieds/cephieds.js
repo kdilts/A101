@@ -81,13 +81,13 @@ displayAnswer = function(cellNum, answerNum){
 		'Cepheid C' + cellData[idx].solutionNum[answerNum] + '. Below is their plot of C' + 
 		cellData[idx].solutionNum[answerNum] + '\'s light curve. On Part I, Section B of your lab sheet, record' +
 		'the name of the Cepheid, its grid section number (' + cellNum + '), its '));
-	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/cepheids/physparm.html#Avgmag';
+	lnk.setAttribute('onclick', 'window.open(this.href); return false;');
 	lnk.appendChild(document.createTextNode('average apparent V magnitude'));
 	h.appendChild(lnk);
 	h.appendChild(document.createTextNode(' (mv), and its '));
-	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/cepheids/physparm.html#Period';
+	lnk.setAttribute('onclick', 'window.open(this.href); return false;');
 	lnk.appendChild(document.createTextNode('period'));
 	h.appendChild(lnk);
 	h.appendChild(document.createTextNode(' (P). (Careful: the numbers decrease going up the vertical axis!)' +
@@ -107,13 +107,13 @@ displayAnswer = function(cellNum, answerNum){
 	img = document.createElement('img');
 	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'light.gif';
 	img.width = 237; img.height = 172;
-	img.setAttribute('style','position:absolute; left:160; top:380');
+	img.setAttribute('style','position:absolute; left:160; top:200');
 	document.body.appendChild(img);
 
 	img = document.createElement('img');
 	img.src = './gifs/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif';
 	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:460; top:380');
+	img.setAttribute('style','position:absolute; left:460; top:200');
 	document.body.appendChild(img);
 }
 
