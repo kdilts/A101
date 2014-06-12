@@ -21,6 +21,7 @@ window.onload = function(){
 // TODO make sure mouse stuff is compatible with all browsers
 window.onmousemove = function(e){
 	mX = e.x; mY = e.y;
+	if(!mX){ mX = e.clientX; mY = e.clientY; }
 }
 
 window.onmouseup = function(e){
