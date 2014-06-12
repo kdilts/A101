@@ -247,34 +247,34 @@ displayGridPage = function(){
 
 	h.appendChild(document.createTextNode('Only grid sections with numbers are currently available.'));
 
-	h.setAttribute('style','position:absolute; left:40; top:10; color:FFFFFF');
+	h.setAttribute('style','position:absolute; left:40px; top:10px; color:FFFFFF');
 	document.body.appendChild(h);
 
 	////////////// middle image
 	canvas = document.createElement('canvas');
 	canvas.width = 450; canvas.height = 300;
 	canvas.id = 'bgCanvas'; canvas.zIndex = 0;
-	canvas.setAttribute('style','position:absolute; left:240; top:180');
+	canvas.setAttribute('style','position:absolute; left:240px; top:180px');
 	h.appendChild(canvas);
 
 	gif = document.createElement('img');
 	gif.zIndex = 1;
 	gif.src = path+'quarter752.gif';
 	gif.width = 200; gif.height = 200;
-	gif.setAttribute('style','position:absolute; left:255; top:260');
 	h.appendChild(gif);
+	gif.setAttribute('style','position:absolute; left:255px; top:260px');
 
 	gif2 = document.createElement('img');
 	gif2.zIndex = 1;
 	gif2.src = path+'quarter752.gif';
 	gif2.width = 200; gif2.height = 200;
-	gif2.setAttribute('style','position:absolute; left:470; top:260');
 	h.appendChild(gif2);
+	gif2.setAttribute('style','position:absolute; left:470px; top:260px');
 
 	canvas2 = document.createElement('canvas');
 	canvas2.width = 450; canvas2.height = 300;
 	canvas2.id = 'fgCanvas'; canvas2.zIndex = 2;
-	canvas2.setAttribute('style','position:absolute; left:240; top:180');
+	canvas2.setAttribute('style','position:absolute; left:240px; top:180px');
 	h.appendChild(canvas2);
 
 	// update canvases
