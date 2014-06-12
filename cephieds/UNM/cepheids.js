@@ -160,6 +160,8 @@ displayEmptyCell = function(){
 
 	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left: 20; top: 120',
 		'Return to the main WF4 8x8 grid', 'color:FF0000');
+
+	mode = 1;
 }
 
 displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
