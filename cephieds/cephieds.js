@@ -27,7 +27,7 @@ window.onmouseup = function(e){
 			gridSpots[s].clicked(mX,mY);
 		}
 	}
-	else if(('' + mode).length === 2 && mY <= 320){
+	else if(('' + mode).length === 2 && mY <= 320 && mY > 100){
 		var idx;
 		for(var c in cellData){ if(cellData[c].cellNum === mode){ idx = c; } }
 		for(var s in cellData[idx].spots){
@@ -43,24 +43,28 @@ window.onmouseup = function(e){
 
 displayBeastie = function(){
 	document.body.setAttribute('bgcolor','white');
-	h = document.createElement('H1');
-	h.appendChild(document.createTextNode('You are no longer in Federation space.'));
-	h.setAttribute('style','position:absolute; left: 50; top: 20');
-	document.body.appendChild(h);
+
+	addHeader(1,'You are no longer in Federation space.','position:absolute; left: 50; top: 20');
 
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('Please go '));
-
 	lnk = document.createElement('a'); lnk.href = './page.html';
 	lnk.setAttribute('onclick','window.location(this.href); return false;');
 	lnk.appendChild(document.createTextNode('back')); lnk.setAttribute('style', 'color:FF0000');
 	h.appendChild(lnk);
-
 	h.appendChild(document.createTextNode(' immediately!'));
 	h.setAttribute('style','position:absolute; left: 80; top: 60');
 	document.body.appendChild(h);
 
 	addImage('./gifs/beastie.gif', 400, 400, 'position:absolute; left:60; top:120', 1);
+}
+
+addHeader = function(size, text, style){
+	h = document.createElement('H' + size);
+	h.appendChild(document.createTextNode(text));
+	h.setAttribute('style',style);
+	document.body.appendChild(h);
+	return h;
 }
 
 addImage = function(src, w, h, style, z){
@@ -73,14 +77,22 @@ addImage = function(src, w, h, style, z){
 	return img;
 }
 
+addLink = function(size, ref, onclick, style, text, color){
+	h = document.createElement('B' + size);
+	lnk = document.createElement('a'); lnk.href = ref;
+	lnk.setAttribute('onclick',onclick);
+	h.setAttribute('style',style);
+	lnk.appendChild(document.createTextNode(text)); lnk.setAttribute('style', color);
+	h.appendChild(lnk);
+	document.body.appendChild(h);
+	return h;
+}
+
 displayAnswer = function(cellNum, answerNum){
 	var idx = -1;
 	for(var c in cellData){ if(cellData[c].cellNum === parseInt(cellNum)){ idx = c;  } }
 
-	h = document.createElement('H1');
-	h.appendChild(document.createTextNode('C' + cellData[idx].solutionNum[answerNum] + ' Light Curve'));
-	h.setAttribute('style','position:absolute; left: 250; top: 0');
-	document.body.appendChild(h);
+	addHeader(1,'C' + cellData[idx].solutionNum[answerNum] + ' Light Curve', 'position:absolute; left: 250; top: 0');
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('You have discovered a Cepheid! Ferrarese et al. (1996) name this' +
@@ -117,10 +129,7 @@ displayAnswer = function(cellNum, answerNum){
 
 displayWrong = function(cellNum){
 
-	h = document.createElement('H1');
-	h.appendChild(document.createTextNode('Nope, not a known Cepheid... Try Again!'));
-	h.setAttribute('style','position:absolute; left: 150; top: 0');
-	document.body.appendChild(h);
+	addHeader(1,'Nope, not a known Cepheid... Try Again!','position:absolute; left: 150; top: 0');
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('The object on which you clicked is not a known Cepheid.' +
@@ -136,13 +145,8 @@ displayWrong = function(cellNum){
 
 	addImage('./gifs/anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:180', 1);
 
-	h = document.createElement('B1');
-	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 400');
-	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
-	h.appendChild(lnk);
-	document.body.appendChild(h);
+	addLink(1,'./page.html', 'window.location(this.href); return false;', 'position:absolute; left: 20; top: 400',
+		'Return to the main WF4 8x8 grid', 'color:FF0000');
 }
 
 displayEmptyCell = function(){
@@ -151,13 +155,8 @@ displayEmptyCell = function(){
 	h.setAttribute('style','position:absolute; left: 250; top: 10');
 	document.body.appendChild(h);
 
-	h = document.createElement('B1');
-	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 120');
-	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
-	h.appendChild(lnk);
-	document.body.appendChild(h);
+	addLink(1,'./page.html', 'window.location(this.href); return false;', 'position:absolute; left: 20; top: 120',
+		'Return to the main WF4 8x8 grid', 'color:FF0000');
 }
 
 displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
@@ -198,34 +197,20 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 
 	addImage('./gifs/anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:120', 1);
 
-	h = document.createElement('B1');
-	lnk = document.createElement('a'); lnk.href = './page.html';
-	lnk.setAttribute('onclick','window.location(this.href); return false;');
-	h.setAttribute('style','position:absolute; left: 20; top: 370');
-	lnk.appendChild(document.createTextNode('Return to the main WF4 8x8 grid')); lnk.setAttribute('style', 'color:FF0000');
-	h.appendChild(lnk);
-	document.body.appendChild(h);	
+	addLink(1,'./page.html', 'window.location(this.href); return false;', 'position:absolute; left: 20; top: 370',
+		'Return to the main WF4 8x8 grid', 'color:FF0000');
 }
 
 enhance = function(){
-	img = document.createElement('img');
-	img.src = './gifs/anim67enh5.gif';
-	img.width = 200; img.height = 200;
-	img.setAttribute('style','position:absolute; left:360; top:120');
-	document.body.appendChild(img);
+
+	addImage('./gifs/anim67enh5.gif',200,200,'position:absolute; left:360; top:120',1);
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('The image has enhanced contrast to make the fainter Cepheid easier to discern.'));
 	h.setAttribute('style','position:absolute; left: 250; top: 320');
 	document.body.appendChild(h);
 
-	h = document.createElement('B1');
-	lnk = document.createElement('a'); lnk.href = '#';
-	lnk.setAttribute('onclick','changeMode(67)');
-	h.setAttribute('style','position:absolute; left: 20; top: 350');
-	lnk.appendChild(document.createTextNode('Standard contrast image')); lnk.setAttribute('style', 'color:FF0000');
-	h.appendChild(lnk);
-	document.body.appendChild(h);
+	addLink(1, '#', 'changeMode(67)', 'position:absolute; left: 20; top: 350', 'Standard contrast image', 'color:FF0000');
 }
 
 displayGridPage = function(){
