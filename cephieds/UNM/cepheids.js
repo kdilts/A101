@@ -24,7 +24,9 @@ window.onmousemove = function(e){
 	if(!mX){ mX = e.clientX; mY = e.clientY; }
 }
 
+//canvas top left: 470,260
 window.onmouseup = function(e){
+	console.log('mX: ' + mX + 'mY: ' + mY);
 	if(mode === 0){
 		for(var s in gridSpots){
 			gridSpots[s].clicked(mX,mY);
@@ -462,7 +464,9 @@ hotspot = function(x,y,sx,sy,ref){
 	this.ref = ref;
 
 	this.clicked = function(x,y){
-		x -= 280; y -= 190;
+		//x -= 280; y -= 190;
+
+		console.log(x + ' ' + y +  ' ' + this.x + ' ' + this.y);
 
 		if(x >= this.x && x < this.x + this.sx){
 			if(y >= this.y && y < this.y + this.sy){
