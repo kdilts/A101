@@ -24,7 +24,7 @@ window.onmousemove = function(e){
 }
 
 window.onmouseup = function(e){
-	console.log('mX: ' + mX + 'mY: ' + mY);
+	//console.log('mX: ' + mX + 'mY: ' + mY);
 	if(mode === 0){
 		for(var s in gridSpots){
 			gridSpots[s].clicked(mX,mY);
@@ -462,7 +462,7 @@ hotspot = function(x,y,sx,sy,ref){
 	this.ref = ref;
 
 	this.clicked = function(x,y){
-		x -= 240; y -= 170;
+		x -= 240; y -= 180;
 
 		//console.log(x + ' ' + y +  ' ' + this.x + ' ' + this.y);
 
