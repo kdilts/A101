@@ -52,22 +52,22 @@ displayBeastie = function(){
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('Please go '));
 	lnk = document.createElement('a'); lnk.href = './cepheidHunt.html';
-	lnk.setAttribute('onclick','window.location(this.href); return false;');
 	lnk.appendChild(document.createTextNode('back')); lnk.setAttribute('style', 'color:FF0000');
 	h.appendChild(lnk);
 	h.appendChild(document.createTextNode(' immediately!'));
-	h.setAttribute('style','position:absolute; left:80; top:60');
 	document.body.appendChild(h);
+	lnk.setAttribute('onclick','window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left:80px; top:60px');
 
-	addImage(path+'beastie.gif', 400, 400, 'position:absolute; left:60; top:120', 1);
+	addImage(path+'beastie.gif', 400, 400, 'position:absolute; left:60px; top:120px', 1);
 
 }
 
 addHeader = function(size, text, style){
 	h = document.createElement('H' + size);
 	h.appendChild(document.createTextNode(text));
-	h.setAttribute('style',style);
 	document.body.appendChild(h);
+	h.setAttribute('style',style);
 	return h;
 }
 
@@ -76,19 +76,19 @@ addImage = function(src, w, h, style, z){
 	img.zIndex = z;
 	img.src = src;
 	img.width = w; img.height = h;
-	img.setAttribute('style', style);
 	document.body.appendChild(img);
+	img.setAttribute('style', style);
 	return img;
 }
 
 addLink = function(size, ref, onclick, style, text, color){
 	h = document.createElement('B' + size);
 	lnk = document.createElement('a'); lnk.href = ref;
-	lnk.setAttribute('onclick',onclick);
-	h.setAttribute('style',style);
 	lnk.appendChild(document.createTextNode(text)); lnk.setAttribute('style', color);
 	h.appendChild(lnk);
 	document.body.appendChild(h);
+	lnk.setAttribute('onclick',onclick);
+	h.setAttribute('style',style);
 	return h;
 }
 
@@ -96,7 +96,7 @@ displayAnswer = function(cellNum, answerNum){
 	var idx = -1;
 	for(var c in cellData){ if(cellData[c].cellNum === parseInt(cellNum)){ idx = c;  } }
 
-	addHeader(1,'C' + cellData[idx].solutionNum[answerNum] + ' Light Curve', 'position:absolute; left:250; top:0');
+	addHeader(1,'C' + cellData[idx].solutionNum[answerNum] + ' Light Curve', 'position:absolute; left:250px; top:0px');
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('You have discovered a Cepheid! Ferrarese et al. (1996) name this' +
@@ -123,17 +123,17 @@ displayAnswer = function(cellNum, answerNum){
 	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
 	lnk.appendChild(document.createTextNode('return to the main WF4 8x8 grid.'));
 	h.appendChild(lnk);
-	h.setAttribute('style','position:absolute; left:20; top:70');
 	document.body.appendChild(h);
+	h.setAttribute('style','position:absolute; left:20px; top:70px');
 
-	addImage(path+'C' + cellData[idx].solutionNum[answerNum] + 'light.gif', 237, 172, 'position:absolute; left:160; top:200', 1);
+	addImage(path+'C' + cellData[idx].solutionNum[answerNum] + 'light.gif', 237, 172, 'position:absolute; left:160px; top:200px', 1);
 
-	addImage(path+'/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif', 200, 200, 'position:absolute; left:460; top:200', 1);
+	addImage(path+'/C' + cellData[idx].solutionNum[answerNum] + 'anim.gif', 200, 200, 'position:absolute; left:460px; top:200px', 1);
 }
 
 displayWrong = function(cellNum){
 
-	addHeader(1,'Nope, not a known Cepheid... Try Again!','position:absolute; left:150; top:0');
+	addHeader(1,'Nope, not a known Cepheid... Try Again!','position:absolute; left:150px; top:0px');
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('The object on which you clicked is not a known Cepheid.' +
@@ -141,25 +141,25 @@ displayWrong = function(cellNum){
 		' If you really want to ask your teaching assistant or professor about an object, you can get the' +
 		'  coordinates of the object on a '));
 	lnk = document.createElement('a'); lnk.href = './cepheidHunt.html';
-	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
 	lnk.appendChild(document.createTextNode('separate page.'));
 	h.appendChild(lnk);
-	h.setAttribute('style','position:absolute; left:20; top:70');
 	document.body.appendChild(h);
+	lnk.setAttribute('onclick', 'window.location(this.href); return false;');
+	h.setAttribute('style','position:absolute; left:20px; top:70px');
 
-	addImage(path+'anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:180', 1);
+	addImage(path+'anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360px; top:180px', 1);
 
-	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20; top:400',
+	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20px; top:400px',
 		'Return to the main WF4 8x8 grid', 'color:FF0000');
 }
 
 displayEmptyCell = function(){
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('Sorry, no Cepheids in this image!'));
-	h.setAttribute('style','position:absolute; left:250; top:10');
 	document.body.appendChild(h);
+	h.setAttribute('style','position:absolute; left:250px; top:10px');
 
-	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20; top:120',
+	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20px; top:120px',
 		'Return to the main WF4 8x8 grid', 'color:FF0000');
 
 	mode = 1;
@@ -173,50 +173,50 @@ displayCell = function(cellNum, solutionNum, enhance, cepheidNum){
 
 	h = document.createElement('H1');
 	h.appendChild(document.createTextNode('Grid section ' + cellNum + '. Find the Cepheids!'));
-	h.setAttribute('style','position:absolute; left:50; top:0');
 	document.body.appendChild(h);
+	h.setAttribute('style','position:absolute; left:50px; top:0px');
 
 	if(cepheidNum === 1){
 		h = document.createElement('B1');
 		h.appendChild(document.createTextNode('There is one known Cepheid in this image from WF4.' + 
 			' See if you can find it! Click on what you believe to be a Cepheid...'));
-		h.setAttribute('style','position:absolute; left:20; top:60');
 		document.body.appendChild(h);
+		h.setAttribute('style','position:absolute; left:20px; top:60px');
 	}else{
 		h = document.createElement('B1');
 		h.appendChild(document.createTextNode('There are ' + cepheidNum + ' known Cepheids in this image from WF4.' + 
 			' See if you can find them! Click on what you believe to be a Cepheid...'));
-		h.setAttribute('style','position:absolute; left:20; top:60');
 		document.body.appendChild(h);
+		h.setAttribute('style','position:absolute; left:20px; top:60px');
 	}
 
 	if(enhance){
 		h = document.createElement('B1');
 		h.appendChild(document.createTextNode('One is easy to find; the other will be easier to detect in a set of '));
 		lnk = document.createElement('a'); lnk.href = '#';
-		lnk.setAttribute('onclick', 'enhance()');
-		h.setAttribute('style','position:absolute; left:20; top:80');
 		lnk.appendChild(document.createTextNode('enhanced images.')); lnk.setAttribute('style', 'color:FF0000');
 		h.appendChild(lnk);
 		document.body.appendChild(h);
+		h.setAttribute('style','position:absolute; left:20px; top:80px');
+		lnk.setAttribute('onclick', 'enhance()');
 	}
 
-	addImage(path+'anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360; top:120', 1);
+	addImage(path+'anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360px; top:120px', 1);
 
-	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20; top:370',
+	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20px; top:370px',
 		'Return to the main WF4 8x8 grid', 'color:FF0000');
 }
 
 enhance = function(){
 
-	addImage(path+'anim67enh5.gif',200,200,'position:absolute; left:360; top:120',1);
+	addImage(path+'anim67enh5.gif',200,200,'position:absolute; left:360px; top:120px',1);
 
 	h = document.createElement('B1');
 	h.appendChild(document.createTextNode('The image has enhanced contrast to make the fainter Cepheid easier to discern.'));
-	h.setAttribute('style','position:absolute; left:250; top:320');
 	document.body.appendChild(h);
+	h.setAttribute('style','position:absolute; left:250px; top:320px');
 
-	addLink(1, '#', 'changeMode(67)', 'position:absolute; left:20; top:350', 'Standard contrast image', 'color:FF0000');
+	addLink(1, '#', 'changeMode(67)', 'position:absolute; left:20px; top:350px', 'Standard contrast image', 'color:FF0000');
 }
 
 displayGridPage = function(){
@@ -228,7 +228,7 @@ displayGridPage = function(){
 	h.appendChild(document.createElement('br'));
 
 	txt = document.createElement('H3');
-	txt.setAttribute('style','color:FFFF00');
+	txt.setAttribute('style','color:yellow');
 	txt.appendChild(document.createTextNode('Click on grid section 47 below to begin your hunt.'));
 	h.appendChild(txt);
 
@@ -236,7 +236,6 @@ displayGridPage = function(){
 	 ' If you need more information on what to expect click on '));
 	
 	lnk = document.createElement('a'); lnk.href = 'http://physics.unm.edu/101lab/portal/labs/Cepheid_check.html';
-	lnk.setAttribute('onclick','window.open(this.href); return false;');
 	lnk.appendChild(document.createTextNode('this link.')); lnk.setAttribute('style', 'color:00FF00');
 	h.appendChild(lnk);
 
@@ -247,15 +246,17 @@ displayGridPage = function(){
 
 	h.appendChild(document.createTextNode('Only grid sections with numbers are currently available.'));
 
-	h.setAttribute('style','position:absolute; left:40px; top:10px; color:FFFFFF');
 	document.body.appendChild(h);
+	lnk.setAttribute('onclick','window.open(this.href); return false;');
+	h.style.color='white';
+	h.setAttribute('cssText','position:absolute; left:40px; top:10px;');
 
 	////////////// middle image
 	canvas = document.createElement('canvas');
 	canvas.width = 450; canvas.height = 300;
 	canvas.id = 'bgCanvas'; canvas.zIndex = 0;
-	canvas.setAttribute('style','position:absolute; left:240px; top:180px');
 	h.appendChild(canvas);
+	canvas.setAttribute('style','position:absolute; left:240px; top:180px');
 
 	gif = document.createElement('img');
 	gif.zIndex = 1;
@@ -274,8 +275,8 @@ displayGridPage = function(){
 	canvas2 = document.createElement('canvas');
 	canvas2.width = 450; canvas2.height = 300;
 	canvas2.id = 'fgCanvas'; canvas2.zIndex = 2;
-	canvas2.setAttribute('style','position:absolute; left:240px; top:180px');
 	h.appendChild(canvas2);
+	canvas2.setAttribute('style','position:absolute; left:240px; top:180px');
 
 	// update canvases
 	gfx = canvas.getContext('2d');
@@ -434,7 +435,7 @@ displayGridPage = function(){
 	h.appendChild(document.createTextNode(' (also linked from the "Period-Luminosity Relation" page) to use the table' +
 		' to convert magnitude differences into distance.'));
 
-	h.setAttribute('style','position:absolute; left: 40; top:510; color:FFFFFF');
+	h.setAttribute('style','position:absolute; left: 40px; top:510px; color:FFFFFF');
 	document.body.appendChild(h);
 }
 
