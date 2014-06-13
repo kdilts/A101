@@ -18,13 +18,11 @@ window.onload = function(){
 	displayGridPage();
 }
 
-// TODO make sure mouse stuff is compatible with all browsers
 window.onmousemove = function(e){
 	mX = e.x; mY = e.y;
 	if(!mX){ mX = e.clientX; mY = e.clientY; }
 }
 
-//canvas top left: 470,260
 window.onmouseup = function(e){
 	console.log('mX: ' + mX + 'mY: ' + mY);
 	if(mode === 0){
@@ -464,9 +462,9 @@ hotspot = function(x,y,sx,sy,ref){
 	this.ref = ref;
 
 	this.clicked = function(x,y){
-		//x -= 280; y -= 190;
+		x -= 240; y -= 170;
 
-		console.log(x + ' ' + y +  ' ' + this.x + ' ' + this.y);
+		//console.log(x + ' ' + y +  ' ' + this.x + ' ' + this.y);
 
 		if(x >= this.x && x < this.x + this.sx){
 			if(y >= this.y && y < this.y + this.sy){
