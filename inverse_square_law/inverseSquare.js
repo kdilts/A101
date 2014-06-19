@@ -134,7 +134,7 @@ drawGrid = function(){
 		gfx.rotate(-90*Math.PI/180);
 
 		var activeButton;
-		for(b in buttons){ if(buttons[b].active){ activeButton = b; console.log(b); } }
+		for(b in buttons){ if(buttons[b].active){ activeButton = b; } }
 
 		if(parseInt(activeButton) === 0){
 			gfx.fillText(''+(5*y), 0, 0);
@@ -147,6 +147,21 @@ drawGrid = function(){
 
 		gfx.restore();
 	}
+
+	gfx.fillStyle='FF0000';
+	gfx.strokeStyle='FF0000';
+	gfx.save();
+	gfx.translate(360,240);
+	for(var d in data){
+		gfx.save();
+		gfx.translate(data[d].d, -data[d].i);
+		gfx.beginPath();
+		gfx.arc(0,0,1.5,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+		gfx.restore();
+	}
+	gfx.restore();
 }
 
 drawStats = function(){
