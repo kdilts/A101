@@ -13,17 +13,24 @@ window.onload = function(){
 	b2.draw();
 	b3 = new button(450,300,150,50,'4.0e+006',18,35,false);
 	b3.draw();
+
+	drawLight();
+	drawCamera();
+	drawGrid();
+	drawStats();
 }
 
 window.onmousemove = function(e){ mx = e.x; my = e.y; }
 
 window.onmousedown = function(e){
 	mouseDown = true;
+	// move camera
+	// collect data
+	// update graph data
+	// update screen
 }
 
-window.onmouseup = function(e){
-	mouseDown = false;
-}
+window.onmouseup = function(e){	mouseDown = false; }
 
 clear = function(){
 	gfx.fillStyle = '000000';
@@ -39,9 +46,24 @@ clear = function(){
 
 drawCamera = function(){}
 
-drawGrid = function(){}
+drawGrid = function(){
+	gfx.fillStyle='000000';
+	gfx.font='14px Verdana';
+	gfx.fillText('Distance', 415, 296);
 
-drawStats = function(){}
+	gfx.save();
+	gfx.translate(315,170);
+	gfx.rotate(-90*Math.PI/180);
+	gfx.fillText('Intensity', 0, 0);
+	gfx.restore();
+}
+
+drawStats = function(){
+	gfx.fillStyle='FFFFFF';
+	gfx.font='14px Verdana';
+	gfx.fillText('Distance:', 5, 296);
+	gfx.fillText('Intensity: ', 185, 296);
+}
 
 drawLight = function(){}
 
