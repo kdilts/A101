@@ -23,7 +23,7 @@ window.onload = function(){
 	drawButtons();
 }
 
-window.onmousemove = function(e){ mx = e.x; my = e.y; }
+window.onmousemove = function(e){ mx = e.x; my = e.y; cam.pos.x = mx; cam.pos.y = my; clearSim(); cam.draw(); }
 
 window.onmousedown = function(e){
 	mouseDown = true;
@@ -198,13 +198,21 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 }
 
 camera = function(x,y){
-	this.x = x;
-	this.y = y;
+	this.pos = new vec2(x,y);
 	this.rot = 0;
 
 	this.draw = function(){
+		var toStar = add(neg(this.pos), new vec2(150,150));
+		var cosTheta = dot(new vec2(0,-10), toStar)/ (mag(new vec2(0,-10))*mag(toStar));
+
+		if(this.pos.x < 150){
+			this.rot = Math.acos(cosTheta);
+		} else {
+			this.rot = -Math.acos(cosTheta);
+		}
+
 		gfx.save();
-		gfx.translate(this.x,this.y);
+		gfx.translate(this.pos.x,this.pos.y);
 		gfx.rotate(this.rot);
 
 		gfx.fillStyle = 'rgb(150,255,255)';
@@ -229,3 +237,9 @@ camera = function(x,y){
 	this.getDist = function(){}
 	this.getIntensity = function(){}
 }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
