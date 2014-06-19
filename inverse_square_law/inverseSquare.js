@@ -1,5 +1,7 @@
 var canvas; var gfx;
 var mx; var my; var mouseDown = false;
+var buttons = [];
+var xLines = 10; var yLines = 10;
 
 window.onload = function(){
 	canvas = document.getElementById('myCanvas');
@@ -7,23 +9,23 @@ window.onload = function(){
 
 	clear();
 
-	b1 = new button(150,300,150,50,'4.0e+004',18,35,true);
-	b1.draw();
-	b2 = new button(300,300,150,50,'4.0e+005',18,35,false);
-	b2.draw();
-	b3 = new button(450,300,150,50,'4.0e+006',18,35,false);
-	b3.draw();
+	buttons[0] = new button(150,300,150,50,'4.0e+004',18,35,true);
+	buttons[1] = new button(300,300,150,50,'4.0e+005',18,35,false);
+	buttons[2] = new button(450,300,150,50,'4.0e+006',18,35,false);
 
 	drawLight();
 	drawCamera();
 	drawGrid();
 	drawStats();
+	drawButtons();
 }
 
 window.onmousemove = function(e){ mx = e.x; my = e.y; }
 
 window.onmousedown = function(e){
 	mouseDown = true;
+	// check buttons
+	for(b in buttons){ buttons[b].clicked(); }
 	// move camera
 	// collect data
 	// update graph data
@@ -46,6 +48,8 @@ clear = function(){
 
 drawCamera = function(){}
 
+drawButtons = function(){ for(var b in buttons){ buttons[b].draw(); } }
+
 drawGrid = function(){
 	gfx.fillStyle='000000';
 	gfx.font='14px Verdana';
@@ -56,6 +60,34 @@ drawGrid = function(){
 	gfx.rotate(-90*Math.PI/180);
 	gfx.fillText('Intensity', 0, 0);
 	gfx.restore();
+
+	gfx.strokeStyle='000000';
+	gfx.lineWidth=2;
+	gfx.save();
+	gfx.translate(360,0);
+	gfx.strokeRect(0,0,240,240);
+	gfx.restore();
+
+	
+	for(x = 0; x < xLines; x++){
+		gfx.save()
+		gfx.translate(360+x*(240/xLines),0);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(0,240);
+		gfx.stroke();
+		gfx.restore()
+	}
+
+	for(y = 0; y < yLines; y++){
+		gfx.save()
+		gfx.translate(360,y*(240/yLines));
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(240,0);
+		gfx.stroke();
+		gfx.restore()
+	}
 }
 
 drawStats = function(){
@@ -84,7 +116,15 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 		gfx.fillText(this.text, this.x+this.offX, this.y+this.offY);
 	}
 
-	this.clicked = function(){}
+	this.clicked = function(){
+		if(mx > this.x && mx < this.x+this.sx){
+			if(my > this.y && my < this.y+this.sy){
+				for(b in buttons){ buttons[b].active = false; }
+				this.active = true;
+				drawButtons();
+			}
+		}
+	}
 }
 
 camera = function(){
