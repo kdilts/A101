@@ -1,8 +1,9 @@
 var canvas; var gfx;
 var mx; var my; var mouseDown = false;
-var buttons = [];
-var xLines = 10; var yLines = 10;
+var buttons = []; var activeButton = 0;
+var xLines = 6; var yLines = 6;
 var cam;
+var data = [];
 
 window.onload = function(){
 	canvas = document.getElementById('myCanvas');
@@ -39,8 +40,9 @@ window.onmousedown = function(e){
 	// check buttons
 	for(b in buttons){ buttons[b].clicked(); }
 
-	// move camera
 	// collect data
+	data.push({d:cam.getDist(), i:cam.getIntensity()});
+
 	// update graph data
 	// update screen
 }
@@ -86,7 +88,7 @@ drawGrid = function(){
 	gfx.strokeRect(0,0,240,240);
 	gfx.restore();
 
-	
+	gfx.lineWidth = .5;
 	for(x = 0; x < xLines; x++){
 		gfx.save()
 		gfx.translate(360+x*(240/xLines),0);
@@ -197,6 +199,7 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 			if(my > this.y && my < this.y+this.sy){
 				for(b in buttons){ buttons[b].active = false; }
 				this.active = true;
+				activeButton = b;
 				drawButtons();
 				drawLight();
 				drawStats();
@@ -248,7 +251,7 @@ camera = function(x,y){
 	this.getIntensity = function(){
 		var exp = 4;
 		for(var b in buttons){ if(buttons[b].active){ exp += parseInt(b); } }
-		return 4*Math.pow(10,exp)/(Math.pow(this.getDist(),2));
+		return (4*Math.pow(10,exp)/(Math.pow(this.getDist(),2))) / 10; //TODO my answers seem to be off by a factor of 10
 	}
 }
 
