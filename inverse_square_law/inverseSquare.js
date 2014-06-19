@@ -112,7 +112,7 @@ drawStats = function(){
 	gfx.fillStyle='FFFFFF';
 	gfx.font='14px Verdana';
 	gfx.fillText('Distance: ' + truncate(''+cam.getDist()), 5, 296);
-	gfx.fillText('Intensity: ', 185, 296);
+	gfx.fillText('Intensity: ' + truncate(''+cam.getIntensity()), 155, 296);
 }
 
 drawLight = function(){
@@ -244,7 +244,12 @@ camera = function(x,y){
 	}
 
 	this.getDist = function(){ var toStar = add(neg(this.pos), new vec2(150,150)); return mag(toStar); }
-	this.getIntensity = function(){}
+	
+	this.getIntensity = function(){
+		var exp = 4;
+		for(var b in buttons){ if(buttons[b].active){ exp += parseInt(b); } }
+		return 4*Math.pow(10,exp)/(Math.pow(this.getDist(),2));
+	}
 }
 
 truncate = function(str){
