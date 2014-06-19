@@ -2,6 +2,7 @@ var canvas; var gfx;
 var mx; var my; var mouseDown = false;
 var buttons = [];
 var xLines = 10; var yLines = 10;
+var cam;
 
 window.onload = function(){
 	canvas = document.getElementById('myCanvas');
@@ -13,8 +14,10 @@ window.onload = function(){
 	buttons[1] = new button(300,300,150,50,'4.0e+005',18,35,false);
 	buttons[2] = new button(450,300,150,50,'4.0e+006',18,35,false);
 
+	cam = new camera(100,100);
+
 	drawLight();
-	drawCamera();
+	cam.draw();
 	drawGrid();
 	drawStats();
 	drawButtons();
@@ -26,6 +29,7 @@ window.onmousedown = function(e){
 	mouseDown = true;
 	// check buttons
 	for(b in buttons){ buttons[b].clicked(); }
+
 	// move camera
 	// collect data
 	// update graph data
@@ -45,8 +49,6 @@ clear = function(){
 	gfx.font='24px Verdana';
 	gfx.fillText('Luminosity:',8,335);
 }
-
-drawCamera = function(){}
 
 drawButtons = function(){ for(var b in buttons){ buttons[b].draw(); } }
 
@@ -122,15 +124,41 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 				for(b in buttons){ buttons[b].active = false; }
 				this.active = true;
 				drawButtons();
+				drawLight();
 			}
 		}
 	}
 }
 
-camera = function(){
-	this.x; this.y; this.rot;
+camera = function(x,y){
+	this.x = x;
+	this.y = y;
+	this.rot = 0;
 
-	this.draw = function(){}
+	this.draw = function(){
+		gfx.save();
+		gfx.translate(this.x,this.y);
+		gfx.rotate(this.rot);
+
+		gfx.fillStyle = 'rgb(150,255,255)';
+		gfx.strokeStyle = 'rgb(20,20,200)';
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.arc(0,0,28,-Math.PI/10,Math.PI/10);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.fillStyle = 'rgb(100,20,200)';
+		gfx.strokeStyle = 'rgb(100,20,200)';
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.arc(0,0,25,-Math.PI/10,Math.PI/10);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.restore();
+	}
+
 	this.getDist = function(){}
 	this.getIntensity = function(){}
 }
