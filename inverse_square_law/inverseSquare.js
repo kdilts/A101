@@ -27,13 +27,16 @@ window.onload = function(){
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
 	cam.pos.x = mx; cam.pos.y = my;
-	if(cam.pos.x > 299){ cam.pos.x = 299; }
-	if(cam.pos.y > 299){ cam.pos.y = 299; }
+	if(cam.pos.x > 279){ cam.pos.x = 279; }
+	if(cam.pos.y > 279){ cam.pos.y = 279; }
+	if(cam.pos.x < 19){ cam.pos.x = 19; }
+	if(cam.pos.y < 19){ cam.pos.y = 19; }
 	clearSim();
 	drawLight();
 	drawStats();
 	cam.draw();
 	drawGrid();
+	drawButtons();
 }
 
 window.onmousedown = function(e){
@@ -152,7 +155,7 @@ drawGrid = function(){
 	gfx.fillStyle='0000FF';
 	gfx.strokeStyle='0000FF';
 	gfx.save();
-	gfx.translate(360+(cam.getDist()/200)*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
+	gfx.translate(360+(cam.getDist()/150)*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
 	gfx.beginPath();
 	gfx.arc(0,0,1.5,0,Math.PI*2);
 	gfx.fill();
@@ -289,6 +292,8 @@ camera = function(x,y){
 			this.rot = -Math.acos(cosTheta);
 		}
 
+		this.pos = add(this.pos, neg(mult(unit(toStar),20)));
+
 		gfx.save();
 		gfx.translate(this.pos.x,this.pos.y);
 		gfx.rotate(this.rot);
@@ -331,3 +336,5 @@ add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
 neg = function(v){ return new vec2(-v.x, -v.y); }
 mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
