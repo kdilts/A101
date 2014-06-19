@@ -33,6 +33,7 @@ window.onmousemove = function(e){
 	drawLight();
 	drawStats();
 	cam.draw();
+	drawGrid();
 }
 
 window.onmousedown = function(e){
@@ -122,19 +123,19 @@ drawGrid = function(){
 		gfx.save()
 		gfx.translate(357+x*((240/xLines)-3),253);
 		gfx.beginPath();
-		gfx.fillText(''+(50*x),0,0);
+		gfx.fillText(''+(25*x),0,0);
 		gfx.stroke();
 		gfx.restore()
 	}
+
+	var activeButton;
+	for(b in buttons){ if(buttons[b].active){ activeButton = b; } }
 
 	for(y = 0; y < yLines; y++){
 		if(y%2 !== 0){ continue; }
 		gfx.save();
 		gfx.translate(355,240 - y*((240/xLines)-3));
 		gfx.rotate(-90*Math.PI/180);
-
-		var activeButton;
-		for(b in buttons){ if(buttons[b].active){ activeButton = b; } }
 
 		if(parseInt(activeButton) === 0){
 			gfx.fillText(''+(5*y), 0, 0);
@@ -148,13 +149,23 @@ drawGrid = function(){
 		gfx.restore();
 	}
 
+	gfx.fillStyle='0000FF';
+	gfx.strokeStyle='0000FF';
+	gfx.save();
+	gfx.translate(360+(cam.getDist()/200)*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
+	gfx.beginPath();
+	gfx.arc(0,0,1.5,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();	
+	gfx.restore();
+
 	gfx.fillStyle='FF0000';
 	gfx.strokeStyle='FF0000';
 	gfx.save();
 	gfx.translate(360,240);
 	for(var d in data){
 		gfx.save();
-		gfx.translate(data[d].d, -data[d].i);
+		gfx.translate((data[d].d/200)*240, (-data[d].i/(30*Math.pow(10,activeButton)))*240);
 		gfx.beginPath();
 		gfx.arc(0,0,1.5,0,Math.PI*2);
 		gfx.fill();
