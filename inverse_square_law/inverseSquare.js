@@ -1,6 +1,6 @@
 var canvas; var gfx;
 var mx; var my; var mouseDown = false;
-var buttons = []; var activeButton = 0;
+var buttons = [];
 var xLines = 6; var yLines = 6;
 var cam;
 var data = [];
@@ -40,16 +40,21 @@ window.onmousedown = function(e){
 	// check buttons
 	for(b in buttons){ buttons[b].clicked(); }
 
-	// collect data
-	data.push({d:cam.getDist(), i:cam.getIntensity()});
+	if(mx < 300 && my < 300){
+		// collect data
+		data.push({d:cam.getDist(), i:cam.getIntensity()});
 
-	// update graph data
-	// update screen
+		// update screen
+		drawGrid();
+	}
 }
 
 window.onmouseup = function(e){	mouseDown = false; }
 
-clearGrid = function(){}
+clearGrid = function(){
+	gfx.fillStyle='FFFFFF';
+	gfx.fillRect(300,0,300,300);
+}
 
 clearSim = function(){
 	gfx.fillStyle='000000';
@@ -71,6 +76,9 @@ clear = function(){
 drawButtons = function(){ for(var b in buttons){ buttons[b].draw(); } }
 
 drawGrid = function(){
+	clearGrid();
+
+
 	gfx.fillStyle='000000';
 	gfx.font='14px Verdana';
 	gfx.fillText('Distance', 415, 296);
@@ -107,6 +115,37 @@ drawGrid = function(){
 		gfx.lineTo(240,0);
 		gfx.stroke();
 		gfx.restore()
+	}
+
+	for(x = 0; x < xLines; x++){
+		if(x%2 !== 0){ continue; }
+		gfx.save()
+		gfx.translate(357+x*((240/xLines)-3),253);
+		gfx.beginPath();
+		gfx.fillText(''+(50*x),0,0);
+		gfx.stroke();
+		gfx.restore()
+	}
+
+	for(y = 0; y < yLines; y++){
+		if(y%2 !== 0){ continue; }
+		gfx.save();
+		gfx.translate(355,240 - y*((240/xLines)-3));
+		gfx.rotate(-90*Math.PI/180);
+
+		var activeButton;
+		for(b in buttons){ if(buttons[b].active){ activeButton = b; console.log(b); } }
+
+		if(parseInt(activeButton) === 0){
+			gfx.fillText(''+(5*y), 0, 0);
+		}
+		else if(parseInt(activeButton) === 1){
+			gfx.fillText(''+(50*y), 0, 0);
+		}else{
+			gfx.fillText(''+(500*y), 0, 0);
+		}
+
+		gfx.restore();
 	}
 }
 
@@ -199,11 +238,12 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 			if(my > this.y && my < this.y+this.sy){
 				for(b in buttons){ buttons[b].active = false; }
 				this.active = true;
-				activeButton = b;
 				drawButtons();
 				drawLight();
 				drawStats();
+				drawGrid();
 				cam.draw();
+				data = [];
 			}
 		}
 	}
