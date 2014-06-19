@@ -23,7 +23,16 @@ window.onload = function(){
 	drawButtons();
 }
 
-window.onmousemove = function(e){ mx = e.x; my = e.y; cam.pos.x = mx; cam.pos.y = my; clearSim(); cam.draw(); }
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	cam.pos.x = mx; cam.pos.y = my;
+	if(cam.pos.x > 299){ cam.pos.x = 299; }
+	if(cam.pos.y > 299){ cam.pos.y = 299; }
+	clearSim();
+	drawLight();
+	drawStats();
+	cam.draw();
+}
 
 window.onmousedown = function(e){
 	mouseDown = true;
@@ -102,7 +111,7 @@ drawGrid = function(){
 drawStats = function(){
 	gfx.fillStyle='FFFFFF';
 	gfx.font='14px Verdana';
-	gfx.fillText('Distance:', 5, 296);
+	gfx.fillText('Distance: ' + truncate(''+cam.getDist()), 5, 296);
 	gfx.fillText('Intensity: ', 185, 296);
 }
 
@@ -234,8 +243,13 @@ camera = function(x,y){
 		gfx.restore();
 	}
 
-	this.getDist = function(){}
+	this.getDist = function(){ var toStar = add(neg(this.pos), new vec2(150,150)); return mag(toStar); }
 	this.getIntensity = function(){}
+}
+
+truncate = function(str){
+	var idx = str.indexOf('.');
+	return str.substr(0,idx+3);
 }
 
 vec2 = function(x,y){ this.x = x; this.y = y; }
