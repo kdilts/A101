@@ -38,6 +38,13 @@ window.onmousedown = function(e){
 
 window.onmouseup = function(e){	mouseDown = false; }
 
+clearGrid = function(){}
+
+clearSim = function(){
+	gfx.fillStyle='000000';
+	gfx.fillRect(0,0,300,300);
+}
+
 clear = function(){
 	gfx.fillStyle = '000000';
 	gfx.fillRect(0,0,300,300);
@@ -99,7 +106,35 @@ drawStats = function(){
 	gfx.fillText('Intensity: ', 185, 296);
 }
 
-drawLight = function(){}
+drawLight = function(){
+	clearSim();
+
+	var star;
+	for(var b in buttons){ if(buttons[b].active){ star = b; } }
+
+	if(parseInt(star) === 0){
+		gfx.strokeStyle='FFFFFF';
+		gfx.fillStyle='FFFFFF';
+		gfx.beginPath();
+		gfx.arc(150,150,5,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+	} else if(parseInt(star) === 1){
+		gfx.strokeStyle='FFFFFF';
+		gfx.fillStyle='FFFFFF';
+		gfx.beginPath();
+		gfx.arc(150,150,20,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+	} else {
+		gfx.strokeStyle='FFFFFF';
+		gfx.fillStyle='FFFFFF';
+		gfx.beginPath();
+		gfx.arc(150,150,50,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+	}
+}
 
 button = function(x,y,sx,sy,text,offX,offY,active){
 	this.x = x; this.y = y;
@@ -144,7 +179,7 @@ camera = function(x,y){
 		gfx.strokeStyle = 'rgb(20,20,200)';
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.arc(0,0,28,-Math.PI/10,Math.PI/10);
+		gfx.arc(0,0,28,-Math.PI/10-Math.PI/2,Math.PI/10-Math.PI/2);
 		gfx.fill();
 		gfx.stroke();
 
@@ -152,7 +187,7 @@ camera = function(x,y){
 		gfx.strokeStyle = 'rgb(100,20,200)';
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.arc(0,0,25,-Math.PI/10,Math.PI/10);
+		gfx.arc(0,0,25,-Math.PI/10-Math.PI/2,Math.PI/10-Math.PI/2);
 		gfx.fill();
 		gfx.stroke();
 
