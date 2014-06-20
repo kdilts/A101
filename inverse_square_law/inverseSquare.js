@@ -136,15 +136,19 @@ drawGrid = function(){
 	for(y = 0; y < yLines; y++){
 		if(y%2 !== 0){ continue; }
 		gfx.save();
-		gfx.translate(355,240 - y*((240/xLines)-3));
-		gfx.rotate(-90*Math.PI/180);
 
 		if(parseInt(activeButton) === 0){
+			gfx.translate(355,240 - y*((240/xLines)-3));
+			gfx.rotate(-90*Math.PI/180);
 			gfx.fillText(''+(5*y), 0, 0);
 		}
 		else if(parseInt(activeButton) === 1){
+			gfx.translate(355,240 - y*((240/xLines)-5));
+			gfx.rotate(-90*Math.PI/180);
 			gfx.fillText(''+(50*y), 0, 0);
 		}else{
+			gfx.translate(355,240 - y*((235/xLines)-5));
+			gfx.rotate(-90*Math.PI/180);
 			gfx.fillText(''+(500*y), 0, 0);
 		}
 
@@ -269,9 +273,9 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 				drawButtons();
 				drawLight();
 				drawStats();
+				data = [];
 				drawGrid();
 				cam.draw();
-				data = [];
 			}
 		}
 	}
