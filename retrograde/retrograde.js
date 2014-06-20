@@ -3,6 +3,7 @@ var menuCanvas; var menuGfx;
 var orbitDiameters = [90, 110, 150];
 var outerRings = [180, 250];
 var centerX = 255; var centerY = 255;
+var buttons = [];
 
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
@@ -10,6 +11,23 @@ window.onload = function(){
 
 	menuCanvas = document.getElementById('menu');
 	menuGfx = menuCanvas.getContext('2d');
+
+	// orbit diameters
+	buttons.push(new button(110,35,true));
+	buttons.push(new button(220,35,false));
+
+	// view
+	buttons.push(new button(80,180,false));
+	buttons.push(new button(240,180,true));
+	buttons.push(new button(80,210,true));
+	buttons.push(new button(240,210,false));
+	buttons.push(new button(80,240,false));
+	buttons.push(new button(240,240,false));
+
+	// options
+	buttons.push(new checkBox(107,313,true));
+	buttons.push(new checkBox(215,313,false));
+	buttons.push(new checkBox(177,333,false));
 
 	clearMenu();
 
@@ -49,6 +67,8 @@ clearMenu = function(){
 	menuGfx.fillText('Earth', 137, planets+30);
 	menuGfx.fillStyle='00FF00';
 	menuGfx.fillText('Venus', 135, planets+60);
+
+	for(var b in buttons){ buttons[b].draw(); }
 }
 
 clearSim = function(){
@@ -76,6 +96,8 @@ clearSim = function(){
 		simGfx.arc(centerX,centerY,outerRings[d],0,Math.PI*2);
 		simGfx.stroke();
 	}
+
+
 }
 
 loop = function(){
@@ -92,14 +114,47 @@ mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 button = function(x,y,active){
 	this.x = x; this.y = y; this.active = active;
 
-	this.draw = function(){}
+	this.draw = function(){
+		menuGfx.fillStyle = 'rgb(200,200,200)';
+		menuGfx.strokeStyle = 'rgb(100,100,100)';
+		
+		menuGfx.lineWidth=2;
+
+		menuGfx.beginPath();
+		menuGfx.arc(this.x, this.y, 7, 0, Math.PI*2);
+		menuGfx.fill();
+		menuGfx.stroke();
+
+		if(this.active){
+			menuGfx.fillStyle = '0000FF';
+			menuGfx.strokeStyle = '0000FF';
+
+			menuGfx.beginPath();
+			menuGfx.arc(this.x, this.y, 2, 0, Math.PI*2);
+			menuGfx.fill();
+			menuGfx.stroke();			
+		}
+	}
+
 	this.clicked = function(){}
 }
 
 checkBox = function(x,y,active){
 	this.x = x; this.y = y; this.active = active;
 
-	this.draw = function(){}
+	this.draw = function(){
+		menuGfx.fillStyle = 'rgb(200,200,200)';
+		menuGfx.fillRect(this.x-5, this.y-5, 15, 15);
+		menuGfx.strokeStyle = 'rgb(100,100,100)';
+		menuGfx.strokeRect(this.x-5, this.y-5, 15, 15);
+
+		if(this.active){
+			menuGfx.fillStyle = '0000FF';
+			menuGfx.strokeStyle = '0000FF';
+			menuGfx.fillRect(this.x-2,this.y-2,9,9);
+		}
+	}
+
 	this.clicked = function(){}	
 }
 
