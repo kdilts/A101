@@ -16,8 +16,25 @@ window.onload = function(){
 }
 
 clearMenu = function(){
-	menuGfx.fillStyle='FFFFFF';
+	menuGfx.fillStyle='000000';
 	menuGfx.fillRect(0,0,300,510);
+
+	menuGfx.fillStyle='00FF00';
+	menuGfx.font='18px Verdana';
+	menuGfx.fillText('Orbit Modifications', 80, 20);
+
+	var viewCtrl = 120;
+	menuGfx.fillText('View Control', 80, viewCtrl);
+	menuGfx.fillText('Look From:', 10, viewCtrl+20);
+	menuGfx.fillText('Look At:', 200, viewCtrl+20);
+
+	menuGfx.fillStyle='FFFFFF';
+	menuGfx.font='14px Verdana';
+	menuGfx.fillText('Venus Orbit', 10, 40);
+	menuGfx.fillText('Mars Orbit', 130, 40);
+	menuGfx.fillText('Orbit Radius: ' + 108 + ' million km', 10, 60);
+
+	
 }
 
 clearSim = function(){
