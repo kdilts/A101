@@ -82,7 +82,6 @@ drawButtons = function(){ for(var b in buttons){ buttons[b].draw(); } }
 drawGrid = function(){
 	clearGrid();
 
-
 	gfx.fillStyle='000000';
 	gfx.font='14px Verdana';
 	gfx.fillText('Distance', 415, 296);
@@ -155,7 +154,7 @@ drawGrid = function(){
 	gfx.fillStyle='0000FF';
 	gfx.strokeStyle='0000FF';
 	gfx.save();
-	gfx.translate(360+(cam.getDist()/150)*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
+	gfx.translate(360+cam.getDist()/150*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
 	gfx.beginPath();
 	gfx.arc(0,0,1.5,0,Math.PI*2);
 	gfx.fill();
@@ -168,7 +167,7 @@ drawGrid = function(){
 	gfx.translate(360,240);
 	for(var d in data){
 		gfx.save();
-		gfx.translate((data[d].d/200)*240, (-data[d].i/(30*Math.pow(10,activeButton)))*240);
+		gfx.translate((data[d].d/150)*240, (-data[d].i/(30*Math.pow(10,activeButton)))*240);
 		gfx.beginPath();
 		gfx.arc(0,0,1.5,0,Math.PI*2);
 		gfx.fill();
@@ -292,10 +291,10 @@ camera = function(x,y){
 			this.rot = -Math.acos(cosTheta);
 		}
 
-		this.pos = add(this.pos, neg(mult(unit(toStar),20)));
+		var offsetPos = add(this.pos, neg(mult(unit(toStar),20)));
 
 		gfx.save();
-		gfx.translate(this.pos.x,this.pos.y);
+		gfx.translate(offsetPos.x,offsetPos.y);
 		gfx.rotate(this.rot);
 
 		gfx.fillStyle = 'rgb(150,255,255)';
