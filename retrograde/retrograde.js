@@ -14,9 +14,12 @@ window.onload = function(){
 	menuGfx = menuCanvas.getContext('2d');
 
 	// planets
-	orbiters.push(new orbiter(orbitRadius[0], .005, 'rgb(0,255,0)'));
-	orbiters.push(new orbiter(orbitRadius[1], .005, '0000FF'));
-	orbiters.push(new orbiter(orbitRadius[2], .005, 'FF0000'));
+	orbiters.push(new orbiter(orbitRadius[0], .005, 7, '00FF00'));
+	orbiters.push(new orbiter(orbitRadius[1], .007, 7, '0000FF'));
+	orbiters.push(new orbiter(orbitRadius[2], .001, 7, 'FF0000'));
+
+	// sun
+	orbiters.push(new orbiter(215, .005, 10, 'FFFF00'))
 
 	// slider
 	buttons.push(new slider(20,73,80,0,100));
@@ -190,9 +193,10 @@ slider = function(x,y,startVal,lowVal,highVal){
 	this.clicked = function(){}
 }
 
-orbiter = function(radius, speed, color){
+orbiter = function(radius, speed, sz, color){
 	this.rad = radius; this.spd = speed;
 	this.rot = 0; this.color = color;
+	this.sz = sz;
 
 	this.draw = function(){
 		simGfx.fillStyle=this.color;
@@ -203,11 +207,25 @@ orbiter = function(radius, speed, color){
 		simGfx.rotate(this.rot);
 		simGfx.translate(0,-this.rad);
 		simGfx.beginPath();
-		simGfx.arc(0,0,8,0,Math.PI*2);
+		simGfx.arc(0,0,this.sz,0,Math.PI*2);
 		simGfx.fill();
 		simGfx.stroke();
-		simGfx.restore();
 
+		if(this.sz === 10){
+			for(var i = 0; i < 25; i++){
+				simGfx.save();
+				simGfx.rotate(10*i);
+				simGfx.beginPath();
+				simGfx.moveTo(-7,0);
+				simGfx.lineTo(0,20);
+				simGfx.lineTo(7,0);
+				simGfx.fill();
+				simGfx.stroke();
+				simGfx.restore();
+			}
+		}
+
+		simGfx.restore();
 		this.rot -= this.spd;
 	}
 }
