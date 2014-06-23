@@ -1,4 +1,4 @@
-var simCanvas; var simGfx;
+var simCanvas; var simGfx; var mx; var my;
 var menuCanvas; var menuGfx;
 var orbitRadius = [54, 74, 114];
 var outerRings = [180, 250];
@@ -6,10 +6,9 @@ var centerX = 255; var centerY = 255;
 var buttons = [];
 var orbiters = [];
 
-var showSun = true;
+var showSun = true; var showTrace = false; var useDirectionColoring = false;
 var fromPlanet = 1; var toPlanet = 2;
 
-var simSpeed = 1;
 var play = true;
 
 var orbitSlider;
@@ -41,21 +40,21 @@ window.onload = function(){
 	buttons.push(speedSlider);
 
 	// orbit Radius
-	buttons.push(new button(110,35,true)); // venus orbit
-	buttons.push(new button(220,35,false)); // mars orbit
+	buttons.push(new button(110,35,true,function(){buttons[3].active = false; buttons[2].active = true;})); // venus orbit
+	buttons.push(new button(220,35,false,function(){buttons[2].active = false; buttons[3].active = true;})); // mars orbit
 
 	// view
-	buttons.push(new button(80,180,false)); // from mars
-	buttons.push(new button(240,180,true)); // to mars
-	buttons.push(new button(80,210,true)); // from earth
-	buttons.push(new button(240,210,false)); // to earth
-	buttons.push(new button(80,240,false)); // from venus
-	buttons.push(new button(240,240,false)); // to venus
+	buttons.push(new button(80,180,false)); // from mars - 4
+	buttons.push(new button(240,180,true)); // to mars - 5 
+	buttons.push(new button(80,210,true)); // from earth - 6
+	buttons.push(new button(240,210,false)); // to earth - 7
+	buttons.push(new button(80,240,false)); // from venus - 8
+	buttons.push(new button(240,240,false)); // to venus - 9
 
 	// options
-	buttons.push(new checkBox(107,313,true)); // show trace
-	buttons.push(new checkBox(215,313,false)); // show sun
-	buttons.push(new checkBox(177,335,false)); // direction coloring
+	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace;})); // show trace - 10
+	buttons.push(new checkBox(215,313,true,function(){showSun = !showSun;})); // show sun - 11
+	buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
 
 	// play / pause
 	playButton = new textButton(20,475,'Pause', function(){
@@ -73,6 +72,7 @@ window.onload = function(){
 	// reset speed
 	resetButton = new textButton(20,445,'1X speed', function(){
 		speedSlider.val = 1;
+		clearMenu();
 	});
 	buttons.push(resetButton);
 
@@ -80,6 +80,10 @@ window.onload = function(){
 
 	setInterval(loop, 1000/60);
 }
+
+window.onmousemove = function(e){ mx = e.x; my = e.y; }
+
+window.onmousedown = function(e){ for(var b in buttons){ buttons[b].clicked(); }}
 
 clearMenu = function(){
 	menuGfx.fillStyle='000000';
@@ -161,8 +165,8 @@ dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 neg = function(v){ return new vec2(-v.x, -v.y); }
 mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 
-button = function(x,y,active){
-	this.x = x; this.y = y; this.active = active;
+button = function(x,y,active,action){
+	this.x = x; this.y = y; this.active = active; this.action = action;
 
 	this.draw = function(){
 		menuGfx.fillStyle = 'rgb(200,200,200)';
@@ -186,11 +190,16 @@ button = function(x,y,active){
 		}
 	}
 
-	this.clicked = function(){}
+	this.clicked = function(){
+		if(mag(add(new vec2(mx-510,my),neg(new vec2(this.x,this.y)))) < 14){
+			this.action();
+			clearMenu();
+		}
+	}
 }
 
-checkBox = function(x,y,active){
-	this.x = x; this.y = y; this.active = active;
+checkBox = function(x,y,active,action){
+	this.x = x; this.y = y; this.active = active; this.action = action;
 
 	this.draw = function(){
 		menuGfx.fillStyle = 'rgb(200,200,200)';
@@ -205,13 +214,29 @@ checkBox = function(x,y,active){
 		}
 	}
 
-	this.clicked = function(){}	
+	this.clicked = function(){
+		if(mx - 510 > this.x - 5 && mx - 510 < this.x + 10){
+			if(my > this.y - 5 && my < this.y + 10){
+				if(this.active){ this.active = false; } else { this.active = true; }
+				this.action();
+				clearMenu();
+			}
+		}
+	}	
 }
 
 textButton = function(x,y,text,action){
 	this.x = x; this.y = y;
 	this.action = action;
 	this.text = text;
+
+	this.clicked = function(){
+		if(mx - 510 > this.x && mx - 510 < this.x + 260){
+			if(my > this.y && my < this.y + 25){
+				this.action();
+			}
+		}
+	}
 
 	this.draw = function(){
 		menuGfx.fillStyle='000000';
@@ -252,7 +277,7 @@ orbiter = function(radius, speed, sz, color){
 	this.sz = sz; this.from = false;
 
 	this.draw = function(){
-		if(play){ this.rot -= (this.spd*simSpeed); }
+		if(play){ this.rot -= (this.spd*speedSlider.val); }
 		if(this.sz === 10 && !showSun){ return; }
 
 		simGfx.fillStyle=this.color;
