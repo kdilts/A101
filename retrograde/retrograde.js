@@ -7,7 +7,7 @@ var buttons = [];
 var orbiters = [];
 
 var showSun = true; var showTrace = false; var useDirectionColoring = false;
-var fromPlanet = 1; var toPlanet = 2;
+var fromPlanet = 0; var toPlanet = 2;
 
 var play = true;
 
@@ -26,7 +26,7 @@ window.onload = function(){
 	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF')); // earth
 	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000')); // mars
 
-	orbiters[1].from = true; orbiters[2].to = true;
+	orbiters[0].from = true; orbiters[2].to = true;
 
 	// sun
 	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
@@ -48,13 +48,13 @@ window.onload = function(){
 		buttons[4].active = true;
 		buttons[6].active = false; buttons[8].active = false;
 		if(buttons[5].active){ buttons[5].active = false; buttons[7].active = true; toPlanet = 1; }
-		fromPlanet = 2;
+		setFromPlanet(2);
 	}));
 
 	buttons.push(new button(240,180,true,function(){  // to mars - 5
 		buttons[5].active = true;
 		buttons[7].active = false; buttons[9].active = false;
-		if(buttons[4].active){ buttons[4].active = false; buttons[6].active = true; fromPlanet = 1; }
+		if(buttons[4].active){ buttons[4].active = false; buttons[6].active = true; setFromPlanet(1); }
 		toPlanet = 2;
 	})); 
 
@@ -62,27 +62,27 @@ window.onload = function(){
 		buttons[6].active = true;
 		buttons[4].active = false; buttons[8].active = false;
 		if(buttons[7].active){ buttons[7].active = false; buttons[9].active = true; toPlanet = 0; }
-		fromPlanet = 1;
+		setFromPlanet(1);
 	}));
 
 	buttons.push(new button(240,210,false,function(){ // to earth - 7
 		buttons[7].active = true;
 		buttons[5].active = false; buttons[9].active = false;
-		if(buttons[6].active){ buttons[6].active = false; buttons[8].active = true; fromPlanet = 0; }
+		if(buttons[6].active){ buttons[6].active = false; buttons[8].active = true; setFromPlanet(0); }
 		toPlanet = 1;
 	}));
 
 	buttons.push(new button(80,240,false,function(){ // from venus - 8
 		buttons[8].active = true;
 		buttons[6].active = false; buttons[4].active = false;
-		if(buttons[9].active){ buttons[9].active = false; buttons[5].active = true; toPlanet = 0; }
-		fromPlanet = 0;
+		if(buttons[9].active){ buttons[9].active = false; buttons[5].active = true; toPlanet = 2; }
+		setFromPlanet(0);
 	}));
 
 	buttons.push(new button(240,240,false,function(){  // to venus - 9
 		buttons[9].active = true;
 		buttons[5].active = false; buttons[7].active = false;
-		if(buttons[8].active){ buttons[8].active = false; buttons[4].active = true; fromPlanet = 2; }
+		if(buttons[8].active){ buttons[8].active = false; buttons[4].active = true; setFromPlanet(2); }
 		toPlanet = 0;
 	}));
 
@@ -368,4 +368,10 @@ drawLine = function(){
 	simGfx.stroke();
 
 	simGfx.restore();
+}
+
+setFromPlanet = function(n){
+	if(n === 0){ orbiters[0].from = true; orbiters[1].from = false; orbiters[2].from = false; fromPlanet = 0; }
+	else if(n === 1){ orbiters[0].from = false; orbiters[1].from = true; orbiters[2].from = false; fromPlanet = 1; }
+	else{ orbiters[0].from = false; orbiters[1].from = false; orbiters[2].from = true; fromPlanet = 2; }
 }
