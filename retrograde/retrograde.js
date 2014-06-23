@@ -1,9 +1,10 @@
 var simCanvas; var simGfx;
 var menuCanvas; var menuGfx;
-var orbitDiameters = [90, 110, 150];
+var orbitRadius = [54, 74, 114];
 var outerRings = [180, 250];
 var centerX = 255; var centerY = 255;
 var buttons = [];
+ orbiters = [];
 
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
@@ -12,10 +13,15 @@ window.onload = function(){
 	menuCanvas = document.getElementById('menu');
 	menuGfx = menuCanvas.getContext('2d');
 
-	// slider
-	buttons.push(new slider(20,70,80,0,100));
+	// planets
+	orbiters.push(new orbiter(orbitRadius[0], .005, 'rgb(0,255,0)'));
+	orbiters.push(new orbiter(orbitRadius[1], .005, '0000FF'));
+	orbiters.push(new orbiter(orbitRadius[2], .005, 'FF0000'));
 
-	// orbit diameters
+	// slider
+	buttons.push(new slider(20,73,80,0,100));
+
+	// orbit Radius
 	buttons.push(new button(110,35,true));
 	buttons.push(new button(220,35,false));
 
@@ -82,14 +88,14 @@ clearSim = function(){
 	simGfx.strokeStyle='FFFF00';
 	simGfx.lineWidth=2;
 	simGfx.beginPath();
-	simGfx.arc(centerX,centerY,8,0,Math.PI*2);
+	simGfx.arc(centerX,centerY,12,0,Math.PI*2);
 	simGfx.fill();
 	simGfx.stroke();
 
 	simGfx.strokeStyle='rgb(150,150,150)';
-	for(var d in orbitDiameters){
+	for(var d in orbitRadius){
 		simGfx.beginPath();
-		simGfx.arc(centerX,centerY,orbitDiameters[d],0,Math.PI*2);
+		simGfx.arc(centerX,centerY,orbitRadius[d],0,Math.PI*2);
 		simGfx.stroke();
 	}
 
@@ -105,6 +111,7 @@ clearSim = function(){
 
 loop = function(){
 	clearSim();
+	for(x in orbiters){ orbiters[x].draw(); }
 }
 
 vec2 = function(x,y){ this.x = x; this.y = y; }
@@ -181,4 +188,26 @@ slider = function(x,y,startVal,lowVal,highVal){
 	}
 
 	this.clicked = function(){}
+}
+
+orbiter = function(radius, speed, color){
+	this.rad = radius; this.spd = speed;
+	this.rot = 0; this.color = color;
+
+	this.draw = function(){
+		simGfx.fillStyle=this.color;
+		simGfx.strokeStyle=this.color;
+
+		simGfx.save();
+		simGfx.translate(centerX, centerY);
+		simGfx.rotate(this.rot);
+		simGfx.translate(0,-this.rad);
+		simGfx.beginPath();
+		simGfx.arc(0,0,8,0,Math.PI*2);
+		simGfx.fill();
+		simGfx.stroke();
+		simGfx.restore();
+
+		this.rot += this.spd;
+	}
 }
