@@ -208,6 +208,6 @@ orbiter = function(radius, speed, color){
 		simGfx.stroke();
 		simGfx.restore();
 
-		this.rot += this.spd;
+		this.rot -= this.spd;
 	}
 }
