@@ -44,12 +44,47 @@ window.onload = function(){
 	buttons.push(new button(220,35,false,function(){buttons[2].active = false; buttons[3].active = true;})); // mars orbit
 
 	// view
-	buttons.push(new button(80,180,false)); // from mars - 4
-	buttons.push(new button(240,180,true)); // to mars - 5 
-	buttons.push(new button(80,210,true)); // from earth - 6
-	buttons.push(new button(240,210,false)); // to earth - 7
-	buttons.push(new button(80,240,false)); // from venus - 8
-	buttons.push(new button(240,240,false)); // to venus - 9
+	buttons.push(new button(80,180,false,function(){  // from mars - 4
+		buttons[4].active = true;
+		buttons[6].active = false; buttons[8].active = false;
+		if(buttons[5].active){ buttons[5].active = false; buttons[7].active = true; toPlanet = 1; }
+		fromPlanet = 2;
+	}));
+
+	buttons.push(new button(240,180,true,function(){  // to mars - 5
+		buttons[5].active = true;
+		buttons[7].active = false; buttons[9].active = false;
+		if(buttons[4].active){ buttons[4].active = false; buttons[6].active = true; fromPlanet = 1; }
+		toPlanet = 2;
+	})); 
+
+	buttons.push(new button(80,210,true,function(){  // from earth - 6
+		buttons[6].active = true;
+		buttons[4].active = false; buttons[8].active = false;
+		if(buttons[7].active){ buttons[7].active = false; buttons[9].active = true; toPlanet = 0; }
+		fromPlanet = 1;
+	}));
+
+	buttons.push(new button(240,210,false,function(){ // to earth - 7
+		buttons[7].active = true;
+		buttons[5].active = false; buttons[9].active = false;
+		if(buttons[6].active){ buttons[6].active = false; buttons[8].active = true; fromPlanet = 0; }
+		toPlanet = 1;
+	}));
+
+	buttons.push(new button(80,240,false,function(){ // from venus - 8
+		buttons[8].active = true;
+		buttons[6].active = false; buttons[4].active = false;
+		if(buttons[9].active){ buttons[9].active = false; buttons[5].active = true; toPlanet = 0; }
+		fromPlanet = 0;
+	}));
+
+	buttons.push(new button(240,240,false,function(){  // to venus - 9
+		buttons[9].active = true;
+		buttons[5].active = false; buttons[7].active = false;
+		if(buttons[8].active){ buttons[8].active = false; buttons[4].active = true; fromPlanet = 2; }
+		toPlanet = 0;
+	}));
 
 	// options
 	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace;})); // show trace - 10
