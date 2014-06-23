@@ -12,6 +12,9 @@ var fromPlanet = 1; var toPlanet = 2;
 var simSpeed = 1;
 var play = true;
 
+var orbitSlider;
+var speedSlider;
+
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
 	simGfx = simCanvas.getContext('2d');
@@ -20,34 +23,39 @@ window.onload = function(){
 	menuGfx = menuCanvas.getContext('2d');
 
 	// planets
-	orbiters.push(new orbiter(orbitRadius[0], .75, 7, '00FF00'));
-	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF'));
-	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000'));
+	orbiters.push(new orbiter(orbitRadius[0], .75, 7, '00FF00')); // venus
+	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF')); // earth
+	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000')); // mars
 
 	orbiters[1].from = true; orbiters[2].to = true;
 
 	// sun
 	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
 
-	// slider
-	buttons.push(new slider(20,73,80,0,100));
+	// orbit radius slider
+	orbitSlider = new slider(20,73,80,0,100);
+	buttons.push(orbitSlider);
+
+	// speed slider
+	speedSlider = new slider(20,393,1,0,2);
+	buttons.push(speedSlider);
 
 	// orbit Radius
-	buttons.push(new button(110,35,true));
-	buttons.push(new button(220,35,false));
+	buttons.push(new button(110,35,true)); // venus orbit
+	buttons.push(new button(220,35,false)); // mars orbit
 
 	// view
-	buttons.push(new button(80,180,false));
-	buttons.push(new button(240,180,true));
-	buttons.push(new button(80,210,true));
-	buttons.push(new button(240,210,false));
-	buttons.push(new button(80,240,false));
-	buttons.push(new button(240,240,false));
+	buttons.push(new button(80,180,false)); // from mars
+	buttons.push(new button(240,180,true)); // to mars
+	buttons.push(new button(80,210,true)); // from earth
+	buttons.push(new button(240,210,false)); // to earth
+	buttons.push(new button(80,240,false)); // from venus
+	buttons.push(new button(240,240,false)); // to venus
 
 	// options
-	buttons.push(new checkBox(107,313,true));
-	buttons.push(new checkBox(215,313,false));
-	buttons.push(new checkBox(177,333,false));
+	buttons.push(new checkBox(107,313,true)); // show trace
+	buttons.push(new checkBox(215,313,false)); // show sun
+	buttons.push(new checkBox(177,335,false)); // direction coloring
 
 	// play / pause
 	playButton = new textButton(20,475,'Pause', function(){
@@ -62,6 +70,12 @@ window.onload = function(){
 	});
 	buttons.push(playButton);
 
+	// reset speed
+	resetButton = new textButton(20,445,'1X speed', function(){
+		speedSlider.val = 1;
+	});
+	buttons.push(resetButton);
+
 	clearMenu();
 
 	setInterval(loop, 1000/60);
@@ -74,10 +88,11 @@ clearMenu = function(){
 	menuGfx.fillStyle='00FF00';
 	menuGfx.font='18px Verdana';
 	menuGfx.fillText('Orbit Modifications', 80, 20);
-	menuGfx.fillText('Options', 80, 300);
+	menuGfx.fillText('Options', 120, 300);
+	menuGfx.fillText('Speed', 120, 380);
 
 	var viewCtrl = 120;
-	menuGfx.fillText('View Control', 80, viewCtrl);
+	menuGfx.fillText('View Control', 100, viewCtrl);
 	menuGfx.fillText('Look From:', 10, viewCtrl+20);
 	menuGfx.fillText('Look At:', 200, viewCtrl+20);
 
@@ -85,12 +100,12 @@ clearMenu = function(){
 	menuGfx.font='14px Verdana';
 	menuGfx.fillText('Venus Orbit', 10, 40);
 	menuGfx.fillText('Mars Orbit', 130, 40);
-	menuGfx.fillText('Orbit Radius: ' + 108 + ' million km', 10, 60);
+	menuGfx.fillText('Orbit Radius: ' + orbitSlider.val + ' million km', 10, 60);
 
 	var opts = 320;
 	menuGfx.fillText('Show Trace', 10, opts);
 	menuGfx.fillText('Show Sun', 130, opts);
-	menuGfx.fillText('Use Direction Coloring', 10, opts+20);
+	menuGfx.fillText('Use Direction Coloring', 10, opts+22);
 
 	var planets = 190;
 	menuGfx.font='18px Verdana';
