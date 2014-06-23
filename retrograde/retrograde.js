@@ -49,6 +49,19 @@ window.onload = function(){
 	buttons.push(new checkBox(215,313,false));
 	buttons.push(new checkBox(177,333,false));
 
+	// play / pause
+	playButton = new textButton(20,475,'Pause', function(){
+		if(play){ play = false;
+			playButton.text = 'Play';
+			clearMenu();
+		} else {
+			play = true;
+			playButton.text = 'Pause';
+			clearMenu();
+		}
+	});
+	buttons.push(playButton);
+
 	clearMenu();
 
 	setInterval(loop, 1000/60);
@@ -178,6 +191,23 @@ checkBox = function(x,y,active){
 	}
 
 	this.clicked = function(){}	
+}
+
+textButton = function(x,y,text,action){
+	this.x = x; this.y = y;
+	this.action = action;
+	this.text = text;
+
+	this.draw = function(){
+		menuGfx.fillStyle='000000';
+		menuGfx.strokeStyle='rgb(100,100,100)';
+		menuGfx.fillRect(this.x,this.y,260,25);
+		menuGfx.strokeRect(this.x,this.y,260,25);
+		menuGfx.font='20px Verdana';
+		menuGfx.fillStyle='FFFFFF';
+		menuGfx.strokeStyle='FFFFFF';
+		menuGfx.fillText(this.text, this.x+100, this.y+19);
+	}
 }
 
 slider = function(x,y,startVal,lowVal,highVal){
