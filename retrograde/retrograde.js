@@ -9,6 +9,9 @@ var orbiters = [];
 var showSun = true;
 var fromPlanet = 1; var toPlanet = 2;
 
+var simSpeed = 1;
+var play = true;
+
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
 	simGfx = simCanvas.getContext('2d');
@@ -17,9 +20,9 @@ window.onload = function(){
 	menuGfx = menuCanvas.getContext('2d');
 
 	// planets
-	orbiters.push(new orbiter(orbitRadius[0], .5, 7, '00FF00'));
-	orbiters.push(new orbiter(orbitRadius[1], 1.25, 7, '0000FF'));
-	orbiters.push(new orbiter(orbitRadius[2], 1, 7, 'FF0000'));
+	orbiters.push(new orbiter(orbitRadius[0], .75, 7, '00FF00'));
+	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF'));
+	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000'));
 
 	orbiters[1].from = true; orbiters[2].to = true;
 
@@ -204,7 +207,7 @@ orbiter = function(radius, speed, sz, color){
 	this.sz = sz; this.from = false;
 
 	this.draw = function(){
-		this.rot -= this.spd;
+		if(play){ this.rot -= (this.spd*simSpeed); }
 		if(this.sz === 10 && !showSun){ return; }
 
 		simGfx.fillStyle=this.color;
