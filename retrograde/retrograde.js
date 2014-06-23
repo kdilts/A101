@@ -12,6 +12,9 @@ window.onload = function(){
 	menuCanvas = document.getElementById('menu');
 	menuGfx = menuCanvas.getContext('2d');
 
+	// slider
+	buttons.push(new slider(20,70,80,0,100));
+
 	// orbit diameters
 	buttons.push(new button(110,35,true));
 	buttons.push(new button(220,35,false));
@@ -158,10 +161,24 @@ checkBox = function(x,y,active){
 	this.clicked = function(){}	
 }
 
-slider = function(x,y,lowVal,highVal){
-	this.x = x; this.y = y;
+slider = function(x,y,startVal,lowVal,highVal){
+	this.x = x; this.y = y; this.val = startVal;
 	this.lowVal = lowVal; this.highVal = highVal;
 
-	this.draw = function(){}
+	this.draw = function(){
+		menuGfx.fillStyle='rgb(100,100,100)';
+		menuGfx.fillRect(this.x,this.y,260,20);
+		menuGfx.fillStyle='000000';
+		menuGfx.fillRect(this.x+2,this.y+9,256,2);
+
+		menuGfx.fillStyle='0000FF';
+		menuGfx.save();
+		menuGfx.translate(this.x + 10 + (this.val/this.highVal*240), this.y+12);
+		menuGfx.rotate(45*Math.PI/180);
+		menuGfx.fillRect(-8,-8,13,13);
+		menuGfx.restore();
+
+	}
+
 	this.clicked = function(){}
 }
