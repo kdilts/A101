@@ -1,4 +1,4 @@
-var simCanvas; var simGfx; var mx; var my;
+var simCanvas; var simGfx; var mx; var my; var mouseDown = false; var dragging = false;
 var menuCanvas; var menuGfx;
 var orbitRadius = [54, 74, 114];
 var outerRings = [180, 250];
@@ -7,7 +7,7 @@ var buttons = [];
 var orbiters = [];
 
 var showSun = true; var showTrace = false; var useDirectionColoring = false;
-var fromPlanet = 0; var toPlanet = 2;
+var fromPlanet = 0; var toPlanet = 2; var activeOrbit = 0;
 
 var play = true;
 
@@ -32,16 +32,27 @@ window.onload = function(){
 	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
 
 	// orbit radius slider
-	orbitSlider = new slider(20,73,80,0,100);
+	orbitSlider = new slider(20,73,80,0,100,'orbit',function(){});
 	buttons.push(orbitSlider);
 
 	// speed slider
-	speedSlider = new slider(20,393,1,0,2);
+	speedSlider = new slider(20,393,1,0,2,'speed',function(){});
 	buttons.push(speedSlider);
 
 	// orbit Radius
-	buttons.push(new button(110,35,true,function(){buttons[3].active = false; buttons[2].active = true;})); // venus orbit
-	buttons.push(new button(220,35,false,function(){buttons[2].active = false; buttons[3].active = true;})); // mars orbit
+	buttons.push(new button(110,35,true,function(){ // venus orbit
+		buttons[3].active = false; buttons[2].active = true;
+		activeOrbit = 0;
+		orbitSlider.lowVal = 25;
+		orbitSlider.highVal = 100;
+	}));
+	
+	buttons.push(new button(220,35,false,function(){ // mars orbit
+		buttons[2].active = false; buttons[3].active = true;
+		activeOrbit = 2;
+		orbitSlider.lowVal = 80;
+		orbitSlider.highVal = 200;
+	}));
 
 	// view
 	buttons.push(new button(80,180,false,function(){  // from mars - 4
@@ -116,9 +127,27 @@ window.onload = function(){
 	setInterval(loop, 1000/60);
 }
 
-window.onmousemove = function(e){ mx = e.x; my = e.y; }
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(dragging === 'speed'){
+		speedSlider.val = (mx-510)/260*speedSlider.highVal;
+		if(speedSlider.val < speedSlider.lowVal){ speedSlider.val = speedSlider.lowVal; }
+		if(speedSlider.val > speedSlider.highVal){ speedSlider.val = speedSlider.highVal; }
+		clearMenu();
+	}
 
-window.onmousedown = function(e){ for(var b in buttons){ buttons[b].clicked(); }}
+	if(dragging === 'orbit'){
+		orbitSlider.val = (mx-510)/260*orbitSlider.highVal;
+		if(orbitSlider.val < orbitSlider.lowVal){ orbitSlider.val = orbitSlider.lowVal; }
+		if(orbitSlider.val > orbitSlider.highVal){ orbitSlider.val = orbitSlider.highVal; }
+		changeRadius(activeOrbit, orbitSlider.val);
+		clearMenu();
+	}
+}
+
+window.onmousedown = function(e){ for(var b in buttons){ buttons[b].clicked(); mouseDown = true; }}
+
+window.onmouseup = function(e){ mouseDown = false; dragging = false; }
 
 clearMenu = function(){
 	menuGfx.fillStyle='000000';
@@ -139,7 +168,7 @@ clearMenu = function(){
 	menuGfx.font='14px Verdana';
 	menuGfx.fillText('Venus Orbit', 10, 40);
 	menuGfx.fillText('Mars Orbit', 130, 40);
-	menuGfx.fillText('Orbit Radius: ' + orbitSlider.val + ' million km', 10, 60);
+	menuGfx.fillText('Orbit Radius: ' + Math.floor(orbitSlider.val) + ' million km', 10, 60);
 
 	var opts = 320;
 	menuGfx.fillText('Show Trace', 10, opts);
@@ -285,9 +314,10 @@ textButton = function(x,y,text,action){
 	}
 }
 
-slider = function(x,y,startVal,lowVal,highVal){
+slider = function(x,y,startVal,lowVal,highVal,id,action){
 	this.x = x; this.y = y; this.val = startVal;
 	this.lowVal = lowVal; this.highVal = highVal;
+	this.action = action; this.id = id;
 
 	this.draw = function(){
 		menuGfx.fillStyle='rgb(100,100,100)';
@@ -303,7 +333,13 @@ slider = function(x,y,startVal,lowVal,highVal){
 		menuGfx.restore();
 	}
 
-	this.clicked = function(){}
+	this.clicked = function(){
+		if(mag(add(new vec2(mx-510,my),neg(new vec2(this.x + 10 + (this.val/this.highVal*240),this.y)))) < 15){
+			dragging = this.id;
+			this.action();
+			clearMenu();
+		}		
+	}
 }
 
 orbiter = function(radius, speed, sz, color){
@@ -374,4 +410,9 @@ setFromPlanet = function(n){
 	if(n === 0){ orbiters[0].from = true; orbiters[1].from = false; orbiters[2].from = false; fromPlanet = 0; }
 	else if(n === 1){ orbiters[0].from = false; orbiters[1].from = true; orbiters[2].from = false; fromPlanet = 1; }
 	else{ orbiters[0].from = false; orbiters[1].from = false; orbiters[2].from = true; fromPlanet = 2; }
+}
+
+changeRadius = function(planet, rad){
+	if(planet === 0){ orbiters[0].rad = rad; orbitRadius[0] = rad; }
+	else if(planet === 2){ orbiters[2].rad = rad; orbitRadius[2] = rad; }
 }
