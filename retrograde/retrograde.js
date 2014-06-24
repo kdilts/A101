@@ -14,6 +14,8 @@ var play = true;
 var orbitSlider;
 var speedSlider;
 
+var starSpots = [];
+
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
 	simGfx = simCanvas.getContext('2d');
@@ -122,6 +124,16 @@ window.onload = function(){
 	});
 	buttons.push(resetButton);
 
+	// background stars
+	for(var i = 0; i < 500; i++){
+		var x = Math.random()*510;
+		var y = Math.random()*510;
+		var d = dist(centerX,centerY,x,y);
+		if(d > outerRings[0] && d < outerRings[1]){
+			starSpots.push({ x:x, y:y });
+		}
+	}
+
 	clearMenu();
 
 	setInterval(loop, 1000/60);
@@ -199,6 +211,16 @@ clearSim = function(){
 	simGfx.fill();
 	simGfx.stroke();
 
+	simGfx.fillStyle='FFFFFF';
+	simGfx.strokeStyle='FFFFFF';
+	simGfx.lineWidth=.5;
+	for(var i in starSpots){
+		simGfx.beginPath();
+		simGfx.arc(starSpots[i].x,starSpots[i].y,.1,0,Math.PI*2);
+		simGfx.fill();
+		simGfx.stroke();
+	}
+
 	simGfx.strokeStyle='rgb(150,150,150)';
 	for(var d in orbitRadius){
 		simGfx.beginPath();
@@ -228,6 +250,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 neg = function(v){ return new vec2(-v.x, -v.y); }
 mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+
+dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)); }
 
 button = function(x,y,active,action){
 	this.x = x; this.y = y; this.active = active; this.action = action;
