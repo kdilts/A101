@@ -222,6 +222,7 @@ clearSim = function(){
 	}
 
 	simGfx.strokeStyle='rgb(150,150,150)';
+	simGfx.lineWidth=2;
 	for(var d in orbitRadius){
 		simGfx.beginPath();
 		simGfx.arc(centerX,centerY,orbitRadius[d],0,Math.PI*2);
@@ -242,6 +243,7 @@ loop = function(){
 	clearSim();
 	drawLine();
 	for(x in orbiters){ orbiters[x].draw(); }
+	drawProjection();
 }
 
 vec2 = function(x,y){ this.x = x; this.y = y; }
@@ -250,6 +252,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 neg = function(v){ return new vec2(-v.x, -v.y); }
 mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
 
 dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2) + Math.pow(y2-y1,2)); }
 
@@ -411,6 +414,28 @@ orbiter = function(radius, speed, sz, color){
 
 		simGfx.restore();
 	}
+}
+
+drawProjection = function(){
+	simGfx.save();
+	simGfx.translate(centerX, centerY);
+
+	fromPos = new vec2(Math.cos((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad, Math.sin((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad);
+	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
+
+	fromTo = add(toPos,neg(fromPos));
+	fromTo = unit(fromTo);
+	fromTo = mult(fromTo, 215);
+
+	simGfx.strokeStyle='FFFFFF';
+	simGfx.fillStyle='FFFFFF';
+	simGfx.lineWidth=2;
+	simGfx.beginPath();
+	simGfx.arc(fromTo.x,fromTo.y,15,0,Math.PI*2);
+	simGfx.fill();
+	simGfx.stroke();
+
+	simGfx.restore();
 }
 
 drawLine = function(){
