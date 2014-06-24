@@ -7,7 +7,7 @@ var buttons = [];
 var orbiters = [];
 
 var showSun = true; var showTrace = false; var useDirectionColoring = false;
-var fromPlanet = 0; var toPlanet = 2; var activeOrbit = 0;
+var fromPlanet = 1; var toPlanet = 2; var activeOrbit = 0;
 
 var play = true;
 
@@ -28,7 +28,7 @@ window.onload = function(){
 	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF')); // earth
 	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000')); // mars
 
-	orbiters[0].from = true; orbiters[2].to = true;
+	orbiters[1].from = true; orbiters[2].to = true;
 
 	// sun
 	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
@@ -421,11 +421,12 @@ drawProjection = function(){
 	simGfx.translate(centerX, centerY);
 
 	fromPos = new vec2(Math.cos((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad, Math.sin((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad);
-	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
+	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*215, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*215);
 
 	fromTo = add(toPos,neg(fromPos));
-	fromTo = unit(fromTo);
-	fromTo = mult(fromTo, 215);
+
+	simGfx.save();
+	simGfx.translate(fromPos.x,fromPos.y);
 
 	simGfx.strokeStyle='FFFFFF';
 	simGfx.fillStyle='FFFFFF';
@@ -435,6 +436,12 @@ drawProjection = function(){
 	simGfx.fill();
 	simGfx.stroke();
 
+	simGfx.beginPath();
+	simGfx.moveTo(0,0);
+	simGfx.lineTo(fromTo.x,fromTo.y);
+	simGfx.stroke();	
+
+	simGfx.restore();
 	simGfx.restore();
 }
 
