@@ -423,56 +423,33 @@ drawProjection = function(){
 	var fromPos = new vec2(Math.cos((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad, Math.sin((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad);
 	var toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
 	
-	//y-y1 = slope*(x-x1)
-	//y-fromPos.y = slope*(x-fromPos.x)
-	//y-fromPos.y = slope*x - slope*fromPos.x
-	//y = slope*x - slope*fromPos.x + fromPos.y
-	//y = slope*x+intercept
-	var slope = (toPos.y-fromPos.y)/(toPos.x-fromPos.x);
-	var intercept = ((-slope*fromPos.x) + fromPos.y);
+	fromTo = add(fromPos, neg(toPos));
+	fromTo = neg(fromTo);
 
-	//x^2 + y^2 = 215^2
-	//x^2 + (slope*x+intercept)^2 = 215^2
-	//x^2 + (slope*x+intercept)(slope*x+intercept) = 215^2
-	//x^2 + slope^2*x^2 + 2*intercept*x + intercept^2 = 215^2
-	//x^2 + slope^2*x^2 + 2*intercept*x + intercept^2 - 215^2 = 0
-	//(slope^2 + 1)*x^2 + (2*intercept)*x + intercept^2 - 215^2 = 0
-
-	//a = (slope^2 + 1) b = (2*intercept) c = (intercept^2 - 215^2)
-	//x = -b +/- sqrt(b^2 - 4*a*c)/(2*a)
-	//x = -(2*intercept) +/- sqrt((2*intercept)^2 - 4*(slope^2 + 1)*(intercept^2 - 215^2))/(2*(slope^2 + 1))
-	var x1 = -(2*intercept) + Math.sqrt(Math.pow((2*intercept),2) - 4*(Math.pow(slope,2) + 1)*(Math.pow(intercept,2) - 46225))/(2*(Math.pow(slope,2) + 1));
-	var x2 = -(2*intercept) - Math.sqrt(Math.pow((2*intercept),2) - 4*(Math.pow(slope,2) + 1)*(intercept^2 - 46225))/(2*(Math.pow(slope,2) + 1));
-
-	var y1 = slope*x1+intercept;
-	var y2 = slope*x2+intercept;
-
-	console.clear();
-	console.log(x1, y1);
-	console.log(x2, y2);
-
-	if(x1 && y1){
-		simGfx.fillStyle='FF0000';
-		simGfx.strokeStyle='FF0000';
-		simGfx.beginPath();
-		simGfx.arc(toPos.x+x1,toPos.y+y1,3,0,Math.PI*2);
-		simGfx.fill();
-		simGfx.stroke();
+	while(dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y) < 215){
+		fromTo = mult(unit(fromTo),mag(fromTo)+1);
 	}
 
-	if(x2 && y2){
-		simGfx.fillStyle='FF0000';
-		simGfx.strokeStyle='FF0000';
-		simGfx.beginPath();
-		simGfx.arc(toPos.x+x2,toPos.y+y2,3,0,Math.PI*2);
-		simGfx.fill();
-		simGfx.stroke();
-	}
+	simGfx.fillStyle='FFFFFF';
+	simGfx.strokeStyle='FFFFFF';
+	simGfx.beginPath();
+	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,6,0,Math.PI*2);
+	simGfx.fill();
+	simGfx.stroke();
 
 	simGfx.fillStyle='FF0000';
 	simGfx.strokeStyle='FF0000';
 	simGfx.beginPath();
-	simGfx.arc(0,0,215,0,Math.PI*2);
+	simGfx.moveTo(0,0);
+	simGfx.lineTo(fromPos.x,fromPos.y);
+	simGfx.moveTo(0,0);
+	simGfx.lineTo(toPos.x,toPos.y);
+	simGfx.stroke();
+	simGfx.fillStyle='00FF00';
+	simGfx.strokeStyle='00FF00';
+	simGfx.beginPath();
+	simGfx.moveTo(fromPos.x,fromPos.y);
+	simGfx.lineTo(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
 	simGfx.stroke();
 
 	simGfx.restore();
