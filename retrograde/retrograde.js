@@ -421,9 +421,12 @@ drawProjection = function(){
 	simGfx.translate(centerX, centerY);
 
 	fromPos = new vec2(Math.cos((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad, Math.sin((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad);
-	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*215, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*215);
+	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
 
 	fromTo = add(toPos,neg(fromPos));
+	var oldMag = mag(fromTo);
+	fromTo = unit(fromTo);
+	
 
 	simGfx.save();
 	simGfx.translate(fromPos.x,fromPos.y);
