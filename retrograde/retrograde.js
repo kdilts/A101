@@ -375,8 +375,9 @@ orbiter = function(radius, speed, sz, color){
 	this.sz = sz; this.from = false;
 
 	this.draw = function(){
-		if(play){ this.rot -= (this.spd*speedSlider.val); }
 		if(this.sz === 10 && !showSun){ return; }
+		if(this.sz === 10){ this.rot = orbiters[fromPlanet].rot-180; }
+		if(play){ this.rot -= (this.spd*speedSlider.val); }
 
 		simGfx.fillStyle=this.color;
 		simGfx.strokeStyle=this.color;
