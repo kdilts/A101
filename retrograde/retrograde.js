@@ -4,7 +4,7 @@ var orbitRadius = [54, 74, 114];
 var outerRings = [180, 250];
 var centerX = 255; var centerY = 255;
 var buttons = [];
-var orbiters = [];
+var orbiters = []; var traceDots = [];
 
 var showSun = true; var showTrace = false; var useDirectionColoring = false;
 var fromPlanet = 1; var toPlanet = 2; var activeOrbit = 0;
@@ -242,6 +242,7 @@ clearSim = function(){
 loop = function(){
 	clearSim();
 	drawLine();
+	if(showTrace){ drawTrace(); }
 	for(x in orbiters){ orbiters[x].draw(); }
 	drawProjection();
 }
@@ -496,4 +497,25 @@ setFromPlanet = function(n){
 changeRadius = function(planet, rad){
 	if(planet === 0){ orbiters[0].rad = rad; orbitRadius[0] = rad; }
 	else if(planet === 2){ orbiters[2].rad = rad; orbitRadius[2] = rad; }
+}
+
+traceDot = function(x,y){
+	this.x = x; this.y = y;
+
+	this.color = '00FF00';
+	this.size = 5;
+
+	this.draw = function(){
+		simGfx.fillStyle = this.color;
+		simGfx.strokeStyle = this.color;
+
+		simGfx.beginPath();
+		simGfx.arc(this.x,this.y,this.size,0,Math.PI*2);
+		simGfx.fill();
+		simGfx.stroke();
+	}
+}
+
+drawTrace = function(){
+	for(d in traceDots){ traceDots[d].draw(); }
 }
