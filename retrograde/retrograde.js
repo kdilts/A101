@@ -431,8 +431,18 @@ drawProjection = function(){
 		fromTo = mult(unit(fromTo),mag(fromTo)+.5);
 	}
 
-	simGfx.fillStyle='FFFFFF';
-	simGfx.strokeStyle='FFFFFF';
+	if(toPlanet === 0){
+		simGfx.fillStyle='00FF00';
+		simGfx.strokeStyle='00FF00';
+	}
+	else if(toPlanet === 1){
+		simGfx.fillStyle='0000FF';
+		simGfx.strokeStyle='0000FF';
+	}else{
+		simGfx.fillStyle='FF0000';
+		simGfx.strokeStyle='FF0000';
+	}
+
 	simGfx.beginPath();
 	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8,0,Math.PI*2);
 	simGfx.fill();
