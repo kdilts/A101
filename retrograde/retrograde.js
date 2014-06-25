@@ -425,9 +425,11 @@ drawProjection = function(){
 	var toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
 	
 	var fromTo = add(fromPos, neg(toPos));
+
 	fromTo = neg(fromTo);
 	
-	var oldMag = mag(fromTo);
+	var maxDist = orbitRadius[fromPlanet]+orbitRadius[toPlanet];
+	var curDist = mag(fromTo);
 
 	while(dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y) < 215){
 		fromTo = mult(unit(fromTo),mag(fromTo)+.5);
@@ -446,10 +448,7 @@ drawProjection = function(){
 	}
 
 	simGfx.beginPath();
-	//console.clear(); console.log(8+((70-mag(fromTo))/70*8));
-	console.clear(); console.log(oldMag);
-	if(fromPlanet === 1 && toPlanet === 2){ simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+((240-mag(fromTo))/240*8),0,Math.PI*2); }
-	//if(fromPlanet === 1 && toPlanet === 0){ simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+((120-mag(fromTo))/120*8),0,Math.PI*2); }
+	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+(6-(curDist/maxDist)*6),0,Math.PI*2);
 	simGfx.fill();
 	simGfx.stroke();
 
