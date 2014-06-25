@@ -427,17 +427,17 @@ drawProjection = function(){
 	fromTo = neg(fromTo);
 
 	while(dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y) < 215){
-		fromTo = mult(unit(fromTo),mag(fromTo)+1);
+		fromTo = mult(unit(fromTo),mag(fromTo)+.5);
 	}
 
 	simGfx.fillStyle='FFFFFF';
 	simGfx.strokeStyle='FFFFFF';
 	simGfx.beginPath();
-	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,6,0,Math.PI*2);
+	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8,0,Math.PI*2);
 	simGfx.fill();
 	simGfx.stroke();
 
-	simGfx.fillStyle='FF0000';
+	/*simGfx.fillStyle='FF0000';
 	simGfx.strokeStyle='FF0000';
 	simGfx.beginPath();
 	simGfx.moveTo(0,0);
@@ -450,7 +450,7 @@ drawProjection = function(){
 	simGfx.beginPath();
 	simGfx.moveTo(fromPos.x,fromPos.y);
 	simGfx.lineTo(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
-	simGfx.stroke();
+	simGfx.stroke();*/
 
 	simGfx.restore();
 }
