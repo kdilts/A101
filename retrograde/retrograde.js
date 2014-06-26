@@ -4,7 +4,7 @@ var orbitRadius = [54, 74, 114];
 var outerRings = [180, 250];
 var centerX = 255; var centerY = 255;
 var buttons = [];
-var orbiters = []; var traceDots = [];
+var orbiters = []; var traceDots = []; var lastDot = 0; var frameSkip = 0;
 
 var showSun = true; var showTrace = false; var useDirectionColoring = false;
 var fromPlanet = 1; var toPlanet = 2; var activeOrbit = 0;
@@ -453,6 +453,15 @@ drawProjection = function(){
 	simGfx.fill();
 	simGfx.stroke();
 
+	if(showTrace && frameSkip === 5){
+		traceDots[lastDot] = (new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y));
+		lastDot++;
+		frameSkip++;
+		if(lastDot === 50){ lastDot = 0; }
+	}else{ frameSkip++; }
+
+	if(frameSkip > 5){ frameSkip = 0; }
+
 	/*simGfx.fillStyle='FF0000';
 	simGfx.strokeStyle='FF0000';
 	simGfx.beginPath();
@@ -503,7 +512,7 @@ traceDot = function(x,y){
 	this.x = x; this.y = y;
 
 	this.color = '00FF00';
-	this.size = 5;
+	this.size = 1;
 
 	this.draw = function(){
 		simGfx.fillStyle = this.color;
@@ -517,5 +526,8 @@ traceDot = function(x,y){
 }
 
 drawTrace = function(){
+	simGfx.save();
+	simGfx.translate(centerX, centerY);
 	for(d in traceDots){ traceDots[d].draw(); }
+	simGfx.restore();
 }
