@@ -100,7 +100,7 @@ window.onload = function(){
 	}));
 
 	// options
-	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace;})); // show trace - 10
+	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace; traceDots = []; })); // show trace - 10
 	buttons.push(new checkBox(215,313,true,function(){showSun = !showSun;})); // show sun - 11
 	buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
 
@@ -453,12 +453,12 @@ drawProjection = function(){
 	simGfx.fill();
 	simGfx.stroke();
 
-	if(showTrace && frameSkip === 5){
-		traceDots[lastDot] = (new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y));
+	if(play && showTrace && frameSkip === 5){
+		traceDots[lastDot] = new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
 		lastDot++;
 		frameSkip++;
 		if(lastDot === 50){ lastDot = 0; }
-	}else{ frameSkip++; }
+	}else if(play){ frameSkip++; }
 
 	if(frameSkip > 5){ frameSkip = 0; }
 
@@ -511,8 +511,18 @@ changeRadius = function(planet, rad){
 traceDot = function(x,y){
 	this.x = x; this.y = y;
 
-	this.color = '00FF00';
+	this.r = 0;
+	this.g = 255;
 	this.size = 1;
+
+	if(traceDots[lastDot-1] !== undefined){
+		var d = dist(this.x,this.y,traceDots[lastDot-1].x,traceDots[lastDot-1].y);
+		this.size += 2 + 5/d;
+		console.clear();
+		console.log(2+5/d);
+	}
+
+	this.color = 'rgb('+this.r+','+this.g+',0)';
 
 	this.draw = function(){
 		simGfx.fillStyle = this.color;
