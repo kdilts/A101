@@ -107,6 +107,8 @@ render = function(){
 	
 	// calculate exp based on decimal position
 	temp = decX - 55; // decX is 55 - 255, shift to 0 - 200
+	console.clear();
+	console.log(decX);
 	if(temp > 182){ exp = 0; }
 	else if(temp < 182 && temp > 162){ exp = 1; }
 	else if(temp < 162 && temp > 142){ exp = 2; }
