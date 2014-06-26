@@ -69,12 +69,12 @@ mouseDown = function(e){
 
 		mX -= canvasRect.left; mY -= canvasRect.top;
 
-		console.log(mX + ' ' + mY);
+		//console.log(mX + ' ' + mY);
 
 		lmbDown = true;
 
-		if(mX >= decX - 3 && mX <= decX + 3){
-			if(mY >= 107 && mY <= 113){
+		if(mX >= decX - 6 && mX <= decX + 6){
+			if(mY >= 104 && mY <= 116){
 				dragging = true;
 			}
 		}
@@ -106,7 +106,7 @@ render = function(){
 	ctx = document.getElementById('myCanvas').getContext('2d');
 	
 	// calculate exp based on decimal position
-	temp = decX - 15; // decX is 15 - 215, shift to 0 - 200
+	temp = decX - 55; // decX is 55 - 255, shift to 0 - 200
 	if(temp > 182){ exp = 0; }
 	else if(temp < 182 && temp > 162){ exp = 1; }
 	else if(temp < 162 && temp > 142){ exp = 2; }
