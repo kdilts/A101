@@ -515,14 +515,20 @@ traceDot = function(x,y){
 	this.g = 255;
 	this.size = 1;
 
+	var rollOver = false;
+	if(lastDot-1 === -1){ lastDot = 50; rollOver = true; }
 	if(traceDots[lastDot-1] !== undefined){
 		var d = dist(this.x,this.y,traceDots[lastDot-1].x,traceDots[lastDot-1].y);
-		this.size += 2 + 5/d;
-		console.clear();
-		console.log(2+5/d);
+		this.size += 2 + 2/d;
+		this.r += (2/d)*100;
+		this.g -= (2/d)*200;
+		console.clear(); console.log(this.r, this.g);
+		if(this.r > 255){ this.r = 255; }
+		if(this.g < 0){this.g = 0;}
 	}
+	if(rollOver){ lastDot = 0; }
 
-	this.color = 'rgb('+this.r+','+this.g+',0)';
+	this.color = 'rgb('+Math.floor(this.r)+','+Math.floor(this.g)+',0)';
 
 	this.draw = function(){
 		simGfx.fillStyle = this.color;
