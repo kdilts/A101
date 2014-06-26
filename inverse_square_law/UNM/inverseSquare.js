@@ -2,7 +2,7 @@ var canvas; var gfx;
 var mx; var my; var mouseDown = false;
 var buttons = [];
 var xLines = 6; var yLines = 6;
-var cam;
+var cam = {};
 var data = [];
 
 window.onload = function(){
@@ -26,6 +26,8 @@ window.onload = function(){
 
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
+	if(!mx || !my){ mx = e.clientX; my = e.clientY; }
+
 	cam.pos.x = mx; cam.pos.y = my;
 	if(cam.pos.x > 279){ cam.pos.x = 279; }
 	if(cam.pos.y > 279){ cam.pos.y = 279; }
@@ -56,23 +58,23 @@ window.onmousedown = function(e){
 window.onmouseup = function(e){	mouseDown = false; }
 
 clearGrid = function(){
-	gfx.fillStyle='FFFFFF';
+	gfx.fillStyle='rgb(255,255,255)';
 	gfx.fillRect(300,0,300,300);
 }
 
 clearSim = function(){
-	gfx.fillStyle='000000';
+	gfx.fillStyle='rgb(0,0,0)';
 	gfx.fillRect(0,0,300,300);
 }
 
 clear = function(){
-	gfx.fillStyle = '000000';
+	gfx.fillStyle = 'rgb(0,0,0)';
 	gfx.fillRect(0,0,300,300);
-	gfx.fillStyle = 'FFFFFF';
+	gfx.fillStyle = 'rgb(255,255,255)';
 	gfx.fillRect(300,0,300,300);
 	gfx.fillStyle = 'rgb(200,200,200)';
 	gfx.fillRect(0,300,600,50);
-	gfx.fillStyle = '000000';
+	gfx.fillStyle = 'rgb(0,0,0)';
 	gfx.font='24px Verdana';
 	gfx.fillText('Luminosity:',8,335);
 }
@@ -82,7 +84,7 @@ drawButtons = function(){ for(var b in buttons){ buttons[b].draw(); } }
 drawGrid = function(){
 	clearGrid();
 
-	gfx.fillStyle='000000';
+	gfx.fillStyle='rgb(0,0,0)';
 	gfx.font='14px Verdana';
 	gfx.fillText('Distance', 415, 296);
 
@@ -92,7 +94,7 @@ drawGrid = function(){
 	gfx.fillText('Intensity', 0, 0);
 	gfx.restore();
 
-	gfx.strokeStyle='000000';
+	gfx.strokeStyle='rgb(0,0,0)';
 	gfx.lineWidth=2;
 	gfx.save();
 	gfx.translate(360,0);
@@ -155,8 +157,8 @@ drawGrid = function(){
 		gfx.restore();
 	}
 
-	gfx.fillStyle='0000FF';
-	gfx.strokeStyle='0000FF';
+	gfx.fillStyle='rgb(0,0,255)';
+	gfx.strokeStyle='rgb(0,0,255)';
 	gfx.save();
 	gfx.translate(360+cam.getDist()/150*240,240-(cam.getIntensity()/(30*Math.pow(10,activeButton)))*240);
 	gfx.beginPath();
@@ -165,8 +167,8 @@ drawGrid = function(){
 	gfx.stroke();	
 	gfx.restore();
 
-	gfx.fillStyle='FF0000';
-	gfx.strokeStyle='FF0000';
+	gfx.fillStyle='rgb(255,0,0)';
+	gfx.strokeStyle='rgb(255,0,0)';
 	gfx.save();
 	gfx.translate(360,240);
 	for(var d in data){
@@ -182,7 +184,7 @@ drawGrid = function(){
 }
 
 drawStats = function(){
-	gfx.fillStyle='FFFFFF';
+	gfx.fillStyle='rgb(255,255,255)';
 	gfx.font='14px Verdana';
 	gfx.fillText('Distance: ' + truncate(''+cam.getDist()), 5, 296);
 	gfx.fillText('Intensity: ' + truncate(''+cam.getIntensity()), 155, 296);
@@ -197,16 +199,16 @@ drawLight = function(){
 	if(parseInt(star) === 0){
 		var grd = gfx.createRadialGradient(150,150,5,150,150,25);
 		grd.addColorStop(0,'rgb(100,100,100)');
-		grd.addColorStop(1,'000000');
+		grd.addColorStop(1,'rgb(0,0,0)');
 		gfx.fillStyle = grd;
-		gfx.strokeStyle = '000000';
+		gfx.strokeStyle = 'rgb(0,0,0)';
 		gfx.beginPath();
 		gfx.arc(150,150,25,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
 
-		gfx.strokeStyle='FFFFFF';
-		gfx.fillStyle='FFFFFF';
+		gfx.strokeStyle='rgb(255,255,255)';
+		gfx.fillStyle='rgb(255,255,255)';
 		gfx.beginPath();
 		gfx.arc(150,150,5,0,Math.PI*2);
 		gfx.fill();
@@ -214,16 +216,16 @@ drawLight = function(){
 	} else if(parseInt(star) === 1){
 		var grd = gfx.createRadialGradient(150,150,20,150,150,100);
 		grd.addColorStop(0,'rgb(100,100,100)');
-		grd.addColorStop(1,'000000');
+		grd.addColorStop(1,'rgb(0,0,0)');
 		gfx.fillStyle = grd;
-		gfx.strokeStyle = '000000';
+		gfx.strokeStyle = 'rgb(0,0,0)';
 		gfx.beginPath();
 		gfx.arc(150,150,100,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
 
-		gfx.strokeStyle='FFFFFF';
-		gfx.fillStyle='FFFFFF';
+		gfx.strokeStyle='rgb(255,255,255)';
+		gfx.fillStyle='rgb(255,255,255)';
 		gfx.beginPath();
 		gfx.arc(150,150,20,0,Math.PI*2);
 		gfx.fill();
@@ -231,16 +233,16 @@ drawLight = function(){
 	} else {
 		var grd = gfx.createRadialGradient(150,150,40,150,150,150);
 		grd.addColorStop(0,'rgb(100,100,100)');
-		grd.addColorStop(1,'000000');
+		grd.addColorStop(1,'rgb(0,0,0)');
 		gfx.fillStyle = grd;
-		gfx.strokeStyle = '000000';
+		gfx.strokeStyle = 'rgb(0,0,0)';
 		gfx.beginPath();
 		gfx.arc(150,150,147,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
 
-		gfx.strokeStyle='FFFFFF';
-		gfx.fillStyle='FFFFFF';
+		gfx.strokeStyle='rgb(255,255,255)';
+		gfx.fillStyle='rgb(255,255,255)';
 		gfx.beginPath();
 		gfx.arc(150,150,45,0,Math.PI*2);
 		gfx.fill();
@@ -256,11 +258,11 @@ button = function(x,y,sx,sy,text,offX,offY,active){
 	this.active = active;
 
 	this.draw = function(){
-		gfx.fillStyle = '000000';
+		gfx.fillStyle = 'rgb(0,0,0)';
 		gfx.fillRect(this.x,this.y,this.sx,this.sy);
-		if(this.active){ gfx.fillStyle = 'FFFF00'; }else{ gfx.fillStyle = 'rgb(200,200,200)'; }
+		if(this.active){ gfx.fillStyle = 'rgb(255,255,0)'; }else{ gfx.fillStyle = 'rgb(200,200,200)'; }
 		gfx.fillRect(this.x+2,this.y+2,this.sx-4,this.sy-4);
-		gfx.fillStyle = '000000';
+		gfx.fillStyle = 'rgb(0,0,0)';
 		gfx.font='24px Verdana';
 		gfx.fillText(this.text, this.x+this.offX, this.y+this.offY);
 	}
