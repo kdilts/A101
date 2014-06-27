@@ -438,16 +438,22 @@ drawProjection = function(){
 		fromTo = mult(unit(fromTo),mag(fromTo)+.5);
 	}
 
-	if(toPlanet === 0){
-		simGfx.fillStyle='00FF00';
-		simGfx.strokeStyle='00FF00';
-	}
-	else if(toPlanet === 1){
-		simGfx.fillStyle='0000FF';
-		simGfx.strokeStyle='0000FF';
+	if(!useDirectionColoring){
+		if(toPlanet === 0){
+			simGfx.fillStyle='00FF00';
+			simGfx.strokeStyle='00FF00';
+		}
+		else if(toPlanet === 1){
+			simGfx.fillStyle='0000FF';
+			simGfx.strokeStyle='0000FF';
+		}else{
+			simGfx.fillStyle='FF0000';
+			simGfx.strokeStyle='FF0000';
+		}
 	}else{
-		simGfx.fillStyle='FF0000';
-		simGfx.strokeStyle='FF0000';
+		simGfx.fillStyle='00FF00'; simGfx.strokeStyle='00FF00';
+		if(projTheta - oldProjTheta < .2){ simGfx.fillStyle='FFFF00'; simGfx.strokeStyle='FFFF00'; }
+		if(projTheta - oldProjTheta < .0){ simGfx.fillStyle='FF0000'; simGfx.strokeStyle='FF0000'; }
 	}
 
 	simGfx.beginPath();
