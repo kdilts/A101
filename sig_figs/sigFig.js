@@ -1,5 +1,3 @@
-// TODO compatibility testing
-
 var roundCtx;
 var minCtx;
 var secCtx;
