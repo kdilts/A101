@@ -474,9 +474,7 @@ drawProjection = function(){
 	projTheta = projTheta*180/Math.PI;
 	if(projPos.x > 0){ projTheta = 360 - projTheta; }
 
-	console.clear();
-	console.log(projTheta - oldProjTheta);
-
+	//console.clear(); console.log(projTheta - oldProjTheta);
 }
 
 drawLine = function(){
@@ -517,13 +515,10 @@ traceDot = function(x,y){
 	var rollOver = false;
 	if(lastDot-1 === -1){ lastDot = 50; rollOver = true; }
 	if(traceDots[lastDot-1] !== undefined){
-		var d = dist(this.x,this.y,traceDots[lastDot-1].x,traceDots[lastDot-1].y);
-		this.size += 2 + 2/d;
-		this.r += (2/d)*100;
-		this.g -= (2/d)*200;
-		console.clear(); console.log(this.r, this.g);
-		if(this.r > 255){ this.r = 255; }
-		if(this.g < 0){this.g = 0;}
+		this.size += 2;
+		if(projTheta - oldProjTheta < .2){ this.r += 255; this.size += 2; }
+		if(projTheta - oldProjTheta < .0){ this.g -= 255; this.size += 2; }
+		//console.clear(); console.log(this.r, this.g);
 	}
 	if(rollOver){ lastDot = 0; }
 
