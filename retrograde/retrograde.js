@@ -36,7 +36,7 @@ window.onload = function(){
 	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
 
 	// orbit radius slider
-	orbitSlider = new slider(20,73,80,0,100,'orbit',function(){});
+	orbitSlider = new slider(20,73,orbitRadius[activeOrbit],25,100,'orbit',function(){});
 	buttons.push(orbitSlider);
 
 	// speed slider
@@ -49,6 +49,7 @@ window.onload = function(){
 		activeOrbit = 0;
 		orbitSlider.lowVal = 25;
 		orbitSlider.highVal = 100;
+		orbitSlider.val = orbitRadius[activeOrbit];
 	}));
 	
 	buttons.push(new button(220,35,false,function(){ // mars orbit
@@ -56,6 +57,7 @@ window.onload = function(){
 		activeOrbit = 2;
 		orbitSlider.lowVal = 80;
 		orbitSlider.highVal = 200;
+		orbitSlider.val = orbitRadius[activeOrbit];
 	}));
 
 	// view
@@ -357,14 +359,20 @@ slider = function(x,y,startVal,lowVal,highVal,id,action){
 
 		menuGfx.fillStyle='0000FF';
 		menuGfx.save();
-		menuGfx.translate(this.x + 10 + (this.val/this.highVal*240), this.y+12);
+		var oldRange = this.highVal - this.lowVal;
+		var newRange = 240;
+		var newVal = (((this.val - this.lowVal)*newRange)/oldRange);
+		menuGfx.translate(this.x + 10 + newVal, this.y+12);
 		menuGfx.rotate(45*Math.PI/180);
 		menuGfx.fillRect(-8,-8,13,13);
 		menuGfx.restore();
 	}
 
 	this.clicked = function(){
-		if(mag(add(new vec2(mx-510,my),neg(new vec2(this.x + 10 + (this.val/this.highVal*240),this.y)))) < 15){
+		var oldRange = this.highVal - this.lowVal;
+		var newRange = 240;
+		var newVal = (((this.val - this.lowVal)*newRange)/oldRange);
+		if(mag(add(new vec2(mx-510,my),neg(new vec2(this.x + 10 + newVal,this.y)))) < 15){
 			dragging = this.id;
 			this.action();
 			clearMenu();
