@@ -16,6 +16,8 @@ var speedSlider;
 
 var starSpots = [];
 
+var projTheta; var oldProjTheta;
+
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
 	simGfx = simCanvas.getContext('2d');
@@ -453,31 +455,28 @@ drawProjection = function(){
 	simGfx.fill();
 	simGfx.stroke();
 
-	if(play && showTrace && frameSkip === 5){
+	if(play && showTrace && frameSkip === 2){
 		traceDots[lastDot] = new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
 		lastDot++;
 		frameSkip++;
 		if(lastDot === 50){ lastDot = 0; }
 	}else if(play){ frameSkip++; }
 
-	if(frameSkip > 5){ frameSkip = 0; }
+	if(frameSkip > 2){ frameSkip = 0; }
 
-	/*simGfx.fillStyle='FF0000';
-	simGfx.strokeStyle='FF0000';
-	simGfx.beginPath();
-	simGfx.moveTo(0,0);
-	simGfx.lineTo(fromPos.x,fromPos.y);
-	simGfx.moveTo(0,0);
-	simGfx.lineTo(toPos.x,toPos.y);
-	simGfx.stroke();
-	simGfx.fillStyle='00FF00';
-	simGfx.strokeStyle='00FF00';
-	simGfx.beginPath();
-	simGfx.moveTo(fromPos.x,fromPos.y);
-	simGfx.lineTo(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
-	simGfx.stroke();*/
+	var projPos = new vec2(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
 
 	simGfx.restore();
+
+	if(projTheta){ oldProjTheta = projTheta; }
+
+	projTheta = Math.acos(dot(projPos,new vec2(0,-30))/(mag(projPos)*mag(new vec2(0,-30))));
+	projTheta = projTheta*180/Math.PI;
+	if(projPos.x > 0){ projTheta = 360 - projTheta; }
+
+	console.clear();
+	console.log(projTheta - oldProjTheta);
+
 }
 
 drawLine = function(){
