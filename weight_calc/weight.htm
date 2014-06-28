@@ -1,80 +1,1 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<!-- saved from url=(0042)http://tesla.phys.unm.edu/a111/weight.html -->
-<HTML><HEAD><TITLE>Weight Calculator</TITLE>
-<META http-equiv=Content-Type content="text/html; charset=windows-1252">
-<SCRIPT language=JavaScript>
-<!-- Original:  Michael Hundt (mchundt@nglic.com) -->
-<!-- Web Site:  http://www.cinet.net/~mhundt/mystuff.htm -->
-<!-- Modified by:  Neb Duric, UNM (JavaScript Source) -->
-
-
-<!-- Begin
-function doArea(num) {
-switch(num) {
-case 0 : return (""); break;
-case 1 : var weight = prompt("Please enter your weight:", "");
-         var mass = prompt("Please enter the mass of the planet in Earth masses:", "");
-         var radius = prompt("Please enter the radius of the planet in Earth radii:", "");
-         newweight= weight * mass / radius / radius;
-         return (newweight); break;
-   }
-}
-//  End -->
-</SCRIPT>
-
-<META content="MSHTML 6.00.2716.2200" name=GENERATOR></HEAD>
-<BODY text=yellow bgColor=navy>
-<CENTER>
-<FORM name=weight>Calculate your weight on another planet
-<P><FONT color=navy><SELECT 
-onchange="this.form.area.value = doArea(this.selectedIndex);" size=1 
-  name=weight> <OPTION selected>Start<OPTION value=weight>Enter your Earth 
-  weight</OPTION></SELECT> = <INPUT size=10 name=area> </FORM>
-<P></FONT>The following table can be used as a guide for entering values for 
-specific planets. 
-<CENTER>
-<TABLE borderColor=#ff0000 borderColorDark=#ff0000 width="59%" 
-borderColorLight=#ff0000 border=1>
-  <CAPTION>
-  <TBODY><BR></TBODY></CENTER></CAPTION>
-  <TBODY>
-  <TR>
-    <TD width="18%"><B>Object</B></TD>
-    <TD width="47%"><B>Mass (in Earth masses) </B></TD>
-    <TD width="35%"><B>Radius (in Earth radii)</B></TD></TR>
-  <TR>
-    <TD width="18%">Mercury</TD>
-    <TD width="47%">0.06</TD>
-    <TD width="35%">0.38</TD></TR>
-  <TR>
-    <TD width="18%">Venus</TD>
-    <TD width="47%">0.81</TD>
-    <TD width="35%">0.95</TD></TR>
-  <TR>
-    <TD width="18%">Earth</TD>
-    <TD width="47%">1.0</TD>
-    <TD width="35%">1.0</TD></TR>
-  <TR>
-    <TD width="18%">Mars</TD>
-    <TD width="47%">0.11</TD>
-    <TD width="35%">0.56</TD></TR>
-  <TR>
-    <TD width="18%">Jupiter</TD>
-    <TD width="47%">317.73</TD>
-    <TD width="35%">11.19</TD>
-  <TR>
-    <TD width="18%">Saturn</TD>
-    <TD width="47%">95.15</TD>
-    <TD width="35%">9.44</TD></TR>
-  <TR>
-    <TD width="18%">Uranus</TD>
-    <TD width="47%">14.53</TD>
-    <TD width="35%">4.03</TD>
-  <TR>
-    <TD width="18%">Neptune</TD>
-    <TD width="47%">17.12</TD>
-    <TD width="35%">3.81</TD></TR>
-  <TR>
-    <TD width="18%">Pluto</TD>
-    <TD width="47%">0.0026</TD>
-    <TD width="35%">0.17</TD></TR></TBODY></TABLE></CENTER></BODY></HTML>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN"><!-- saved from url=(0042)http://tesla.phys.unm.edu/a111/weight.html --><HTML><HEAD><TITLE>Weight Calculator</TITLE><META http-equiv=Content-Type content="text/html; charset=windows-1252"><SCRIPT language=JavaScript><!-- Original:  Michael Hundt (mchundt@nglic.com) --><!-- Web Site:  http://www.cinet.net/~mhundt/mystuff.htm --><!-- Modified by:  Neb Duric, UNM (JavaScript Source) --><!-- Further Modified by: Kevin Dilts, UNM (Javascript Edits) --><!-- Begin -->var gfx;window.onload = function(){  gfx = document.getElementbyId('myCanvas');  //gfx.fillStyle='rgb(0,0,0)';  //gfx.fillRect(0,0,600,100);}<!-- End --></SCRIPT><META content="MSHTML 6.00.2716.2200" name=GENERATOR></HEAD><BODY text=yellow bgColor=navy><CENTER><br><canvas id="myCanvas" width="600px" height="100px" style="border:1px solid"></canvas><br><br>The following table can be used as a guide for entering values for specific planets. <CENTER><TABLE borderColor=#ff0000 borderColorDark=#ff0000 width="59%" borderColorLight=#ff0000 border=1>  <CAPTION>  <TBODY><BR></TBODY></CENTER></CAPTION>  <TBODY>  <TR>    <TD width="18%"><B>Object</B></TD>    <TD width="47%"><B>Mass (in Earth masses) </B></TD>    <TD width="35%"><B>Radius (in Earth radii)</B></TD></TR>  <TR>    <TD width="18%">Mercury</TD>    <TD width="47%">0.06</TD>    <TD width="35%">0.38</TD></TR>  <TR>    <TD width="18%">Venus</TD>    <TD width="47%">0.81</TD>    <TD width="35%">0.95</TD></TR>  <TR>    <TD width="18%">Earth</TD>    <TD width="47%">1.0</TD>    <TD width="35%">1.0</TD></TR>  <TR>    <TD width="18%">Mars</TD>    <TD width="47%">0.11</TD>    <TD width="35%">0.56</TD></TR>  <TR>    <TD width="18%">Jupiter</TD>    <TD width="47%">317.73</TD>    <TD width="35%">11.19</TD>  <TR>    <TD width="18%">Saturn</TD>    <TD width="47%">95.15</TD>    <TD width="35%">9.44</TD></TR>  <TR>    <TD width="18%">Uranus</TD>    <TD width="47%">14.53</TD>    <TD width="35%">4.03</TD>  <TR>    <TD width="18%">Neptune</TD>    <TD width="47%">17.12</TD>    <TD width="35%">3.81</TD></TR>  <TR>    <TD width="18%">Pluto</TD>    <TD width="47%">0.0026</TD>    <TD width="35%">0.17</TD></TR></TBODY></TABLE></CENTER></BODY></HTML>
