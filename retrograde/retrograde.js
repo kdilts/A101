@@ -26,14 +26,14 @@ window.onload = function(){
 	menuGfx = menuCanvas.getContext('2d');
 
 	// planets
-	orbiters.push(new orbiter(orbitRadius[0], .75, 7, '00FF00')); // venus
-	orbiters.push(new orbiter(orbitRadius[1], 1, 7, '0000FF')); // earth
-	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'FF0000')); // mars
+	orbiters.push(new orbiter(orbitRadius[0], .75, 7, 'rgb(0,255,0)')); // venus
+	orbiters.push(new orbiter(orbitRadius[1], 1, 7, 'rgb(0,0,255)')); // earth
+	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'rgb(255,0,0)')); // mars
 
 	orbiters[1].from = true; orbiters[2].to = true;
 
 	// sun
-	orbiters.push(new orbiter(215, 1, 10, 'FFFF00'));
+	orbiters.push(new orbiter(215, 1, 10, 'rgb(255,255,0)'));
 
 	// orbit radius slider
 	orbitSlider = new slider(20,73,orbitRadius[activeOrbit],25,100,'orbit',function(){});
@@ -145,6 +145,8 @@ window.onload = function(){
 
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
+	if(!mx || !my){ mx = e.clientX; my = e.clientY; }
+
 	if(dragging === 'speed'){
 		speedSlider.val = (mx-510)/260*speedSlider.highVal;
 		if(speedSlider.val < speedSlider.lowVal){ speedSlider.val = speedSlider.lowVal; }
@@ -169,7 +171,7 @@ clearMenu = function(){
 	menuGfx.fillStyle='000000';
 	menuGfx.fillRect(0,0,300,510);
 
-	menuGfx.fillStyle='00FF00';
+	menuGfx.fillStyle='rgb(0,255,0)';
 	menuGfx.font='18px Verdana';
 	menuGfx.fillText('Orbit Modifications', 80, 20);
 	menuGfx.fillText('Options', 120, 300);
@@ -180,7 +182,7 @@ clearMenu = function(){
 	menuGfx.fillText('Look From:', 10, viewCtrl+20);
 	menuGfx.fillText('Look At:', 200, viewCtrl+20);
 
-	menuGfx.fillStyle='FFFFFF';
+	menuGfx.fillStyle='rgb(255,255,255)';
 	menuGfx.font='14px Verdana';
 	menuGfx.fillText('Venus Orbit', 10, 40);
 	menuGfx.fillText('Mars Orbit', 130, 40);
@@ -193,11 +195,11 @@ clearMenu = function(){
 
 	var planets = 190;
 	menuGfx.font='18px Verdana';
-	menuGfx.fillStyle='FF0000';
+	menuGfx.fillStyle='rgb(255,0,0)';
 	menuGfx.fillText('Mars', 140, planets);
-	menuGfx.fillStyle='0000FF';
+	menuGfx.fillStyle='rgb(0,0,255)';
 	menuGfx.fillText('Earth', 137, planets+30);
-	menuGfx.fillStyle='00FF00';
+	menuGfx.fillStyle='rgb(0,255,0)';
 	menuGfx.fillText('Venus', 135, planets+60);
 
 	for(var b in buttons){ buttons[b].draw(); }
@@ -207,16 +209,16 @@ clearSim = function(){
 	simGfx.fillStyle='000000';
 	simGfx.fillRect(0,0,600,600);
 
-	simGfx.fillStyle='FFFF00';
-	simGfx.strokeStyle='FFFF00';
+	simGfx.fillStyle='rgb(255,255,0)';
+	simGfx.strokeStyle='rgb(255,255,0)';
 	simGfx.lineWidth=2;
 	simGfx.beginPath();
 	simGfx.arc(centerX,centerY,12,0,Math.PI*2);
 	simGfx.fill();
 	simGfx.stroke();
 
-	simGfx.fillStyle='FFFFFF';
-	simGfx.strokeStyle='FFFFFF';
+	simGfx.fillStyle='rgb(255,255,255)';
+	simGfx.strokeStyle='rgb(255,255,255)';
 	simGfx.lineWidth=.5;
 	for(var i in starSpots){
 		simGfx.beginPath();
@@ -276,8 +278,8 @@ button = function(x,y,active,action){
 		menuGfx.stroke();
 
 		if(this.active){
-			menuGfx.fillStyle = '0000FF';
-			menuGfx.strokeStyle = '0000FF';
+			menuGfx.fillStyle = 'rgb(0,0,255)';
+			menuGfx.strokeStyle = 'rgb(0,0,255)';
 
 			menuGfx.beginPath();
 			menuGfx.arc(this.x, this.y, 2, 0, Math.PI*2);
@@ -304,8 +306,8 @@ checkBox = function(x,y,active,action){
 		menuGfx.strokeRect(this.x-5, this.y-5, 15, 15);
 
 		if(this.active){
-			menuGfx.fillStyle = '0000FF';
-			menuGfx.strokeStyle = '0000FF';
+			menuGfx.fillStyle = 'rgb(0,0,255)';
+			menuGfx.strokeStyle = 'rgb(0,0,255)';
 			menuGfx.fillRect(this.x-2,this.y-2,9,9);
 		}
 	}
@@ -340,8 +342,8 @@ textButton = function(x,y,text,action){
 		menuGfx.fillRect(this.x,this.y,260,25);
 		menuGfx.strokeRect(this.x,this.y,260,25);
 		menuGfx.font='20px Verdana';
-		menuGfx.fillStyle='FFFFFF';
-		menuGfx.strokeStyle='FFFFFF';
+		menuGfx.fillStyle='rgb(255,255,255)';
+		menuGfx.strokeStyle='rgb(255,255,255)';
 		menuGfx.fillText(this.text, this.x+100, this.y+19);
 	}
 }
@@ -357,7 +359,7 @@ slider = function(x,y,startVal,lowVal,highVal,id,action){
 		menuGfx.fillStyle='000000';
 		menuGfx.fillRect(this.x+2,this.y+9,256,2);
 
-		menuGfx.fillStyle='0000FF';
+		menuGfx.fillStyle='rgb(0,0,255)';
 		menuGfx.save();
 		var oldRange = this.highVal - this.lowVal;
 		var newRange = 240;
@@ -403,8 +405,8 @@ orbiter = function(radius, speed, sz, color){
 		simGfx.stroke();
 
 		if(this.from){
-			simGfx.fillStyle='FFFFFF';
-			simGfx.strokeStyle='FFFFFF';
+			simGfx.fillStyle='rgb(255,255,255)';
+			simGfx.strokeStyle='rgb(255,255,255)';
 			simGfx.beginPath();
 			simGfx.arc(0,0,this.sz+5,0,Math.PI*2);
 			simGfx.stroke();
@@ -448,20 +450,20 @@ drawProjection = function(){
 
 	if(!useDirectionColoring){
 		if(toPlanet === 0){
-			simGfx.fillStyle='00FF00';
-			simGfx.strokeStyle='00FF00';
+			simGfx.fillStyle='rgb(0,255,0)';
+			simGfx.strokeStyle='rgb(0,255,0)';
 		}
 		else if(toPlanet === 1){
-			simGfx.fillStyle='0000FF';
-			simGfx.strokeStyle='0000FF';
+			simGfx.fillStyle='rgb(0,0,255)';
+			simGfx.strokeStyle='rgb(0,0,255)';
 		}else{
-			simGfx.fillStyle='FF0000';
-			simGfx.strokeStyle='FF0000';
+			simGfx.fillStyle='rgb(255,0,0)';
+			simGfx.strokeStyle='rgb(255,0,0)';
 		}
 	}else{
-		simGfx.fillStyle='00FF00'; simGfx.strokeStyle='00FF00';
-		if(projTheta - oldProjTheta < .2){ simGfx.fillStyle='FFFF00'; simGfx.strokeStyle='FFFF00'; }
-		if(projTheta - oldProjTheta < .0){ simGfx.fillStyle='FF0000'; simGfx.strokeStyle='FF0000'; }
+		simGfx.fillStyle='rgb(0,255,0)'; simGfx.strokeStyle='rgb(0,255,0)';
+		if(projTheta - oldProjTheta < .2){ simGfx.fillStyle='rgb(255,255,0)'; simGfx.strokeStyle='rgb(255,255,0)'; }
+		if(projTheta - oldProjTheta < .0){ simGfx.fillStyle='rgb(255,0,0)'; simGfx.strokeStyle='rgb(255,0,0)'; }
 	}
 
 	simGfx.beginPath();
@@ -498,7 +500,7 @@ drawLine = function(){
 	fromPos = new vec2(Math.cos((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad, Math.sin((orbiters[fromPlanet].rot-90)*Math.PI/180)*orbiters[fromPlanet].rad);
 	toPos = new vec2(Math.cos((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad, Math.sin((orbiters[toPlanet].rot-90)*Math.PI/180)*orbiters[toPlanet].rad);
 
-	simGfx.strokeStyle='FFFFFF';
+	simGfx.strokeStyle='rgb(255,255,255)';
 	simGfx.lineWidth=2;
 	simGfx.beginPath();
 	simGfx.moveTo(fromPos.x, fromPos.y);
