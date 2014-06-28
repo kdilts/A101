@@ -168,7 +168,7 @@ window.onmousedown = function(e){ for(var b in buttons){ buttons[b].clicked(); m
 window.onmouseup = function(e){ mouseDown = false; dragging = false; }
 
 clearMenu = function(){
-	menuGfx.fillStyle='000000';
+	menuGfx.fillStyle='rgb(0,0,0)';
 	menuGfx.fillRect(0,0,300,510);
 
 	menuGfx.fillStyle='rgb(0,255,0)';
@@ -206,7 +206,7 @@ clearMenu = function(){
 }
 
 clearSim = function(){
-	simGfx.fillStyle='000000';
+	simGfx.fillStyle='rgb(0,0,0)';
 	simGfx.fillRect(0,0,600,600);
 
 	simGfx.fillStyle='rgb(255,255,0)';
@@ -337,7 +337,7 @@ textButton = function(x,y,text,action){
 	}
 
 	this.draw = function(){
-		menuGfx.fillStyle='000000';
+		menuGfx.fillStyle='rgb(0,0,0)';
 		menuGfx.strokeStyle='rgb(100,100,100)';
 		menuGfx.fillRect(this.x,this.y,260,25);
 		menuGfx.strokeRect(this.x,this.y,260,25);
@@ -356,7 +356,7 @@ slider = function(x,y,startVal,lowVal,highVal,id,action){
 	this.draw = function(){
 		menuGfx.fillStyle='rgb(100,100,100)';
 		menuGfx.fillRect(this.x,this.y,260,20);
-		menuGfx.fillStyle='000000';
+		menuGfx.fillStyle='rgb(0,0,0)';
 		menuGfx.fillRect(this.x+2,this.y+9,256,2);
 
 		menuGfx.fillStyle='rgb(0,0,255)';
