@@ -6,8 +6,8 @@
 	<body>
 		<script src="js/three.min.js"></script>
 		<script>
-			// credit to: threejs.org. This is their introductory tutorial to 3d in javascript.
-			var planets = []; var cam = 0;
+			// credit to: threejs.org. Some of this is from their introductory tutorial to 3d in javascript.
+			var planets = [];
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -38,21 +38,50 @@
 			scene.add(star);
 			for(var p in planets){ scene.add(planets[p].obj); }
 
-			camera.position.z = 5;
+			camera.position.set(1,2,5);
+			camera.lookAt(new THREE.Vector3(0,0,0));
 
-			window.onmousedown = function(){ switchCam(); }
+			var axisHelper = new THREE.AxisHelper(15);
+			scene.add(axisHelper);
 
-			var switchCam = function(){
-				if(cam === 0){
-					camera.position.z = 3;
-					camera.position.y = -3;
-					camera.rotation.x = .6;
-					cam = 1;
-				}else{
-					camera.position.z = 5;
-					camera.position.y = 0;
-					camera.rotation.x = 0;
-					cam = 0;
+			window.onmousedown = function(){ }
+
+			window.onkeydown = function(e){
+
+				if(e.which === 65){ // a (zoom in)
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 90){ // z (zoom out)
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}				
+
+				if(e.which === 38){ // up
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 40){ // down
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 37){ // left
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 39){ // right
+					
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
 				}
 			}
 
@@ -62,9 +91,9 @@
 					var x = planets[p];
 
 					planets[p].obj.position.x = Math.cos(x.rot*Math.PI/180) * x.rad;
-					planets[p].obj.position.y = Math.sin(x.rot*Math.PI/180) * x.rad;
+					planets[p].obj.position.z = Math.sin(x.rot*Math.PI/180) * x.rad;
 
-					planets[p].rot += x.spd;
+					planets[p].rot -= x.spd;
 				}
 			}
 
