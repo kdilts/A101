@@ -49,13 +49,13 @@
 			window.onkeydown = function(e){
 
 				if(e.which === 65){ // a (zoom in)
-					
+					camera.position.setLength(camera.position.length()-.1);
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
 				}
 
 				if(e.which === 90){ // z (zoom out)
-					
+					camera.position.setLength(camera.position.length()+.1);
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
 				}				
@@ -90,8 +90,8 @@
 
 					var x = planets[p];
 
-					planets[p].obj.position.x = Math.cos(x.rot*Math.PI/180) * x.rad;
-					planets[p].obj.position.z = Math.sin(x.rot*Math.PI/180) * x.rad;
+					planets[p].obj.position.set(Math.cos(x.rot*Math.PI/180) * x.rad, 0,
+						Math.sin(x.rot*Math.PI/180) * x.rad);
 
 					planets[p].rot -= x.spd;
 				}
