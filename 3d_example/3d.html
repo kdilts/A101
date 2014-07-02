@@ -7,8 +7,7 @@
 		<script src="js/three.min.js"></script>
 		<script>
 			// credit to: threejs.org. This is their introductory tutorial to 3d in javascript.
-
-			var planets = [];
+			var planets = []; var cam = 0;
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -17,23 +16,23 @@
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
 
-			var geometry = new THREE.SphereGeometry(.25);
+			var geometry = new THREE.SphereGeometry(.5);
 			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
 			var star = new THREE.Mesh(geometry, material);
 
 			geometry = new THREE.SphereGeometry(.25/3);
 			material = new THREE.MeshBasicMaterial({color: 0xff0000});
-			planets[0] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.1, rad:1 }
+			planets[0] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:1 }
 			planets[0].obj.position.x = 1;
 
 			geometry = new THREE.SphereGeometry(.25/2.5);
 			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-			planets[1] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.1, rad:1.5 }
+			planets[1] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.5, rad:1.5 }
 			planets[1].obj.position.x = 1.5;
 
 			geometry = new THREE.SphereGeometry(.25/2);
 			material = new THREE.MeshBasicMaterial({color: 0x0000ff});
-			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.1, rad:2 }
+			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
 			planets[2].obj.position.x = 2;
 
 			scene.add(star);
@@ -41,15 +40,32 @@
 
 			camera.position.z = 5;
 
-			var vec3 = function(x,y,z){ this.x = x; this.y = y; this.z = z; }
-			var add = function(v1,v2){ return new vec3(v1.x+v2.x, v1.y+v2.y, v1.z+v2.z); }
-			var sub = function(v1,v2){ return new vec3(v1.x-v2.x, v1.y-v2.y, v1.z-v2.z); }
-			var dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y + v1.z*v2.z; }
-			var mag = function(v){ return Math.sqrt(Math.pow(v.x,2)+Math.pow(v.y,2)+Math.pow(v.z,2)); }
-			var unit = function(v){ return new vec3(v.x/mag(v), v.y/mag(v), v.z/mag(v)); }
+			window.onmousedown = function(){ switchCam(); }
+
+			var switchCam = function(){
+				if(cam === 0){
+					camera.position.z = 3;
+					camera.position.y = -3;
+					camera.rotation.x = .6;
+					cam = 1;
+				}else{
+					camera.position.z = 5;
+					camera.position.y = 0;
+					camera.rotation.x = 0;
+					cam = 0;
+				}
+			}
 
 			var updatePos = function(){
+				for(var p in planets){
 
+					var x = planets[p];
+
+					planets[p].obj.position.x = Math.cos(x.rot*Math.PI/180) * x.rad;
+					planets[p].obj.position.y = Math.sin(x.rot*Math.PI/180) * x.rad;
+
+					planets[p].rot += x.spd;
+				}
 			}
 
 			var render = function () {
