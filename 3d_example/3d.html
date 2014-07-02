@@ -16,21 +16,21 @@
 			renderer.setSize(window.innerWidth, window.innerHeight);
 			document.body.appendChild(renderer.domElement);
 
-			var geometry = new THREE.SphereGeometry(.5);
+			var geometry = new THREE.SphereGeometry(.5,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
 			var star = new THREE.Mesh(geometry, material);
 
-			geometry = new THREE.SphereGeometry(.25/3);
+			geometry = new THREE.SphereGeometry(.25/3,20,20);
 			material = new THREE.MeshBasicMaterial({color: 0xff0000});
 			planets[0] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:1 }
 			planets[0].obj.position.x = 1;
 
-			geometry = new THREE.SphereGeometry(.25/2.5);
+			geometry = new THREE.SphereGeometry(.25/2.5,20,20);
 			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 			planets[1] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.5, rad:1.5 }
 			planets[1].obj.position.x = 1.5;
 
-			geometry = new THREE.SphereGeometry(.25/2);
+			geometry = new THREE.SphereGeometry(.25/2,20,20);
 			material = new THREE.MeshBasicMaterial({color: 0x0000ff});
 			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
 			planets[2].obj.position.x = 2;
