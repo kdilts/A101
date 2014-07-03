@@ -4,7 +4,7 @@
 		<script src="js/three.min.js"></script>
 		<script>
 			// credit to: threejs.org. Some of this is from their introductory tutorial to 3d in javascript.
-			var planets = [];
+			var planets = []; var orbitRings = [];
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -31,6 +31,22 @@
 			material = new THREE.MeshBasicMaterial({color: 0x0000ff});
 			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
 			planets[2].obj.position.x = 2;
+
+			geometry = new THREE.TorusGeometry(1,.01,8,20);
+			material = new THREE.MeshBasicMaterial({color: 0xffffff});
+			orbitRings[0] = new THREE.Mesh(geometry, material);
+			orbitRings[0].rotation.x = 90*Math.PI/180;
+			scene.add(orbitRings[0]);
+
+			geometry = new THREE.TorusGeometry(1.5,.01,8,20);
+			orbitRings[1] = new THREE.Mesh(geometry, material);
+			orbitRings[1].rotation.x = 90*Math.PI/180;
+			scene.add(orbitRings[1]);
+
+			geometry = new THREE.TorusGeometry(2,.01,8,20);
+			orbitRings[2] = new THREE.Mesh(geometry, material);
+			orbitRings[2].rotation.x = 90*Math.PI/180;
+			scene.add(orbitRings[2]);
 
 			scene.add(star);
 			for(var p in planets){ scene.add(planets[p].obj); }
