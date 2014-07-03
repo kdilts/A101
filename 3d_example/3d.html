@@ -32,18 +32,18 @@
 			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
 			planets[2].obj.position.x = 2;
 
-			geometry = new THREE.TorusGeometry(1,.01,8,20);
+			geometry = new THREE.TorusGeometry(1,.01,8,40);
 			material = new THREE.MeshBasicMaterial({color: 0xffffff});
 			orbitRings[0] = new THREE.Mesh(geometry, material);
 			orbitRings[0].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[0]);
 
-			geometry = new THREE.TorusGeometry(1.5,.01,8,20);
+			geometry = new THREE.TorusGeometry(1.5,.01,8,40);
 			orbitRings[1] = new THREE.Mesh(geometry, material);
 			orbitRings[1].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[1]);
 
-			geometry = new THREE.TorusGeometry(2,.01,8,20);
+			geometry = new THREE.TorusGeometry(2,.01,8,40);
 			orbitRings[2] = new THREE.Mesh(geometry, material);
 			orbitRings[2].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[2]);
@@ -98,11 +98,12 @@
 					var d = camera.position.length();
 					var pos = camera.position;
 					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
-
+					if(camera.position.z <= 0){ rot = -rot; }
 					rot += .1;
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
+					console.log(rot);
 
 					camera.position.setLength(d);
 
@@ -114,10 +115,12 @@
 					var d = camera.position.length();
 					var pos = camera.position;
 					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
+					if(camera.position.z <= 0){ rot = -rot; }
 					rot -= .1;
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
+					console.log(rot);
 
 					camera.position.setLength(d);
 
