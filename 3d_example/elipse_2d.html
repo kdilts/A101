@@ -7,25 +7,50 @@
 				gfx = document.getElementById('myCanvas').getContext('2d');
 				gfx.fillStyle='black';
 				gfx.fillRect(0,0,400,400);
-				elipse2_center(100,100,30,30);
-				elipse2_center(200,100,30,40);
-				elipse2_center(300,100,40,10);
+				ellipse2_center(100,100,30,30);
+				ellipse2_center(200,100,30,40);
+				ellipse2_center(300,100,40,10);
+
+				ellipse2(100,200,130,230,.6,45);
+				ellipse2(200,200,250,170,.7,40);
+				ellipse2(300,200,320,200,.1,40);
 			}
 
 			dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2)); }
 
-			elipse2 = function(x1,y1,x2,y2,e,semimajor){
-				var center = { x:(x1+x2)/2, y:(y1+y2)/2 };
-				var c = dist(x1,y1,x2,y2);
-				var a = semimajor*2;
-				var semiminor = Math.sqrt(Math.pow(c,2)-Math.pow(a,2));
+			vec2 = function(x,y){ this.x = x; this.y = y; }
+			add = function(v1,v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+			sub = function(v1,v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+			dot = function(v1,v2){ return v1.x*v2.x + v1.y+v2.y; }
+			mag = function(v){ return dist(0,0,v.x,v.y); }
 
-				
+			ellipse2 = function(x1,y1,x2,y2,e,semimajor){
+				var center = new vec2((x1+x2)/2,(y1+y2)/2);
+				var c = dist(x1,y1,center.x,center.y);
+				var a = c/e;
+				//console.log(c,a);
+
+				var semiminor = Math.sqrt(Math.abs(Math.pow(c,2)-Math.pow(a,2)));
+
+				var foc1 = new vec2(x1,y1); var foc2 = new vec2(x2,y2);
+				var f = sub(foc1,foc2);
+				var right = new vec2(1,0);
+
+				var rot = dot(f,right)/mag(f);
+
+				gfx.save()
+				gfx.translate(center.x,center.y);
+				gfx.rotate(rot*180/Math.PI);
+
+				console.log(center.x, center.y, semimajor,semiminor,rot);
+				ellipse2_center(0,0,semimajor,semiminor);
+
+				gfx.restore();
 			}
 
-			elipse2_center = function(x, y, xrad, yrad){
+			ellipse2_center = function(x, y, xrad, yrad){
 				gfx.lineWidth=2;
-				gfx.strokeStyle='white';
+				gfx.strokeStyle='white'; gfx.fillStyle='white';
 				gfx.beginPath();
 
 				// formula modified from: http://scienceprimer.com/draw-oval-html5-canvas
@@ -43,9 +68,14 @@
 
 				gfx.stroke();
 
+				gfx.beginPath();
+				gfx.arc(x,y,2,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+
 				var a; var b;
 				if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
-				console.log(Math.sqrt(1-Math.pow((b/a),2)));
+				console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
 			}
 		</script>
 		<canvas id="myCanvas" width="400" height="400"></canvas>
