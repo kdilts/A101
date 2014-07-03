@@ -1,0 +1,106 @@
+<html>
+	<head></head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+
+			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
+			document.body.appendChild(renderer.domElement);
+
+			var geometry = new THREE.SphereGeometry(.5,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+			var star = new THREE.Mesh(geometry, material);
+
+			scene.add(star);
+
+			camera.position.set(1,2,5);
+			camera.lookAt(new THREE.Vector3(0,0,0));
+
+			var axisHelper = new THREE.AxisHelper(15);
+			scene.add(axisHelper);
+
+			window.onmousedown = function(){ }
+
+			window.onkeydown = function(e){
+
+				console.clear();
+				console.log(camera.position);
+
+				if(e.which === 65){ // a (zoom in)
+					camera.position.setLength(camera.position.length()-.1);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 90){ // z (zoom out)
+					camera.position.setLength(camera.position.length()+.1);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}				
+
+				if(e.which === 38){ // up
+					var d = camera.position.length();
+					camera.position.y += .1;
+					if(camera.position.y > 4){ camera.position.y = 4; }
+					camera.position.setLength(d);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 40){ // down
+					var d = camera.position.length();
+					camera.position.y -= .1;
+					if(camera.position.y < -4){ camera.position.y = -4; }
+					camera.position.setLength(d);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 37){ // left
+					var d = camera.position.length();
+					var pos = camera.position;
+					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
+					if(camera.position.z <= 0){ rot = -rot; }
+					rot += .1;
+
+					camera.position.x = Math.cos(rot)*d;
+					camera.position.z = Math.sin(rot)*d;
+					console.log(rot);
+
+					camera.position.setLength(d);
+
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+
+				if(e.which === 39){ // right
+					var d = camera.position.length();
+					var pos = camera.position;
+					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
+					if(camera.position.z <= 0){ rot = -rot; }
+					rot -= .1;
+
+					camera.position.x = Math.cos(rot)*d;
+					camera.position.z = Math.sin(rot)*d;
+					console.log(rot);
+
+					camera.position.setLength(d);
+
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+			}
+
+			var render = function () {
+				requestAnimationFrame(render);
+				
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+	</body>
+</html>
