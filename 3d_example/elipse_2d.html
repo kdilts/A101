@@ -7,12 +7,23 @@
 				gfx = document.getElementById('myCanvas').getContext('2d');
 				gfx.fillStyle='black';
 				gfx.fillRect(0,0,400,400);
-				elipse2(100,100,30,30);
-				elipse2(200,100,30,40);
-				elipse2(300,100,40,10);
+				elipse2_center(100,100,30,30);
+				elipse2_center(200,100,30,40);
+				elipse2_center(300,100,40,10);
 			}
 
-			elipse2 = function(x, y, xrad, yrad){
+			dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2)); }
+
+			elipse2 = function(x1,y1,x2,y2,e,semimajor){
+				var center = { x:(x1+x2)/2, y:(y1+y2)/2 };
+				var c = dist(x1,y1,x2,y2);
+				var a = semimajor*2;
+				var semiminor = Math.sqrt(Math.pow(c,2)-Math.pow(a,2));
+
+				
+			}
+
+			elipse2_center = function(x, y, xrad, yrad){
 				gfx.lineWidth=2;
 				gfx.strokeStyle='white';
 				gfx.beginPath();
