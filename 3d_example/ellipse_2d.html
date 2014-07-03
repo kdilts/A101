@@ -7,13 +7,15 @@
 				gfx = document.getElementById('myCanvas').getContext('2d');
 				gfx.fillStyle='black';
 				gfx.fillRect(0,0,400,400);
-				ellipse2_center(100,100,30,30);
+				/*ellipse2_center(100,100,30,30);
 				ellipse2_center(200,100,30,40);
 				ellipse2_center(300,100,40,10);
 
 				ellipse2(100,200,130,230,.6,45);
 				ellipse2(200,200,250,170,.7,40);
-				ellipse2(300,200,320,200,.1,40);
+				ellipse2(300,200,320,200,.1,40);*/
+
+				ellipse2(200,200,250,250,.9,40);
 			}
 
 			dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2)); }
@@ -42,8 +44,41 @@
 				gfx.translate(center.x,center.y);
 				gfx.rotate(rot*180/Math.PI);
 
-				console.log(center.x, center.y, semimajor,semiminor,rot);
-				ellipse2_center(0,0,semimajor,semiminor);
+				gfx.lineWidth=2;
+				gfx.strokeStyle='white'; gfx.fillStyle='white';
+				gfx.beginPath();
+
+				var x = 0; var y = 0;
+
+				// formula modified from: http://scienceprimer.com/draw-oval-html5-canvas
+					for(var i = 0*Math.PI; i < 2*Math.PI; i += 0.01){
+						xpos = x-(semimajor*Math.sin(i))*Math.sin(0*Math.PI)+(semiminor*Math.cos(i))*Math.cos(0*Math.PI);
+						ypos = y+(semiminor*Math.cos(i))*Math.sin(0*Math.PI)+(semimajor*Math.sin(i))*Math.cos(0*Math.PI);
+
+						if(i === 0){
+							gfx.moveTo(xpos,ypos);
+						}else{
+							gfx.lineTo(xpos,ypos);
+						}
+					}
+				//
+
+				gfx.stroke();
+
+				gfx.beginPath();
+				gfx.arc(x,y,2,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+
+				gfx.beginPath();
+				gfx.arc(foc1.x-center.x,foc1.y-center.y,2,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+
+				gfx.beginPath();
+				gfx.arc(foc2.x-center.x,foc2.y-center.y,2,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();				
 
 				gfx.restore();
 			}
