@@ -13,7 +13,6 @@
 			var geometry = new THREE.SphereGeometry(.5,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
 			var star = new THREE.Mesh(geometry, material);
-
 			scene.add(star);
 
 			camera.position.set(1,2,5);
@@ -22,12 +21,17 @@
 			var axisHelper = new THREE.AxisHelper(15);
 			scene.add(axisHelper);
 
+			var ellipse3 = function(semimajor,e,thick,res){
+				var geometry = new THREE.TorusGeometry(semimajor,thick,res,res);
+				var material = new THREE.MeshBasicMaterial({color: 0xffffff});
+				var ellipse = new THREE.Mesh(geometry, material);
+				ellipse.scale.y = (1-e);
+				return ellipse;
+			}
+
 			window.onmousedown = function(){ }
 
 			window.onkeydown = function(e){
-
-				console.clear();
-				console.log(camera.position);
 
 				if(e.which === 65){ // a (zoom in)
 					camera.position.setLength(camera.position.length()-.1);
@@ -68,7 +72,6 @@
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
-					console.log(rot);
 
 					camera.position.setLength(d);
 
@@ -85,7 +88,6 @@
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
-					console.log(rot);
 
 					camera.position.setLength(d);
 
@@ -99,6 +101,8 @@
 				
 				renderer.render(scene, camera);
 			};
+
+			for(var i = 0; i <= 1; i += .2){ scene.add(ellipse3(1,i,.02,40)) }
 
 			render();
 		</script>
