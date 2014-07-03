@@ -7,10 +7,30 @@
 				gfx = document.getElementById('myCanvas').getContext('2d');
 				gfx.fillStyle='black';
 				gfx.fillRect(0,0,400,400);
+				elipse2(100,100,30,30);
+				elipse2(200,100,30,40);
+				elipse2(300,100,40,10);
 			}
 
-			elipse2 = function(foc1, foc2, semiminor, semimajor){ // the focii should be { x:_, y:_ }
+			elipse2 = function(x, y, xrad, yrad){
+				gfx.lineWidth=2;
+				gfx.strokeStyle='white';
+				gfx.beginPath();
 
+				// formula modified from: http://scienceprimer.com/draw-oval-html5-canvas
+					for(var i = 0*Math.PI; i < 2*Math.PI; i += 0.01){
+						xpos = x-(yrad*Math.sin(i))*Math.sin(0*Math.PI)+(xrad*Math.cos(i))*Math.cos(0*Math.PI);
+						ypos = y+(xrad*Math.cos(i))*Math.sin(0*Math.PI)+(yrad*Math.sin(i))*Math.cos(0*Math.PI);
+
+						if(i === 0){
+							gfx.moveTo(xpos,ypos);
+						}else{
+							gfx.lineTo(xpos,ypos);
+						}
+					}
+				//
+
+				gfx.stroke();
 			}
 		</script>
 		<canvas id="myCanvas" width="400" height="400"></canvas>
