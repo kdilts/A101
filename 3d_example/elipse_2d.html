@@ -31,6 +31,10 @@
 				//
 
 				gfx.stroke();
+
+				var a; var b;
+				if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
+				console.log(Math.sqrt(1-Math.pow((b/a),2)));
 			}
 		</script>
 		<canvas id="myCanvas" width="400" height="400"></canvas>
