@@ -5,10 +5,12 @@ var gfx;
 
 var mx; var my;
 
-var dist = 1;
+var dist = 3;
 
 var area = [ 1, 4, 9 ];
 var intensity = [ 1, .25, 1/9 ];
+var iStr = ['L', 'L/4', 'L/9'];
+var aStr = ['A', 'A/4', 'A/9'];
 
 window.onload = function(){
 	gfx = document.getElementById('myCanvas').getContext('2d');
@@ -66,7 +68,7 @@ drawMenu = function(){
 
 	gfx.fillStyle = 'white';
 	gfx.font = '30px Verdana';
-	gfx.fillText('Distance         D          2*D       3*D', 10, 590);
+	gfx.fillText('Distance =     D          2*D       3*D', 10, 590);
 }
 
 draw = function(){
