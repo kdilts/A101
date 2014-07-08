@@ -10,7 +10,7 @@ var dist = 3;
 var area = [ 1, 4, 9 ];
 var intensity = [ 1, .25, 1/9 ];
 var iStr = ['L', 'L/4', 'L/9'];
-var aStr = ['A', 'A/4', 'A/9'];
+var aStr = ['A', '4A', '9A'];
 
 window.onload = function(){
 	gfx = document.getElementById('myCanvas').getContext('2d');
@@ -47,6 +47,11 @@ drawLight = function(){
 	gfx.arc(300,270,26*area[dist-1],0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
+
+	gfx.fillStyle = 'white';
+	gfx.strokeStyle = 'white';
+	gfx.fillText('Area = ' + aStr[dist-1],10,550);
+	gfx.fillText('Lux = ' + iStr[dist-1],440,550);
 }
 
 drawMenu = function(){
