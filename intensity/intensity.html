@@ -41,8 +41,21 @@ window.onmousedown = function(e){
 }
 
 drawLight = function(){
-	gfx.fillStyle = 'white';
-	gfx.strokeStyle = 'white';
+	
+	if(dist === 1){
+		gfx.fillStyle = 'white';
+		gfx.strokeStyle = 'white';
+	}
+	else if(dist === 2){
+		var i = Math.floor(255/4);
+		gfx.fillStyle = 'rgb('+i+','+i+','+i+')';
+		gfx.strokeStyle = 'rgb('+i+','+i+','+i+')';
+	}else{
+		var i = Math.floor(255/9);
+		gfx.fillStyle = 'rgb('+i+','+i+','+i+')';
+		gfx.strokeStyle = 'rgb('+i+','+i+','+i+')';
+	}
+
 	gfx.beginPath();
 	gfx.arc(300,270,26*area[dist-1],0,Math.PI*2);
 	gfx.fill();
