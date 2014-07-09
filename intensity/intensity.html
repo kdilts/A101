@@ -1,7 +1,7 @@
 <html>
 <head><script>
 
-var gfx;
+var gfx; var bgGfx;
 
 var mx; var my;
 
@@ -12,9 +12,19 @@ var intensity = [ 1, .25, 1/9 ];
 var iStr = ['L', 'L/4', 'L/9'];
 var aStr = ['A', '4A', '9A'];
 
-window.onload = function(){
-	gfx = document.getElementById('myCanvas').getContext('2d');
+var img;
 
+window.onload = function(){
+	img = new Image();
+	img.src = 'http://previewcf.turbosquid.com/Preview/2014/02/18__20_05_55/19.jpgbc60cec7-e070-4c32-b04e-b9a3c68db6cbLarge.jpg';
+
+	gfx = document.getElementById('fg').getContext('2d');
+	bgGfx = document.getElementById('bg').getContext('2d');
+
+	document.getElementById('fg').style.zIndex = 1;
+	document.getElementById('bg').style.zIndex = 0;
+
+	draw();
 	draw();
 }
 
@@ -43,18 +53,19 @@ window.onmousedown = function(e){
 drawLight = function(){
 	
 	if(dist === 1){
-		gfx.fillStyle = 'white';
-		gfx.strokeStyle = 'white';
+		/*gfx.fillStyle = 'rgba(255,255,255,.3)';
+		gfx.strokeStyle = 'rgba(255,255,255,.3)';*/
 	}
 	else if(dist === 2){
-		var i = Math.floor(255/4);
-		gfx.fillStyle = 'rgb('+i+','+i+','+i+')';
-		gfx.strokeStyle = 'rgb('+i+','+i+','+i+')';
+		gfx.fillStyle = 'rgba(0,0,0,.75)';
+		gfx.strokeStyle = 'rgba(0,0,0,.75)';
 	}else{
-		var i = Math.floor(255/9);
-		gfx.fillStyle = 'rgb('+i+','+i+','+i+')';
-		gfx.strokeStyle = 'rgb('+i+','+i+','+i+')';
+		var i = 1-(1/9);
+		gfx.fillStyle = 'rgba(0,0,0,'+i+')';
+		gfx.strokeStyle = 'rgba(0,0,0,'+i+')';
 	}
+
+	cutCircle(gfx,300,270,26*area[dist-1]);
 
 	gfx.beginPath();
 	gfx.arc(300,270,26*area[dist-1],0,Math.PI*2);
@@ -89,9 +100,23 @@ drawMenu = function(){
 	gfx.fillText('Distance =     D          2*D       3*D', 10, 590);
 }
 
+// credit to: http://stackoverflow.com/questions/3564717/html5-canvas-clear-arc-method
+cutCircle = function(context, x, y, radius){
+	context.save();
+    context.globalCompositeOperation = 'destination-out';
+    context.beginPath();
+    context.arc(x, y, radius, 0, Math.PI*2, true);
+    context.fill();
+    context.stroke();
+    context.restore();
+}
+//
+
 draw = function(){
-	gfx.fillStyle = 'black';
+	gfx.fillStyle='black';
 	gfx.fillRect(0,0,600,600);
+
+	bgGfx.drawImage(img,0,0);
 
 	drawMenu();
 	drawLight();
@@ -99,6 +124,7 @@ draw = function(){
 
 </script></head>
 <body bgcolor = 'grey'>
-	<canvas id = 'myCanvas' width='600' height='600' style='position:absolute; left:0; top:0'></canvas>
+	<canvas id = 'fg' width='600' height='600' style='position:absolute; left:0; top:0'></canvas>
+	<canvas id = 'bg' width='600' height='600' style='position:absolute; left:0; top:0'></canvas>
 </body>
 </html>
