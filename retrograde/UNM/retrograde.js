@@ -36,11 +36,11 @@ window.onload = function(){
 	orbiters.push(new orbiter(215, 1, 10, 'rgb(255,255,0)'));
 
 	// orbit radius slider
-	orbitSlider = new slider(20,73,orbitRadius[activeOrbit],25,100,'orbit',function(){});
+	orbitSlider = new slider(20,73,orbitRadius[activeOrbit],25,100,'orbit');
 	buttons.push(orbitSlider);
 
 	// speed slider
-	speedSlider = new slider(20,393,1,0,2,'speed',function(){});
+	speedSlider = new slider(20,393,1,0,2,'speed');
 	buttons.push(speedSlider);
 
 	// orbit Radius
@@ -148,14 +148,29 @@ window.onmousemove = function(e){
 	if(!mx || !my){ mx = e.clientX; my = e.clientY; }
 
 	if(dragging === 'speed'){
-		speedSlider.val = (mx-510)/260*speedSlider.highVal;
+		var oldRange = speedSlider.highVal - speedSlider.lowVal;
+		var newRange = 240;
+		var newVal = (mx-540)/newRange*oldRange;
+
+		speedSlider.val = newVal;
 		if(speedSlider.val < speedSlider.lowVal){ speedSlider.val = speedSlider.lowVal; }
 		if(speedSlider.val > speedSlider.highVal){ speedSlider.val = speedSlider.highVal; }
 		clearMenu();
 	}
 
 	if(dragging === 'orbit'){
-		orbitSlider.val = (mx-510)/260*orbitSlider.highVal;
+		var oldRange = orbitSlider.highVal - orbitSlider.lowVal;
+		var newRange = 240;
+
+		var newVal;
+		if(activeOrbit === 0){
+			newVal = (mx-460)/newRange*oldRange;
+		}else{
+			newVal = (mx-380)/newRange*oldRange;
+		}
+
+		orbitSlider.val = newVal;
+		console.clear(); console.log(newVal)
 		if(orbitSlider.val < orbitSlider.lowVal){ orbitSlider.val = orbitSlider.lowVal; }
 		if(orbitSlider.val > orbitSlider.highVal){ orbitSlider.val = orbitSlider.highVal; }
 		changeRadius(activeOrbit, orbitSlider.val);
@@ -186,7 +201,7 @@ clearMenu = function(){
 	menuGfx.font='14px Verdana';
 	menuGfx.fillText('Venus Orbit', 10, 40);
 	menuGfx.fillText('Mars Orbit', 130, 40);
-	menuGfx.fillText('Orbit Radius: ' + Math.floor(orbitSlider.val) + ' million km', 10, 60);
+	menuGfx.fillText('Orbit Radius: ' + Math.floor(orbitSlider.val*2) + ' million km', 10, 60);
 
 	var opts = 320;
 	menuGfx.fillText('Show Trace', 10, opts);
@@ -348,10 +363,10 @@ textButton = function(x,y,text,action){
 	}
 }
 
-slider = function(x,y,startVal,lowVal,highVal,id,action){
+slider = function(x,y,startVal,lowVal,highVal,id){
 	this.x = x; this.y = y; this.val = startVal;
 	this.lowVal = lowVal; this.highVal = highVal;
-	this.action = action; this.id = id;
+	this.id = id;
 
 	this.draw = function(){
 		menuGfx.fillStyle='rgb(100,100,100)';
@@ -376,7 +391,6 @@ slider = function(x,y,startVal,lowVal,highVal,id,action){
 		var newVal = (((this.val - this.lowVal)*newRange)/oldRange);
 		if(mag(add(new vec2(mx-510,my),neg(new vec2(this.x + 10 + newVal,this.y)))) < 15){
 			dragging = this.id;
-			this.action();
 			clearMenu();
 		}		
 	}
