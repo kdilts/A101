@@ -27,8 +27,8 @@ window.onload = function(){
 
 	// planets
 	orbiters.push(new orbiter(orbitRadius[0], 1.75, 7, 'rgb(0,255,0)')); // venus
-	orbiters.push(new orbiter(orbitRadius[1], 1.25, 7, 'rgb(0,0,255)')); // earth
-	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'rgb(255,0,0)')); // mars
+	orbiters.push(new orbiter(orbitRadius[1], 1.4, 7, 'rgb(0,0,255)')); // earth
+	orbiters.push(new orbiter(orbitRadius[2], .3, 7, 'rgb(255,0,0)')); // mars
 
 	orbiters[1].from = true; orbiters[2].to = true;
 

@@ -1,0 +1,112 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+
+var cwidth; var cheight;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	document.body.appendChild(canvas);
+	cwidth = canvas.width = window.innerWidth*.995;
+	cheight = canvas.height = window.innerHeight*.99;
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+
+	gfx = canvas.getContext('2d');
+	gfx.fillStyle='black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	for(var i = 0; i < 1; i += .1){
+		ellipse2(cwidth*.5,cheight*.5,cwidth*.4,cheight*.5,i,cwidth*.1);
+	}
+}
+
+window.onresize = function(){
+	cwidth = canvas.width = window.innerWidth*.995;
+	cheight = canvas.height = window.innerHeight*.99;
+}
+
+window.onmousemove = function(){}
+
+window.onmousedown = function(){}
+
+dist = function(x1,y1,x2,y2){ return Math.sqrt(Math.pow(x2-x1,2)+Math.pow(y2-y1,2)); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1,v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1,v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y+v2.y; }
+mag = function(v){ return dist(0,0,v.x,v.y); }
+
+ellipse2 = function(x1,y1,x2,y2,e,semimajor){
+	var center = new vec2((x1+x2)/2,(y1+y2)/2);
+
+	var up = new vec2(0,-1);
+	var f = sub(new vec2(x1,y1), new vec2(x2,y2));
+	var rot = Math.acos(dot(f,up)/(mag(f)*mag(up)));
+	rot -= Math.PI/2;
+	if(!rot){ rot = Math.PI/2; }
+	
+	gfx.fillStyle='white'; gfx.strokeStyle='white'; gfx.lineWidth=2;
+
+	gfx.save();
+	gfx.translate(center.x,center.y);
+	gfx.rotate(rot);
+	gfx.beginPath();
+	for(var i = 0; i < Math.PI*2; i += .01){
+		var x = 1.0*semimajor*Math.cos(i);
+		var y = (1-e)*semimajor*Math.sin(i)*(-1);
+		if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); } 
+	}
+	gfx.stroke();
+	gfx.restore();
+
+	gfx.beginPath();
+	gfx.arc(x1,y1,2,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(x2,y2,2,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(center.x,center.y,2,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+}
+
+ellipse2_center = function(x, y, xrad, yrad){
+	gfx.lineWidth=2;
+	gfx.strokeStyle='white'; gfx.fillStyle='white';
+	gfx.beginPath();
+
+	// formula modified from: http://scienceprimer.com/draw-oval-html5-canvas
+		for(var i = 0*Math.PI; i < 2*Math.PI; i += 0.01){
+			xpos = x-(yrad*Math.sin(i))*Math.sin(0*Math.PI)+(xrad*Math.cos(i))*Math.cos(0*Math.PI);
+			ypos = y+(xrad*Math.cos(i))*Math.sin(0*Math.PI)+(yrad*Math.sin(i))*Math.cos(0*Math.PI);
+
+			if(i === 0){
+				gfx.moveTo(xpos,ypos);
+			}else{
+				gfx.lineTo(xpos,ypos);
+			}
+		}
+	//
+
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(x,y,2,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	var a; var b;
+	if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
+	console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
+}
+
+	</script>
+</head>
+<body bgcolor='grey'>
+</body>
