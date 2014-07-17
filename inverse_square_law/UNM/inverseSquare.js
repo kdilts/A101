@@ -7,14 +7,17 @@ var starRad = [.1,.1,.1];
 var lum = ['4.0e+004','4.0e+005','4.0e+006']
 var centers = [];
 
-var graphs = [];
+var graphs = []; var buttons = [];
 
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
 	gfx = canvas.getContext('2d');
 
-	for(var i = 0; i < 3; i++){ graphs[i] = new graph(i); }
+	for(var i = 0; i < 3; i++){
+		graphs[i] = new graph(i);
+		buttons[i] = new clearButton(i);
+	}
 
 	setInterval(render,1000/60);
 }
@@ -24,7 +27,12 @@ window.onmousemove = function(e){
 	if(!mx || !my){ mx = e.clientX; my = e.clientY; }
 }
 
-window.onmousedown = function(e){ for(var g in graphs){ if(graphs[g].mouseIn){ graphs[g].plot(); } } }
+window.onmousedown = function(e){
+	for(var g in graphs){
+		if(graphs[g].mouseIn){ graphs[g].plot(); }
+		buttons[g].clicked();
+	}
+}
 
 window.onresize = function(){ render(); };
 
@@ -69,7 +77,7 @@ render = function(){
 		}
 	}
 
-	for(var g in graphs){ graphs[g].draw(); }
+	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
 }
 
 drawPanels = function(){
@@ -192,6 +200,28 @@ graph = function(n){
 
 			gfx.restore();
 		}
+	}
+}
+
+clearButton = function(n){
+	this.clicked = function(){
+		if(mx < .33*cwidth+(n*.33*cwidth) && mx > .33*cwidth+(n*.33*cwidth)-.295*cwidth/6){
+		console.log(n);
+			if(my < 94*cheight && my > .05*cheight){
+				graphs[n].clear();
+			}		
+		}
+	}
+
+	this.draw = function(){
+		gfx.save();
+		gfx.fillStyle = 'grey'; gfx.strokeStyle = 'black';
+		gfx.fillRect(.33*cwidth+(n*.33*cwidth),.94*cheight,-.295*cwidth/6,.05*cheight);
+		gfx.strokeRect(.33*cwidth+(n*.33*cwidth),.94*cheight,-.295*cwidth/6,.05*cheight);
+		gfx.fillStyle = 'black';
+		gfx.font='22px verdana';
+		gfx.fillText('Clear',.295*cwidth+(n*.33*cwidth),.97*cheight);
+		gfx.restore();
 	}
 }
 
