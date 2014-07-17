@@ -1,6 +1,6 @@
 var simCanvas; var simGfx; var mx; var my; var mouseDown = false; var dragging = false;
 var menuCanvas; var menuGfx;
-var orbitRadius = [54, 74, 114];
+var orbitRadius = [108/2, 149/2, 227/2];
 var outerRings = [180, 250];
 var centerX = 255; var centerY = 255;
 var buttons = [];
@@ -26,8 +26,8 @@ window.onload = function(){
 	menuGfx = menuCanvas.getContext('2d');
 
 	// planets
-	orbiters.push(new orbiter(orbitRadius[0], .75, 7, 'rgb(0,255,0)')); // venus
-	orbiters.push(new orbiter(orbitRadius[1], 1, 7, 'rgb(0,0,255)')); // earth
+	orbiters.push(new orbiter(orbitRadius[0], 1.75, 7, 'rgb(0,255,0)')); // venus
+	orbiters.push(new orbiter(orbitRadius[1], 1.25, 7, 'rgb(0,0,255)')); // earth
 	orbiters.push(new orbiter(orbitRadius[2], .5, 7, 'rgb(255,0,0)')); // mars
 
 	orbiters[1].from = true; orbiters[2].to = true;
