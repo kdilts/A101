@@ -1,5 +1,5 @@
 var canvas; var gfx;
-var mx; var my; var mouseDown = false;
+var mx; var my;
 
 var cwidth; var cheight;
 
@@ -24,9 +24,7 @@ window.onmousemove = function(e){
 	if(!mx || !my){ mx = e.clientX; my = e.clientY; }
 }
 
-window.onmousedown = function(e){ mouseDown = true; }
-
-window.onmouseup = function(e){	mouseDown = false; }
+window.onmousedown = function(e){ for(var g in graphs){ if(graphs[g].mouseIn){ graphs[g].plot(); } } }
 
 window.onresize = function(){ render(); };
 
@@ -110,6 +108,15 @@ graph = function(n){
 	this.data = [];
 	this.mouseIn = false;
 
+	this.clear = function(){ this.data = []; }
+
+	this.plot = function(){
+		var d = dist(centers[n], new vec2(mx,my)) - .23*cheight*starRad[n];
+		var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
+
+		this.data.push({x:d,y:intens});
+	}
+
 	this.draw = function(){
 		gfx.fillStyle = 'black'; gfx.strokeStyle = 'black';
 		gfx.font = '28px verdana';
@@ -156,13 +163,33 @@ graph = function(n){
 			var d = dist(centers[n], new vec2(mx,my)) - .23*cheight*starRad[n];
 			var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
 
-			if(intens > -300){
+			if(intens > -300 && d > 0 && d < 300){
 				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
 				gfx.beginPath();
 				gfx.arc(0,0,3,0,Math.PI*2);
 				gfx.fill();
 				gfx.stroke();
 			}
+
+			gfx.restore();
+		}
+
+		for(var i in this.data){
+			gfx.save();
+			gfx.strokeStyle = gfx.fillStyle = 'red';
+			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
+
+			var d = this.data[i].x;
+			var intens = this.data[i].y;
+
+			if(intens > -300 && d > 0 && d < 300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+
 			gfx.restore();
 		}
 	}
