@@ -82,7 +82,7 @@ render = function(){
 
 drawPanels = function(){
 
-	gfx.font = '28px verdana';
+	gfx.font = '20px verdana';
 	for(var i = 0; i < 3; i++){
 		centers[i] = {x:.33*cwidth/2+(i*.33*cwidth), y:.25*cheight };
 
@@ -107,7 +107,7 @@ drawPanels = function(){
 		gfx.stroke();
 
 		gfx.fillStyle = 'yellow';
-		gfx.fillText('Luminosity: ' + lum[i],.01*cwidth+(i*.33*cwidth),.03*cheight);
+		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.03*cheight);
 	}
 }
 
@@ -127,7 +127,7 @@ graph = function(n){
 
 	this.draw = function(){
 		gfx.fillStyle = 'black'; gfx.strokeStyle = 'black';
-		gfx.font = '28px verdana';
+		gfx.font = '20px verdana';
 		gfx.fillText('Distance', .06*cwidth+(n*.33*cwidth), .985*cheight);
 
 		gfx.save();
@@ -219,7 +219,7 @@ clearButton = function(n){
 		gfx.fillRect(.33*cwidth+(n*.33*cwidth),.94*cheight,-.295*cwidth/6,.05*cheight);
 		gfx.strokeRect(.33*cwidth+(n*.33*cwidth),.94*cheight,-.295*cwidth/6,.05*cheight);
 		gfx.fillStyle = 'black';
-		gfx.font='22px verdana';
+		gfx.font='20px verdana';
 		gfx.fillText('Clear',.295*cwidth+(n*.33*cwidth),.97*cheight);
 		gfx.restore();
 	}
