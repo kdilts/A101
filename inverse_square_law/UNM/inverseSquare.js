@@ -7,13 +7,16 @@ var starRad = [.1,.1,.1];
 var lum = ['4.0e+004','4.0e+005','4.0e+006']
 var centers = [];
 
+var graphs = [];
+
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
 	gfx = canvas.getContext('2d');
 
-	setInterval(render,1000/60);
+	for(var i = 0; i < 3; i++){ graphs[i] = new graph(i); }
 
+	setInterval(render,1000/60);
 }
 
 window.onmousemove = function(e){
@@ -28,7 +31,7 @@ window.onmouseup = function(e){	mouseDown = false; }
 window.onresize = function(){ render(); };
 
 clearAll = function(){
-	gfx.fillStyle='rgb(75,75,75)';
+	gfx.fillStyle='rgb(0,0,0)';
 	gfx.fillRect(0,0,cwidth,cheight);
 }
 
@@ -48,40 +51,47 @@ render = function(){
 			gfx.fill();
 			gfx.stroke();
 
-			var d = dist(centers[i], new vec2(mx,my));
+			var d = dist(centers[i], new vec2(mx,my)) - .23*cheight*starRad[i];
 			var intens = (4*Math.pow(10,4+i))/Math.pow(d,2);
 
 			gfx.fillStyle = 'white'; gfx.strokeStyle = 'white';
 			gfx.font = '20px verdana';
-			gfx.fillText('Distance: ' + truncate(''+d), mx+5, my+19);
-			gfx.fillText('Intensity: ' + truncate(''+intens), mx+5, my+37);
+			if(d > 0){
+				gfx.fillText('Distance: ' + truncate(''+d), mx+5, my+19);
+				gfx.fillText('Intensity: ' + truncate(''+intens), mx+5, my+37);
+				graphs[i].mouseIn = true;
+			}else{
+				gfx.fillText('Distance: --', mx+5, my+19);
+				gfx.fillText('Intensity: --', mx+5, my+37);
+			}
 			break;
 		}else{
 			document.body.style='';
+			graphs[i].mouseIn = false;
 		}
 	}
-}
 
-calculateIntensity = function(i){
-	return 31337.2122;
+	for(var g in graphs){ graphs[g].draw(); }
 }
 
 drawPanels = function(){
-	gfx.fillStyle = 'rgb(190,190,190)';
-	gfx.fillRect(.01*cwidth,.5*cheight,.32*cwidth,.49*cheight);
-	gfx.fillRect(.34*cwidth,.5*cheight,.32*cwidth,.49*cheight);
-	gfx.fillRect(.67*cwidth,.5*cheight,.32*cwidth,.49*cheight);
 
 	gfx.font = '28px verdana';
 	for(var i = 0; i < 3; i++){
 		centers[i] = {x:.33*cwidth/2+(i*.33*cwidth), y:.25*cheight };
 
-		gfx.strokeStyle = 'black';
+		gfx.fillStyle = 'rgb(190,190,190)';
+		gfx.fillRect(.01*cwidth+(i*.33*cwidth),.5*cheight,.32*cwidth,.49*cheight);
+
+		gfx.save();
+		gfx.lineWidth = 2.5;
+		gfx.strokeStyle = 'grey';
 		gfx.fillStyle = 'black';
 		gfx.beginPath();
 		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+		gfx.restore();
 
 		gfx.strokeStyle = 'white';
 		gfx.fillStyle = 'white';
@@ -92,6 +102,69 @@ drawPanels = function(){
 
 		gfx.fillStyle = 'yellow';
 		gfx.fillText('Luminosity: ' + lum[i],.01*cwidth+(i*.33*cwidth),.03*cheight);
+	}
+}
+
+graph = function(n){
+	this.id = n;
+	this.data = [];
+	this.mouseIn = false;
+
+	this.draw = function(){
+		gfx.fillStyle = 'black'; gfx.strokeStyle = 'black';
+		gfx.font = '28px verdana';
+		gfx.fillText('Distance', .06*cwidth+(n*.33*cwidth), .985*cheight);
+
+		gfx.save();
+		gfx.translate(.02*cwidth+(n*.33*cwidth), .85*cheight);
+		gfx.rotate(-Math.PI/2);
+		gfx.fillText('Intensity', 0,0);
+		gfx.restore();
+
+		for(var i = 0; i < 3; i++){
+			gfx.fillText(''+ 100*i, .032*cwidth+(n*.33*cwidth)+(i*.285*cwidth/3), .965*cheight);
+
+			gfx.save();
+			gfx.translate(.032*cwidth+(n*.33*cwidth), .945*cheight-(i*.42*cheight/3));
+			gfx.rotate(-Math.PI/2);
+			gfx.fillText(''+ 100*i, 0,0);
+			gfx.restore();
+		}
+
+		gfx.lineWidth = 2.5;
+		gfx.strokeRect(.035*cwidth+(n*.33*cwidth),.5*cheight,.295*cwidth,.44*cheight);
+		gfx.strokeRect(.01*cwidth+(n*.33*cwidth),.5*cheight,.32*cwidth,.49*cheight);
+
+		gfx.lineWidth = 1.5;
+		for(var i = 0; i < 6; i++){
+			gfx.beginPath();
+			gfx.moveTo(.035*cwidth+(n*.33*cwidth)+(i*.295*cwidth/6), .5*cheight);
+			gfx.lineTo(.035*cwidth+(n*.33*cwidth)+(i*.295*cwidth/6), .94*cheight);
+			gfx.stroke();
+
+			gfx.beginPath();
+			gfx.moveTo(.035*cwidth+(n*.33*cwidth), .5*cheight+(i*.44*cheight/6));
+			gfx.lineTo(.33*cwidth+(n*.33*cwidth), .5*cheight+(i*.44*cheight/6));
+			gfx.stroke();
+		}
+
+		if(this.mouseIn){
+			gfx.save();
+			gfx.strokeStyle = gfx.fillStyle = 'blue';
+			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
+
+			var d = dist(centers[n], new vec2(mx,my)) - .23*cheight*starRad[n];
+			var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
+
+			if(intens > -300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+			gfx.restore();
+		}
 	}
 }
 
