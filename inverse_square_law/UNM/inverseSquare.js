@@ -11,6 +11,8 @@ var graphs = []; var buttons = [];
 
 var noiseThreshold = 10; var noiseRange = 3;
 
+var show = 0;
+
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
@@ -79,6 +81,12 @@ render = function(){
 			document.body.style='';
 			graphs[i].mouseIn = false;
 		}
+	}
+
+	if(show === 1){
+		gfx.fillStyle='yellow';
+		gfx.fillRect(.33*cwidth,0,.01*cwidth,cheight);
+		gfx.fillRect(.66*cwidth,0,.01*cwidth,cheight);
 	}
 
 	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
