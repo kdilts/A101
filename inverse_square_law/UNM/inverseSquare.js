@@ -206,8 +206,7 @@ graph = function(n){
 clearButton = function(n){
 	this.clicked = function(){
 		if(mx < .33*cwidth+(n*.33*cwidth) && mx > .33*cwidth+(n*.33*cwidth)-.295*cwidth/6){
-		console.log(n);
-			if(my < 94*cheight && my > .05*cheight){
+			if(my < .97*cheight && my > .92*cheight){
 				graphs[n].clear();
 			}		
 		}
