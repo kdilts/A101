@@ -9,6 +9,8 @@ var centers = [];
 
 var graphs = []; var buttons = [];
 
+var noiseThreshold = 10; var noiseRange = 3;
+
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
@@ -125,6 +127,9 @@ graph = function(n){
 		var d = dist(centers[n], new vec2(mx,my));
 		d = lerp(0,195,d,0,300);
 		var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
+
+		if(intens > -noiseThreshold){ intens += (Math.random()*noiseRange - noiseRange/2 ); }
+		if(intens > 0){ intens = 0; }
 
 		this.data.push({x:d,y:intens});
 	}
