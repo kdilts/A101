@@ -122,7 +122,8 @@ graph = function(n){
 	this.clear = function(){ this.data = []; }
 
 	this.plot = function(){
-		var d = dist(centers[n], new vec2(mx,my)) - .23*cheight*starRad[n];
+		var d = dist(centers[n], new vec2(mx,my));
+		d = lerp(0,195,d,0,300);
 		var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
 
 		this.data.push({x:d,y:intens});
@@ -171,7 +172,8 @@ graph = function(n){
 			gfx.strokeStyle = gfx.fillStyle = 'blue';
 			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
 
-			var d = dist(centers[n], new vec2(mx,my)) - .23*cheight*starRad[n];
+			var d = dist(centers[n], new vec2(mx,my));
+			d = lerp(0,195,d,0,300);
 			var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
 
 			if(intens > -300 && d > 0 && d < 300){
