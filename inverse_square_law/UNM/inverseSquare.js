@@ -58,6 +58,8 @@ render = function(){
 			gfx.stroke();
 
 			var d = dist(centers[i], new vec2(mx,my));
+			d = lerp(0,195,d,0,300);
+
 			var intens = (4*Math.pow(10,4+i))/Math.pow(d,2);
 
 			gfx.fillStyle = 'white'; gfx.strokeStyle = 'white';
@@ -228,6 +230,10 @@ clearButton = function(n){
 truncate = function(str){
 	var idx = str.indexOf('.');
 	return str.substr(0,idx+3);
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
 }
 
 dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
