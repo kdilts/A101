@@ -57,12 +57,12 @@ render = function(){
 			gfx.fill();
 			gfx.stroke();
 
-			var d = dist(centers[i], new vec2(mx,my)) - .23*cheight*starRad[i];
+			var d = dist(centers[i], new vec2(mx,my));
 			var intens = (4*Math.pow(10,4+i))/Math.pow(d,2);
 
 			gfx.fillStyle = 'white'; gfx.strokeStyle = 'white';
 			gfx.font = '20px verdana';
-			if(d > 0){
+			if(d- .23*cheight*starRad[i] > 0){
 				gfx.fillText('Distance: ' + truncate(''+d), mx+5, my+19);
 				gfx.fillText('Intensity: ' + truncate(''+intens), mx+5, my+37);
 				graphs[i].mouseIn = true;
@@ -78,11 +78,6 @@ render = function(){
 	}
 
 	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
-
-	//if(mx < .33*cwidth+(n*.33*cwidth) && mx > .33*cwidth+(n*.33*cwidth)-.295*cwidth/6){
-	//if(my < .97*cheight && my > .92*cheight){
-	//gfx.fillStyle='red';
-	//gfx.fillRect(.33*cwidth-.295*cwidth/6,.94*cheight,.295*cwidth/6,.05*cheight);
 
 }
 
