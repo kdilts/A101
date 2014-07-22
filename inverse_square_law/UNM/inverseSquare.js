@@ -146,7 +146,7 @@ graph = function(n){
 			gfx.save();
 			gfx.translate(.032*cwidth+(n*.33*cwidth), .945*cheight-(i*.42*cheight/3));
 			gfx.rotate(-Math.PI/2);
-			gfx.fillText(''+ 100*i, 0,0);
+			gfx.fillText(''+ Math.pow(10,this.id+1)*i, 0,0);
 			gfx.restore();
 		}
 
@@ -176,8 +176,20 @@ graph = function(n){
 			d = lerp(0,195,d,0,300);
 			var intens = -(4*Math.pow(10,4+n))/Math.pow(d,2);
 
-			if(intens > -300 && d > 0 && d < 300){
+			if(this.id === 0 && intens > -30 && d > 0 && d < 300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/30));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}else if(this.id === 1 && intens > -300 && d > 0 && d < 300){
 				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}else if(this.id === 2 && intens > -3000 && d > 0 && d < 300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/3000));
 				gfx.beginPath();
 				gfx.arc(0,0,3,0,Math.PI*2);
 				gfx.fill();
@@ -195,8 +207,22 @@ graph = function(n){
 			var d = this.data[i].x;
 			var intens = this.data[i].y;
 
-			if(intens > -300 && d > 0 && d < 300){
+			if(this.id === 0 && intens > -30 && d > 0 && d < 300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/30));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+			else if(this.id === 1 && intens > -300 && d > 0 && d < 300){
 				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+			else if(this.id === 2 && intens > -3000 && d > 0 && d < 300){
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/3000));
 				gfx.beginPath();
 				gfx.arc(0,0,3,0,Math.PI*2);
 				gfx.fill();
