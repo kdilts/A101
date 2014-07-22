@@ -78,6 +78,12 @@ render = function(){
 	}
 
 	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
+
+	//if(mx < .33*cwidth+(n*.33*cwidth) && mx > .33*cwidth+(n*.33*cwidth)-.295*cwidth/6){
+	//if(my < .97*cheight && my > .92*cheight){
+	//gfx.fillStyle='red';
+	//gfx.fillRect(.33*cwidth-.295*cwidth/6,.94*cheight,.295*cwidth/6,.05*cheight);
+
 }
 
 drawPanels = function(){
@@ -206,7 +212,7 @@ graph = function(n){
 clearButton = function(n){
 	this.clicked = function(){
 		if(mx < .33*cwidth+(n*.33*cwidth) && mx > .33*cwidth+(n*.33*cwidth)-.295*cwidth/6){
-			if(my < .97*cheight && my > .92*cheight){
+			if(my < .99*cheight && my > .94*cheight){
 				graphs[n].clear();
 			}		
 		}
