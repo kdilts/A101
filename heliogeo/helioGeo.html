@@ -1,59 +1,127 @@
 <head>
 	<script language=javascript>
-		var canvas; var gfx;
-		var cwidth; var cheight;
+var canvas; var gfx;
+var cwidth; var cheight;
 
-		window.onload = function(){
-			canvas = document.createElement('canvas');
-			canvas.setAttribute('style','position:absolute; left:0; top:0');
-			cwidth = canvas.width = window.innerWidth;
-			cheight = canvas.height = window.innerHeight;
-			document.body.appendChild(canvas);
-			gfx = canvas.getContext('2d');
+var orbiters = [];
 
-			render();
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,.01*Math.PI,'red');
+	/*orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,.01*Math.PI,'blue');
+
+	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.00*cwidth,.06*cwidth,.01*Math.PI,'red');
+	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,.01*Math.PI,'blue')
+	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,.01*Math.PI,'red');*/
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	letterCircle(.33*cwidth,.65*cheight);
+	letterCircle(.66*cwidth,.65*cheight);
+
+	for(var i in orbiters){ orbiters[i].draw(); }
+}
+
+orbiter = function(pt, rad, orad, spd, col){
+	this.pos = new vec2(0,0); this.rot = 0;
+
+	this.update = function(){
+		this.pos.x = (Math.cos(this.rot*180/Math.PI)*orad);
+		this.pos.y = Math.sin(this.rot*180/Math.PI)*orad;
+		this.rot += this.spd;
+
+		console.clear(); console.log(this.pos, this.rot);
+	}
+
+	this.draw = function(){
+		gfx.save();
+		gfx.translate(pt.x,pt.y);
+
+		gfx.fillStyle = gfx.strokeStyle = col;
+
+		gfx.beginPath();
+		gfx.arc(0,0,orad,0,Math.PI*2);
+		gfx.stroke();
+
+		gfx.beginPath();
+		gfx.arc(this.pos.x,this.pos.y,rad,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.restore();
+
+		this.update();
+	}
+}
+
+var letters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+letterCircle = function(x,y){
+	gfx.save();
+	gfx.translate(x,y);
+
+	gfx.fillStyle = 'yellow'; gfx.strokeStyle = 'yellow';
+	gfx.font = '20px verdana';
+
+	gfx.beginPath();
+	gfx.arc(0,0,.02*cheight,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();		
+
+	for(var i = 0; i < 12; i++){
+		gfx.save();
+		gfx.rotate(Math.PI/6*i);
+		gfx.translate(0,-.1*cwidth);
+
+		gfx.beginPath();
+		gfx.arc(0,0,.006*cheight,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+
+		if(i < 6){
+			gfx.translate(0,-.01*cwidth);
+			gfx.rotate(-Math.PI/6*i);
+			gfx.fillText(letters[i],0,0);
+		}else{
+			gfx.translate(.005*cwidth,-.015*cwidth);
+			gfx.rotate(-Math.PI/6*i);
+			gfx.fillText(letters[i],0,0);
 		}
 
-		window.onresize = function(){ render(); }
+		gfx.restore();
+	}
 
-		render = function(){
-			cwidth = canvas.width = window.innerWidth;
-			cheight = canvas.height = window.innerHeight;
+	gfx.restore();
+}
 
-			gfx.fillStyle = 'black';
-			gfx.fillRect(0,0,cwidth,cheight);
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
 
-			letterCircle(.33*cwidth,.65*cheight);
-			letterCircle(.66*cwidth,.65*cheight);
-		}
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
 
-		var letters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-		letterCircle = function(x,y){
-			gfx.save();
-			gfx.translate(x,y);
-
-			gfx.fillStyle = 'yellow'; gfx.strokeStyle = 'yellow';
-			gfx.font = '20px verdana';
-
-			for(var i = 0; i < 12; i++){
-				gfx.save();
-				gfx.rotate(Math.PI/6*i);
-				gfx.translate(0,-.1*cwidth);
-
-				gfx.beginPath();
-				gfx.arc(0,0,.006*cheight,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-
-				gfx.translate(0,-.01*cwidth);
-				gfx.rotate(-Math.PI/6*i);
-				gfx.fillText(letters[i],0,0);
-
-				gfx.restore();
-			}
-
-			gfx.restore();
-		}
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 
 	</script>
 </head>
