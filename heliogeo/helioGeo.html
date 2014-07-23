@@ -1,0 +1,61 @@
+<head>
+	<script language=javascript>
+		var canvas; var gfx;
+		var cwidth; var cheight;
+
+		window.onload = function(){
+			canvas = document.createElement('canvas');
+			canvas.setAttribute('style','position:absolute; left:0; top:0');
+			cwidth = canvas.width = window.innerWidth;
+			cheight = canvas.height = window.innerHeight;
+			document.body.appendChild(canvas);
+			gfx = canvas.getContext('2d');
+
+			render();
+		}
+
+		window.onresize = function(){ render(); }
+
+		render = function(){
+			cwidth = canvas.width = window.innerWidth;
+			cheight = canvas.height = window.innerHeight;
+
+			gfx.fillStyle = 'black';
+			gfx.fillRect(0,0,cwidth,cheight);
+
+			letterCircle(.33*cwidth,.65*cheight);
+			letterCircle(.66*cwidth,.65*cheight);
+		}
+
+		var letters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+		letterCircle = function(x,y){
+			gfx.save();
+			gfx.translate(x,y);
+
+			gfx.fillStyle = 'yellow'; gfx.strokeStyle = 'yellow';
+			gfx.font = '20px verdana';
+
+			for(var i = 0; i < 12; i++){
+				gfx.save();
+				gfx.rotate(Math.PI/6*i);
+				gfx.translate(0,-.1*cwidth);
+
+				gfx.beginPath();
+				gfx.arc(0,0,.006*cheight,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+
+				gfx.translate(0,-.01*cwidth);
+				gfx.rotate(-Math.PI/6*i);
+				gfx.fillText(letters[i],0,0);
+
+				gfx.restore();
+			}
+
+			gfx.restore();
+		}
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
