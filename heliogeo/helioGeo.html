@@ -42,7 +42,7 @@ orbiter = function(pt, rad, orad, spd, col){
 	this.pos = new vec2(0,0); this.rot = 0;
 
 	this.update = function(){
-		this.pos.x = (Math.cos(this.rot*180/Math.PI)*orad);
+		this.pos.x = Math.cos(this.rot*180/Math.PI)*orad;
 		this.pos.y = Math.sin(this.rot*180/Math.PI)*orad;
 		this.rot += this.spd;
 
@@ -93,15 +93,9 @@ letterCircle = function(x,y){
 		gfx.fill();
 		gfx.stroke();
 
-		if(i < 6){
-			gfx.translate(0,-.01*cwidth);
-			gfx.rotate(-Math.PI/6*i);
-			gfx.fillText(letters[i],0,0);
-		}else{
-			gfx.translate(.005*cwidth,-.015*cwidth);
-			gfx.rotate(-Math.PI/6*i);
-			gfx.fillText(letters[i],0,0);
-		}
+		gfx.translate(0,-.01*cwidth);
+		gfx.rotate(-Math.PI/6*i);
+		gfx.fillText(letters[i],-8,8);
 
 		gfx.restore();
 	}
