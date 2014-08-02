@@ -14,11 +14,11 @@ window.onload = function(){
 	gfx = canvas.getContext('2d');
 
 	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'red');
-	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00005*Math.PI,'blue');
+	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00008*Math.PI,'blue');
 
 	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.00*cwidth,.06*cwidth,-.00005*Math.PI,'yellow');
-	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.0001*Math.PI,'red',true,true);
-	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'yellow', true);
+	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00008*Math.PI,'red',true,true);
+	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00008*Math.PI,'yellow', true);
 
 	setInterval(render,1000/60);
 }
@@ -44,8 +44,8 @@ orbiter = function(pt, rad, orad, spd, col, line, follow){
 	this.update = function(){
 
 		if(follow){
-			pt.x = .66*cwidth + orbiters[2].pos.x;
-			pt.y = .65*cheight + orbiters[2].pos.y;
+			pt.x = .66*cwidth - orbiters[2].pos.x;
+			pt.y = .65*cheight - orbiters[2].pos.y;
 		}
 
 		this.pos.x = Math.cos(this.rot*180/Math.PI)*orad;
@@ -98,7 +98,7 @@ letterCircle = function(x,y,geo){
 
 	for(var i = 0; i < 12; i++){
 		gfx.save();
-		gfx.rotate(Math.PI/6*i);
+		gfx.rotate(-Math.PI/6*i+Math.PI);
 		gfx.translate(0,-.1*cwidth);
 
 		gfx.beginPath();
@@ -107,7 +107,7 @@ letterCircle = function(x,y,geo){
 		gfx.stroke();
 
 		gfx.translate(0,-.01*cwidth);
-		gfx.rotate(-Math.PI/6*i);
+		gfx.rotate(Math.PI/6*i+Math.PI);
 		gfx.fillText(letters[i],-8,8);
 
 		gfx.restore();
