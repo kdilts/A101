@@ -48,30 +48,30 @@ render = function(){
 }
 
 debugLines = function(){
-	var temp = sub(orbiters[1].pos,orbiters[0].pos);
-	//temp = mult(temp,2);
+	var line1 = sub(orbiters[1].pos,orbiters[0].pos);
+	line1 = unit(line1);
+	line1 = mult(line1,350);
 
 	gfx.save();
 	gfx.translate(.33*cwidth,.65*cheight);
 
 	gfx.beginPath();
-	gfx.moveTo(0,0);
-	gfx.lineTo(orbiters[0].pos.x,orbiters[0].pos.y);
-	gfx.stroke();
-
-	gfx.beginPath();
-	gfx.moveTo(0,0);
-	gfx.lineTo(orbiters[1].pos.x,orbiters[1].pos.y);
-	gfx.stroke();
-
-	gfx.beginPath();
-	gfx.moveTo(orbiters[0].pos.x,orbiters[0].pos.y);
-	gfx.lineTo(temp.x,temp.y);
-	gfx.stroke();
-
-	gfx.beginPath();
 	gfx.moveTo(orbiters[1].pos.x,orbiters[1].pos.y);
-	gfx.lineTo(temp.x,temp.y);
+	gfx.lineTo(orbiters[1].pos.x-line1.x,orbiters[1].pos.y-line1.y);
+	gfx.stroke();
+
+	gfx.restore();
+
+	var line2 = sub(orbiters[4].pos,orbiters[3].pos);
+	line2 = unit(line2);
+	line2 = mult(line2,350);
+
+	gfx.save();
+	gfx.translate(.66*cwidth,.65*cheight);
+
+	gfx.beginPath();
+	gfx.moveTo(orbiters[4].pos.x,orbiters[4].pos.y);
+	gfx.lineTo(orbiters[4].pos.x-line2.x,orbiters[4].pos.y-line2.y);
 	gfx.stroke();
 
 	gfx.restore();
