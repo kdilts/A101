@@ -13,8 +13,8 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'red');
-	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00008*Math.PI,'blue');
+	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'red',false,false,Math.PI);
+	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00008*Math.PI,'blue',false,false,Math.PI);
 
 	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.002*cwidth,.06*cwidth,-.00005*Math.PI,'white');
 	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00008*Math.PI,'red',true,true);
@@ -101,8 +101,15 @@ topBar = function(){
 	gfx.restore();
 }
 
-orbiter = function(pt, rad, orad, spd, col, line, follow){
-	this.pos = new vec2(0,0); this.rot = 0;
+orbiter = function(pt, rad, orad, spd, col, line, follow,rot){
+	this.pos = new vec2(0,0);
+
+	if(rot){
+		this.rot = rot;
+	}else{
+		this.rot = 0;
+	}
+
 
 	this.update = function(){
 
