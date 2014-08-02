@@ -36,6 +36,36 @@ render = function(){
 	letterCircle(.66*cwidth,.65*cheight,true);
 
 	for(var i in orbiters){ orbiters[i].draw(); }
+
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.font = '20px verdana';
+	gfx.fillText('Heliocentric Model',.05*cwidth*5.5,.35*cheight);
+	gfx.fillText('Geocentric Model',.05*cwidth*12,.35*cheight);
+
+	topBar();
+}
+
+topBar = function(){
+	gfx.save();
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.font = '20px verdana';
+
+	gfx.fillText('View of Mars from Earth',.05*cwidth,.1*cheight);
+
+	var letters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+	for(var i in letters){
+		gfx.beginPath();
+		gfx.arc(.05*cwidth*(parseInt(i)+4),.2*cheight,.006*cheight,0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.fillText(letters[i],.05*cwidth*(parseInt(i)+4)-6,.175*cheight);
+	}
+
+	gfx.fillStyle = gfx.strokeStyle = 'white';
+	gfx.fillRect(0,.3*cheight,cwidth,.005*cheight);
+
+	gfx.restore();
 }
 
 orbiter = function(pt, rad, orad, spd, col, line, follow){
