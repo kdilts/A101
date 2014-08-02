@@ -43,6 +43,39 @@ render = function(){
 	gfx.fillText('Geocentric Model',.05*cwidth*12,.35*cheight);
 
 	topBar();
+
+	debugLines();
+}
+
+debugLines = function(){
+	var temp = sub(orbiters[1].pos,orbiters[0].pos);
+	//temp = mult(temp,2);
+
+	gfx.save();
+	gfx.translate(.33*cwidth,.65*cheight);
+
+	gfx.beginPath();
+	gfx.moveTo(0,0);
+	gfx.lineTo(orbiters[0].pos.x,orbiters[0].pos.y);
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.moveTo(0,0);
+	gfx.lineTo(orbiters[1].pos.x,orbiters[1].pos.y);
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.moveTo(orbiters[0].pos.x,orbiters[0].pos.y);
+	gfx.lineTo(temp.x,temp.y);
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.moveTo(orbiters[1].pos.x,orbiters[1].pos.y);
+	gfx.lineTo(temp.x,temp.y);
+	gfx.stroke();
+
+	gfx.restore();
+
 }
 
 topBar = function(){
@@ -154,6 +187,7 @@ dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
 
 vec2 = function(x,y){ this.x = x; this.y = y; }
 add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
 neg = function(v){ return new vec2(-v.x, -v.y); }
 mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
