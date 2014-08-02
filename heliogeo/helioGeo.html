@@ -17,8 +17,8 @@ window.onload = function(){
 	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00005*Math.PI,'blue');
 
 	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.00*cwidth,.06*cwidth,-.00005*Math.PI,'yellow');
-	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00005*Math.PI,'red');
-	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'yellow');
+	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.0001*Math.PI,'red',true,true);
+	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'yellow', true);
 
 	setInterval(render,1000/60);
 }
@@ -38,10 +38,16 @@ render = function(){
 	for(var i in orbiters){ orbiters[i].draw(); }
 }
 
-orbiter = function(pt, rad, orad, spd, col){
+orbiter = function(pt, rad, orad, spd, col, line, follow){
 	this.pos = new vec2(0,0); this.rot = 0;
 
 	this.update = function(){
+
+		if(follow){
+			pt.x = .66*cwidth + orbiters[2].pos.x;
+			pt.y = .65*cheight + orbiters[2].pos.y;
+		}
+
 		this.pos.x = Math.cos(this.rot*180/Math.PI)*orad;
 		this.pos.y = Math.sin(this.rot*180/Math.PI)*orad;
 		this.rot += spd;
@@ -61,6 +67,13 @@ orbiter = function(pt, rad, orad, spd, col){
 		gfx.arc(this.pos.x,this.pos.y,rad,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+
+		if(line){
+			gfx.beginPath();
+			gfx.moveTo(0,0);
+			gfx.lineTo(this.pos.x,this.pos.y);
+			gfx.stroke();			
+		}
 
 		gfx.restore();
 
