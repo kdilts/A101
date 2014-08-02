@@ -13,12 +13,12 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,.01*Math.PI,'red');
-	/*orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,.01*Math.PI,'blue');
+	orbiters[0] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'red');
+	orbiters[1] = new orbiter(new vec2(.33*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00005*Math.PI,'blue');
 
-	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.00*cwidth,.06*cwidth,.01*Math.PI,'red');
-	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,.01*Math.PI,'blue')
-	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,.01*Math.PI,'red');*/
+	orbiters[2] = new orbiter(new vec2(.66*cwidth,.65*cheight),.00*cwidth,.06*cwidth,-.00005*Math.PI,'red');
+	orbiters[3] = new orbiter(new vec2(.66*cwidth+.06*cwidth,.65*cheight),.005*cwidth,.03*cwidth,-.00005*Math.PI,'blue');
+	orbiters[4] = new orbiter(new vec2(.66*cwidth,.65*cheight),.005*cwidth,.06*cwidth,-.00005*Math.PI,'red');
 
 	setInterval(render,1000/60);
 }
@@ -33,7 +33,7 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	letterCircle(.33*cwidth,.65*cheight);
-	letterCircle(.66*cwidth,.65*cheight);
+	letterCircle(.66*cwidth,.65*cheight,true);
 
 	for(var i in orbiters){ orbiters[i].draw(); }
 }
@@ -44,9 +44,7 @@ orbiter = function(pt, rad, orad, spd, col){
 	this.update = function(){
 		this.pos.x = Math.cos(this.rot*180/Math.PI)*orad;
 		this.pos.y = Math.sin(this.rot*180/Math.PI)*orad;
-		this.rot += this.spd;
-
-		console.clear(); console.log(this.pos, this.rot);
+		this.rot += spd;
 	}
 
 	this.draw = function(){
@@ -71,17 +69,19 @@ orbiter = function(pt, rad, orad, spd, col){
 }
 
 var letters = ['A','B','C','D','E','F','G','H','I','J','K','L'];
-letterCircle = function(x,y){
+letterCircle = function(x,y,geo){
 	gfx.save();
 	gfx.translate(x,y);
 
-	gfx.fillStyle = 'yellow'; gfx.strokeStyle = 'yellow';
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '20px verdana';
 
+	if(geo){ gfx.fillStyle = gfx.strokeStyle = 'blue'; }
 	gfx.beginPath();
 	gfx.arc(0,0,.02*cheight,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();		
+	if(geo){ gfx.fillStyle = gfx.strokeStyle = 'yellow'; }
 
 	for(var i = 0; i < 12; i++){
 		gfx.save();
