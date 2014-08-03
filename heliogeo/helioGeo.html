@@ -62,10 +62,6 @@ debugLines = function(){
 
 	gfx.restore();
 
-	var line2 = sub(orbiters[4].pos,orbiters[3].pos);
-	line2 = unit(line2);
-	line2 = mult(line2,350);
-
 	gfx.save();
 	gfx.translate(.66*cwidth,.65*cheight);
 
@@ -74,7 +70,17 @@ debugLines = function(){
 	gfx.lineTo((-orbiters[2].pos.x+orbiters[3].pos.x)*3,(-orbiters[2].pos.y+orbiters[3].pos.y)*3);
 	gfx.stroke();
 
+	gfx.beginPath();
+	gfx.moveTo(0,0);
+	gfx.lineTo(300,0);
+	gfx.stroke();
+
 	gfx.restore();
+
+	var vt = add(neg(orbiters[2].pos),orbiters[3].pos);
+	var angle = Math.acos((dot(vt,new vec2(1,0)))/(mag(vt)*mag(new vec2(1,0))));
+
+	console.clear(); console.log(angle);
 
 }
 
@@ -121,6 +127,7 @@ orbiter = function(pt, rad, orad, spd, col, line, follow,rot){
 		this.pos.x = Math.cos(this.rot*180/Math.PI)*orad;
 		this.pos.y = Math.sin(this.rot*180/Math.PI)*orad;
 		this.rot += spd;
+
 	}
 
 	this.draw = function(){
