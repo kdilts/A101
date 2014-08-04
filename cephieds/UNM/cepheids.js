@@ -221,6 +221,7 @@ enhance = function(){
 
 displayGridPage = function(){
 	/////// top text
+	c = document.createElement('center');
 	h = document.createElement('B1');
 	
 	h.appendChild(document.createTextNode('Now you\'re ready to do your own Cepheid hunt.'));
@@ -246,36 +247,37 @@ displayGridPage = function(){
 
 	h.appendChild(document.createTextNode('Only grid sections with numbers are currently available.'));
 
-	document.body.appendChild(h);
+	c.appendChild(h);
+
+	document.body.appendChild(c);
 	lnk.setAttribute('onclick','window.open(this.href); return false;');
 	h.style.color='white';
-	h.setAttribute('cssText','position:absolute; left:40px; top:10px;');
 
 	////////////// middle image
 	canvas = document.createElement('canvas');
 	canvas.width = 450; canvas.height = 300;
 	canvas.id = 'bgCanvas'; canvas.zIndex = 0;
-	h.appendChild(canvas);
+	c.appendChild(canvas);
 	canvas.setAttribute('style','position:absolute; left:240px; top:180px');
 
 	gif = document.createElement('img');
 	gif.zIndex = 1;
 	gif.src = path+'quarter752.gif';
 	gif.width = 200; gif.height = 200;
-	h.appendChild(gif);
+	c.appendChild(gif);
 	gif.setAttribute('style','position:absolute; left:255px; top:260px');
 
 	gif2 = document.createElement('img');
 	gif2.zIndex = 1;
 	gif2.src = path+'quarter752.gif';
 	gif2.width = 200; gif2.height = 200;
-	h.appendChild(gif2);
+	c.appendChild(gif2);
 	gif2.setAttribute('style','position:absolute; left:470px; top:260px');
 
 	canvas2 = document.createElement('canvas');
 	canvas2.width = 450; canvas2.height = 300;
 	canvas2.id = 'fgCanvas'; canvas2.zIndex = 2;
-	h.appendChild(canvas2);
+	c.appendChild(canvas2);
 	canvas2.setAttribute('style','position:absolute; left:240px; top:180px');
 
 	// update canvases
@@ -419,6 +421,9 @@ displayGridPage = function(){
 	}
 
 	///////////// bottom text
+	c = document.createElement('center');
+	c.setAttribute('style','position:absolute; top:510');
+
 	h = document.createElement('B1');
 
 	h.appendChild(document.createTextNode('For each of the Cepheid stars you found, determine their apparent and absolute magnitudes.' +
@@ -435,8 +440,9 @@ displayGridPage = function(){
 	h.appendChild(document.createTextNode(' (also linked from the "Period-Luminosity Relation" page) to use the table' +
 		' to convert magnitude differences into distance.'));
 
-	h.setAttribute('style','position:absolute; left: 40px; top:510px; color:FFFFFF');
-	document.body.appendChild(h);
+	h.setAttribute('style','color:FFFFFF');
+	c.appendChild(h);
+	document.body.appendChild(c);
 }
 
 hotcircle = function(x,y,diam,ref){
