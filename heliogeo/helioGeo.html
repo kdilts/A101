@@ -80,7 +80,7 @@ debugLines = function(){
 	var vt = add(neg(orbiters[2].pos),orbiters[3].pos);
 	var angle = Math.acos((dot(vt,new vec2(1,0)))/(mag(vt)*mag(new vec2(1,0))));
 	if(orbiters[2].pos.y < 0){ angle = Math.PI*2-angle; }
-	//console.clear(); console.log(angle);
+	console.clear(); console.log(angle);
 
 	gfx.fillStyle = gfx.strokeStyle = 'red';
 	gfx.beginPath();
@@ -121,7 +121,6 @@ orbiter = function(pt, rad, orad, spd, col, line, follow,rot){
 	}else{
 		this.rot = 0;
 	}
-
 
 	this.update = function(){
 
