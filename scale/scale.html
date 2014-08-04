@@ -15,8 +15,11 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
+	
+	//// works for all browsers. safari users must have pop-up blocker disabled
 	testWindow = window.open('','','left=10, top=10, width=600, height=200');
 	testWindow.onresize = function(){ testWindow.resizeTo(600,200); }
+	////
 
 	setInterval(render,1000/60);
 }
