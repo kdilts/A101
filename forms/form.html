@@ -1,0 +1,48 @@
+<head>
+	<script language=javascript>
+
+var button;
+var textBoxes = [];
+
+window.onload = function(){
+
+	for(var i = 1; i <= 4; i++){ textBoxes[i] = document.getElementById('text'+i); }
+
+	clearButton = document.getElementById('clearButton');
+	clearButton.onclick = function(){
+		for(var i = 1; i <= 4; i++){ textBoxes[i].value = ''; }
+	}
+
+	button = document.getElementById('submitButton');
+	button.onclick = function(){
+		var valid = true;
+		for(var i = 1; i < 4; i++){
+			if(isNaN(parseFloat(textBoxes[i].value))){ valid = false; }
+		}
+		
+		if(valid){
+			var w = parseFloat(textBoxes[1].value);
+			var m = parseFloat(textBoxes[2].value);
+			var r = parseFloat(textBoxes[3].value);
+			var ans = w*m/r/r;
+			textBoxes[4].value = ('' + ans).substr(0,8);
+		}else{
+			textBoxes[4].value = 'Invalid Input';
+		}
+	}
+}
+
+	</script>
+</head>
+<body bgcolor="grey">
+	<center>
+		<form>
+			<b1>your earth weight: </b1><input type='textbox' id='text1' autocomplete="off"><br></br>
+			<b1>object mass: </b1><input type='textbox' id='text2' autocomplete="off"><br></br>
+			<b1>object radius: </b1><input type='textbox' id='text3' autocomplete="off"><br></br>
+			<input type='button' id='submitButton' value='Calculate'>
+			<input type='button' id='clearButton' value='Clear'><br></br>
+			<b1>your weight on object: </b1><input type='textbox' id='text4' autocomplete="off" disabled><br></br>
+		</form>
+	</center>
+</body>
