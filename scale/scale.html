@@ -5,13 +5,18 @@ var cwidth; var cheight;
 
 var orbiters = [];
 
+var testWindow;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
-	canvas.setAttribute('style','position:absolute; left:0; top:0; min-width:800px; min-height:600px');
+	canvas.setAttribute('style','position:absolute; left:0; top:0; min-width:800px; min-height:600px; max-width:800px; max-height:800px');
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	testWindow = window.open('','','left=10, top=10, width=600, height=200');
+	testWindow.onresize = function(){ testWindow.resizeTo(600,200); }
 
 	setInterval(render,1000/60);
 }
