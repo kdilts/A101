@@ -13,10 +13,6 @@ var noiseThreshold = 8; var noiseRange = 2;
 
 var show = 0;
 
-window.onresize = function(){
-	window.resizeTo(1400,800);
-}
-
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
@@ -42,7 +38,7 @@ window.onmousedown = function(e){
 	}
 }
 
-window.onresize = function(){ render(); };
+window.onresize = function(){ window.resizeTo(1400,800); render(); };
 
 clearAll = function(){
 	gfx.fillStyle='rgb(0,0,0)';
