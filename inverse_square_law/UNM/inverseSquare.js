@@ -9,7 +9,7 @@ var centers = [];
 
 var graphs = []; var buttons = [];
 
-var noiseThreshold = 10; var noiseRange = 3;
+var noiseThreshold = 8; var noiseRange = 2;
 
 var show = 0;
 
@@ -68,7 +68,7 @@ render = function(){
 
 			gfx.fillStyle = 'white'; gfx.strokeStyle = 'white';
 			gfx.font = '20px verdana';
-			if(d- .23*cheight*starRad[i] > 0){
+			if(d- .5*cheight*starRad[i] > 0){
 				gfx.fillText('Distance: ' + truncate(''+d), mx+5, my+19);
 				gfx.fillText('Intensity: ' + truncate(''+intens), mx+5, my+37);
 				graphs[i].mouseIn = true;
