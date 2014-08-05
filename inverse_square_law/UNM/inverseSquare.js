@@ -3,7 +3,7 @@ var mx; var my;
 
 var cwidth; var cheight;
 
-var starRad = [.1,.1,.1];
+var starRad = [.05,.075,.1];
 var lum = ['4.0e+004','4.0e+005','4.0e+006']
 var centers = [];
 
