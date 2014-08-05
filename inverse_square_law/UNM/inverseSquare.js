@@ -112,12 +112,20 @@ drawPanels = function(){
 		gfx.stroke();
 		gfx.restore();
 
-		gfx.strokeStyle = 'white';
-		gfx.fillStyle = 'white';
+		gfx.strokeStyle = gfx.fillStyle = 'yellow';
 		gfx.beginPath();
 		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight*starRad[i],0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+
+		for(var z = 0; z < 30; z++){
+			var temp = Math.floor(Math.random()*100)+120;
+			gfx.strokeStyle = gfx.fillStyle = 'rgb('+temp+','+temp+','+0+')';
+			gfx.beginPath();
+			gfx.arc(.33*cwidth/2+(i*.33*cwidth)+Math.random()*24-12,.25*cheight+Math.random()*24-12,Math.random()*6,0,Math.PI*2);
+			gfx.fill();
+			gfx.stroke();
+		}
 
 		gfx.fillStyle = 'yellow';
 		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.03*cheight);
