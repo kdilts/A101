@@ -13,6 +13,10 @@ var noiseThreshold = 8; var noiseRange = 2;
 
 var show = 0;
 
+window.onresize = function(){
+	window.resizeTo(1400,800);
+}
+
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
