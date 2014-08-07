@@ -7,7 +7,7 @@ var cwidth; var cheight;
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	document.body.appendChild(canvas);
-	cwidth = canvas.width = window.innerWidth*.995;
+	cwidth = canvas.width = window.innerWidth*.6;
 	cheight = canvas.height = window.innerHeight*.99;
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
 
@@ -18,7 +18,7 @@ window.onload = function(){
 }
 
 window.onresize = function(){
-	cwidth = canvas.width = window.innerWidth*.995;
+	cwidth = canvas.width = window.innerWidth*.6;
 	cheight = canvas.height = window.innerHeight*.99;
 	render();
 }
@@ -30,15 +30,6 @@ window.onmousedown = function(){}
 render = function(){
 	gfx.fillStyle='black';
 	gfx.fillRect(0,0,cwidth,cheight);
-
-	gfx.fillStyle='grey';
-	gfx.fillRect(cwidth*.75,cheight*.01,cwidth*.25,cheight)
-
-	dropDown.draw();
-
-	gfx.fillStyle='black'; gfx.font='22px verdana';
-	gfx.fillText('Semimajor axis:',cwidth*.76,cheight*.115);
-	gfx.fillText('Num. eccentricity:',cwidth*.76,cheight*.14);
 
 	gfx.fillStyle = gfx.strokeStyle = 'white';
 	ellipse2(400,400,600,400,0.17,175);
@@ -82,30 +73,6 @@ orbiter = {
 		orbiter.pos = new vec2(325,400);
 		orbiter.offset = new vec2(500,400);
 	}
-}
-
-inputBox = function(){
-	this.draw = function(){}
-}
-
-checkBox = function(){
-	this.draw = function(){}
-}
-
-dropDown = {
-	draw:function(){
-		gfx.fillStyle='black'; gfx.font='22px verdana';
-		gfx.fillText('Planet Select:',cwidth*.82,cheight*.035);
-		gfx.fillRect(cwidth*.76,cheight*.04,cwidth*.23,cheight*.05);
-	}
-}
-
-slider = {
-	draw:function(){}
-}
-
-button = {
-	draw:function(){}
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
@@ -189,5 +156,33 @@ ellipse2_center = function(x, y, xrad, yrad){
 
 	</script>
 </head>
-<body bgcolor='black'>
+<body bgcolor='grey'>
+	<form style='position:absolute; left:62%; top:2%;'>
+		<select id='planetSelect' style='width:200'>
+				<option value = "0">Mercury</option>
+				<option value = "1">Venus</option>
+				<option value = "2">Earth</option>
+				<option value = "3">Mars</option>
+				<option value = "4">Jupiter</option>
+				<option value = "5">Saturn</option>
+				<option value = "6">Uranus</option>
+				<option value = "7">Neptune</option>
+				<option value = "8">Pluto</option>
+				<option value = "8">Halley's Comet</option>
+		</select><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity'><br></br>
+		<input type='button' id='playpause' value='Play / Pause'><br></br>
+		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
+		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
+		<input type='slider' id='slider'><br></br>
+		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<br></br>
+		<b1>Distance from the Sun: </b1><br></br>
+		<br></br>
+		<b1>Velocity</b1><br></br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Currently: </b1><br></br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Min: </b1><br></br>
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Max: </b1><br></br>
+	</form>
 </body>
