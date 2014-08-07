@@ -55,6 +55,9 @@ window.onload = function(){
 	minbox.value = ''+planetData.mercury.min + ' km/s';
 	maxbox.value = ''+planetData.mercury.max + ' km/s';
 
+	semimajorbox.onchange = function(){ updateOrbit(); }
+	eccbox.onchange = function(){ updateOrbit(); }
+
 	playpausebutton.onclick = function(){
 		if(playing){
 			clearInterval(interval);
@@ -171,7 +174,11 @@ render = function(){
 	gfx.stroke();
 	gfx.lineWidth = 1;
 	gfx.font = '17px verdana';
-	gfx.fillText(planetData[currentPlanet].semimajor + ' AU',557,395);
+	if(currentPlanet !== 'custom'){
+		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',557,395);
+	}else{
+		gfx.fillText(semimajorbox.value + ' AU',557,395);
+	}
 	
 	orbiter.draw();
 
@@ -214,6 +221,46 @@ orbiter = {
 		orbiter.pos = new vec2(325,400);
 		orbiter.offset = new vec2(500,400);
 	}
+}
+
+updateOrbit = function(){
+	orbitEcc = eccbox.value;
+	minbox.value = (''+aphelioVel()).substr(0,4) + ' km/s';
+	maxbox.value = (''+perihelioVel()).substr(0,4) + ' km/s';
+}
+
+// equation from: http://people.bridgewater.edu/~rbowman/ISAW/KeplerCalc.html
+aphelioVel = function(){
+	var semi; var ecc;
+	if(currentPlanet !== 'custom'){
+		semi = planetData[currentPlanet].semimajor;
+		ecc = planetData[currentPlanet].ecc;
+	}else{
+		semi = semimajorbox.value;
+		ecc = eccbox.value;
+	}
+	var temp = (8.871*Math.pow(10,8)/semi);
+	temp *= (1-ecc)/(1+ecc);
+	temp = Math.sqrt(temp);
+	temp /= 1000;
+	return temp;
+}
+
+// equation from: http://people.bridgewater.edu/~rbowman/ISAW/KeplerCalc.html
+perihelioVel = function(){
+	var semi; var ecc;
+	if(currentPlanet !== 'custom'){
+		semi = planetData[currentPlanet].semimajor;
+		ecc = planetData[currentPlanet].ecc;
+	}else{
+		semi = semimajorbox.value;
+		ecc = eccbox.value;
+	}
+	var temp = (8.871*Math.pow(10,8)/semi);
+	temp *= (1+ecc)/(1-ecc);
+	temp = Math.sqrt(temp);
+	temp /= 1000;
+	return temp;
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
