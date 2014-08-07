@@ -4,6 +4,11 @@ var canvas; var gfx;
 
 var cwidth; var cheight;
 
+var planetSelecter; var semimajorbox; var eccbox; var playpausebutton;
+var slowmobox; var showsectorsbox; var slider; var showvelbox;
+
+var interval; var playing = true;
+
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
 	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
@@ -27,7 +32,26 @@ window.onload = function(){
 	gfx = canvas.getContext('2d');
 	orbiter.init();
 	
-	setInterval(render,1000/60);
+	planetSelecter =  document.getElementById('planetSelect');
+	semimajorbox = document.getElementById('semimajor');
+	eccbox = document.getElementById('eccentricity');
+	playpausebutton = document.getElementById('playpause');
+	slowmobox = document.getElementById('slowmo');
+	showsectorsbox = document.getElementById('showsectors');
+	slider = document.getElementById('slider');
+	showvelbox = document.getElementById('showvel');
+
+	playpausebutton.onclick = function(){
+		if(playing){
+			clearInterval(interval);
+			playing = false;
+		}else{
+			interval = setInterval(render,1000/60);
+			playing = true;
+		}
+	}
+
+	interval = setInterval(render,1000/60);
 }
 
 window.onresize = function(){
@@ -151,7 +175,6 @@ ellipse2_center = function(x, y, xrad, yrad){
 	if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
 	console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
 }
-
 	</script>
 </head>
 <body bgcolor='grey'>
