@@ -167,7 +167,7 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	gfx.fillStyle = gfx.strokeStyle = 'white';
-	ellipse2_center(500,400,orbitSemiMajor,175*Math.sqrt(1-(orbitEcc*orbitEcc*11)));
+	ellipse2(400,400,600,400,orbitEcc,orbitSemiMajor);
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.beginPath();
@@ -243,36 +243,6 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 	}
 	gfx.stroke();
 	gfx.restore();
-}
-
-ellipse2_center = function(x, y, xrad, yrad){
-	gfx.lineWidth=2;
-	gfx.strokeStyle='white'; gfx.fillStyle='white';
-	gfx.beginPath();
-
-	// formula modified from: http://scienceprimer.com/draw-oval-html5-canvas
-		for(var i = 0*Math.PI; i < 2*Math.PI; i += 0.01){
-			xpos = x-(yrad*Math.sin(i))*Math.sin(0*Math.PI)+(xrad*Math.cos(i))*Math.cos(0*Math.PI);
-			ypos = y+(xrad*Math.cos(i))*Math.sin(0*Math.PI)+(yrad*Math.sin(i))*Math.cos(0*Math.PI);
-
-			if(i === 0){
-				gfx.moveTo(xpos,ypos);
-			}else{
-				gfx.lineTo(xpos,ypos);
-			}
-		}
-	//
-
-	gfx.stroke();
-
-	/*gfx.beginPath();
-	gfx.arc(x,y,2,0,Math.PI*2);
-	gfx.fill();
-	gfx.stroke();*/
-
-	var a; var b;
-	if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
-	//console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
 }
 	</script>
 </head>
