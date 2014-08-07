@@ -4,10 +4,13 @@ var canvas; var gfx;
 
 var cwidth; var cheight;
 
-var planetSelecter; var semimajorbox; var eccbox; var playpausebutton;
+var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox;
+var minbox; var maxbox; var curbox; var distbox;
 
 var interval; var playing = true;
+
+var orbitEcc = .17; var orbitSemiMajor = 175;
 
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
@@ -32,7 +35,7 @@ window.onload = function(){
 	gfx = canvas.getContext('2d');
 	orbiter.init();
 	
-	planetSelecter =  document.getElementById('planetSelect');
+	planetSelector =  document.getElementById('planetSelect');
 	semimajorbox = document.getElementById('semimajor');
 	eccbox = document.getElementById('eccentricity');
 	playpausebutton = document.getElementById('playpause');
@@ -41,6 +44,17 @@ window.onload = function(){
 	slider = document.getElementById('slider');
 	showvelbox = document.getElementById('showvel');
 
+	minbox = document.getElementById('minvel');
+	maxbox = document.getElementById('maxvel');
+	curbox = document.getElementById('curvel');
+	distbox = document.getElementById('distbox');
+
+	semimajorbox.value = ''+planetData.mercury.semimajor;
+	eccbox.value = ''+planetData.mercury.ecc;
+	semimajorbox.disabled = true; eccbox.disabled = true;
+	minbox.value = ''+planetData.mercury.min;
+	maxbox.value = ''+planetData.mercury.max;
+
 	playpausebutton.onclick = function(){
 		if(playing){
 			clearInterval(interval);
@@ -48,6 +62,90 @@ window.onload = function(){
 		}else{
 			interval = setInterval(render,1000/60);
 			playing = true;
+		}
+	}
+
+	slider.onchange = function(){ } // TODO
+
+	planetSelector.onchange = function(){
+		switch(parseInt(planetSelector.value)){
+			case 0:
+				semimajorbox.value = ''+planetData.mercury.semimajor;
+				eccbox.value = ''+planetData.mercury.ecc;
+				minbox.value = ''+planetData.mercury.min;
+				maxbox.value = ''+planetData.mercury.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 1:
+				semimajorbox.value = ''+planetData.venus.semimajor;
+				eccbox.value = ''+planetData.venus.ecc;
+				minbox.value = ''+planetData.venus.min;
+				maxbox.value = ''+planetData.venus.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 2:
+				semimajorbox.value = ''+planetData.earth.semimajor;
+				eccbox.value = ''+planetData.earth.ecc;
+				minbox.value = ''+planetData.earth.min;
+				maxbox.value = ''+planetData.earth.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 3:
+				semimajorbox.value = ''+planetData.mars.semimajor;
+				eccbox.value = ''+planetData.mars.ecc;
+				minbox.value = ''+planetData.mars.min;
+				maxbox.value = ''+planetData.mars.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 4:
+				semimajorbox.value = ''+planetData.jupiter.semimajor;
+				eccbox.value = ''+planetData.jupiter.ecc;
+				minbox.value = ''+planetData.jupiter.min;
+				maxbox.value = ''+planetData.jupiter.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 5:
+				semimajorbox.value = ''+planetData.saturn.semimajor;
+				eccbox.value = ''+planetData.saturn.ecc;
+				minbox.value = ''+planetData.saturn.min;
+				maxbox.value = ''+planetData.saturn.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 6:
+				semimajorbox.value = ''+planetData.uranus.semimajor;
+				eccbox.value = ''+planetData.uranus.ecc;
+				minbox.value = ''+planetData.uranus.min;
+				maxbox.value = ''+planetData.uranus.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 7:
+				semimajorbox.value = ''+planetData.neptune.semimajor;
+				eccbox.value = ''+planetData.neptune.ecc;
+				minbox.value = ''+planetData.neptune.min;
+				maxbox.value = ''+planetData.neptune.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 8:
+				semimajorbox.value = ''+planetData.pluto.semimajor;
+				eccbox.value = ''+planetData.pluto.ecc;
+				minbox.value = ''+planetData.pluto.min;
+				maxbox.value = ''+planetData.pluto.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 9:
+				semimajorbox.value = ''+planetData.halley.semimajor;
+				eccbox.value = ''+planetData.halley.ecc;
+				minbox.value = ''+planetData.halley.min;
+				maxbox.value = ''+planetData.halley.max;
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 10:
+			semimajorbox.value = '';
+			eccbox.value = '';
+			minbox.value = ''; // TODO
+			maxbox.value = ''; // TODO
+			semimajorbox.disabled = false; eccbox.disabled = false;
+			break;
 		}
 	}
 
@@ -69,7 +167,7 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	gfx.fillStyle = gfx.strokeStyle = 'white';
-	ellipse2(400,400,600,400,0.17,175);
+	ellipse2_center(500,400,orbitSemiMajor,175*Math.sqrt(1-(orbitEcc*orbitEcc*11)));
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.beginPath();
@@ -96,15 +194,16 @@ orbiter = {
 	update:function(){
 		// calculate distance
 		var d = mag(sub(orbiter.pos,new vec2(400,400)));
-		//console.clear(); console.log(d);
-		// calculate velocity
+		
 		// update position
-		orbiter.pos.x = 1.0*175*Math.cos(orbiter.rot);
-		orbiter.pos.y = (1-0.17)*175*Math.sin(orbiter.rot)*(-1);
+		orbiter.pos.x = 1.0*orbitSemiMajor*Math.cos(orbiter.rot);
+		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
 		orbiter.rot += lerp(75,275,d,.025,.008);
-
 		if(orbiter.rot > Math.PI*2){ orbiter.rot = orbiter.rot % Math.PI*2 }
+
+		distbox.value = (''+d).substr(0,8);
+		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8); // TODO
 	},
 	init:function(){
 		orbiter.pos = new vec2(325,400);
@@ -166,14 +265,14 @@ ellipse2_center = function(x, y, xrad, yrad){
 
 	gfx.stroke();
 
-	gfx.beginPath();
+	/*gfx.beginPath();
 	gfx.arc(x,y,2,0,Math.PI*2);
 	gfx.fill();
-	gfx.stroke();
+	gfx.stroke();*/
 
 	var a; var b;
 	if(xrad < yrad){ a = yrad; b = xrad; }else{ a = xrad; b = yrad; }
-	console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
+	//console.log('>> eccentricity: ' + Math.sqrt(1-Math.pow((b/a),2)));
 }
 	</script>
 </head>
@@ -189,21 +288,37 @@ ellipse2_center = function(x, y, xrad, yrad){
 				<option value = "6">Uranus</option>
 				<option value = "7">Neptune</option>
 				<option value = "8">Pluto</option>
-				<option value = "8">Halley's Comet</option>
+				<option value = "9">Halley's Comet</option>
+				<option value = "10">Custom</option>
 		</select><br></br>
 		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor'><br></br>
 		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity'><br></br>
 		<input type='button' id='playpause' value='Play / Pause'><br></br>
 		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
 		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
-		<input type='slider' id='slider'><br></br>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type='range' id='slider'><br></br>
 		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		
+		<b1>Distance from the Sun: </b1>
+		<input type = 'textbox' id='distbox' disabled>
 		<br></br>
-		<b1>Distance from the Sun: </b1><br></br>
-		<br></br>
+		
 		<b1>Velocity</b1><br></br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Currently: </b1><br></br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Min: </b1><br></br>
-		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<b1>Max: </b1><br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Currently: </b1>
+		<input type = 'textbox' id='curvel' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Min: </b1>
+		<input type = 'textbox' id='minvel' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Max: </b1>
+		<input type = 'textbox' id='maxvel' disabled>
+		<br></br>
 	</form>
 </body>
