@@ -8,9 +8,9 @@ var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
-var interval; var playing = true;
+var interval; var playing = true; var currentPlanet = 'mercury';
 
-var orbitEcc = .17; var orbitSemiMajor = 175;
+var orbitEcc = .17; var orbitSemiMajor = 175; var slow = false;
 
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
@@ -49,11 +49,11 @@ window.onload = function(){
 	curbox = document.getElementById('curvel');
 	distbox = document.getElementById('distbox');
 
-	semimajorbox.value = ''+planetData.mercury.semimajor;
+	semimajorbox.value = ''+planetData.mercury.semimajor + ' AU';
 	eccbox.value = ''+planetData.mercury.ecc;
 	semimajorbox.disabled = true; eccbox.disabled = true;
-	minbox.value = ''+planetData.mercury.min;
-	maxbox.value = ''+planetData.mercury.max;
+	minbox.value = ''+planetData.mercury.min + ' km/s';
+	maxbox.value = ''+planetData.mercury.max + ' km/s';
 
 	playpausebutton.onclick = function(){
 		if(playing){
@@ -67,86 +67,73 @@ window.onload = function(){
 
 	slider.onchange = function(){ } // TODO
 
+	slowmobox.onchange = function(){
+		if(slowmobox.checked){
+			slow = true;
+		}else{
+			slow = false;
+		}
+	}
+
 	planetSelector.onchange = function(){
 		switch(parseInt(planetSelector.value)){
 			case 0:
-				semimajorbox.value = ''+planetData.mercury.semimajor;
-				eccbox.value = ''+planetData.mercury.ecc;
-				minbox.value = ''+planetData.mercury.min;
-				maxbox.value = ''+planetData.mercury.max;
+				currentPlanet = 'mercury';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 1:
-				semimajorbox.value = ''+planetData.venus.semimajor;
-				eccbox.value = ''+planetData.venus.ecc;
-				minbox.value = ''+planetData.venus.min;
-				maxbox.value = ''+planetData.venus.max;
+				currentPlanet = 'venus';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 2:
-				semimajorbox.value = ''+planetData.earth.semimajor;
-				eccbox.value = ''+planetData.earth.ecc;
-				minbox.value = ''+planetData.earth.min;
-				maxbox.value = ''+planetData.earth.max;
+				currentPlanet = 'earth';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 3:
-				semimajorbox.value = ''+planetData.mars.semimajor;
-				eccbox.value = ''+planetData.mars.ecc;
-				minbox.value = ''+planetData.mars.min;
-				maxbox.value = ''+planetData.mars.max;
+				currentPlanet = 'mars';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 4:
-				semimajorbox.value = ''+planetData.jupiter.semimajor;
-				eccbox.value = ''+planetData.jupiter.ecc;
-				minbox.value = ''+planetData.jupiter.min;
-				maxbox.value = ''+planetData.jupiter.max;
+				currentPlanet = 'jupiter';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 5:
-				semimajorbox.value = ''+planetData.saturn.semimajor;
-				eccbox.value = ''+planetData.saturn.ecc;
-				minbox.value = ''+planetData.saturn.min;
-				maxbox.value = ''+planetData.saturn.max;
+				currentPlanet = 'saturn';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 6:
-				semimajorbox.value = ''+planetData.uranus.semimajor;
-				eccbox.value = ''+planetData.uranus.ecc;
-				minbox.value = ''+planetData.uranus.min;
-				maxbox.value = ''+planetData.uranus.max;
+				currentPlanet = 'uranus';
+
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 7:
-				semimajorbox.value = ''+planetData.neptune.semimajor;
-				eccbox.value = ''+planetData.neptune.ecc;
-				minbox.value = ''+planetData.neptune.min;
-				maxbox.value = ''+planetData.neptune.max;
+				currentPlanet = 'neptune';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 8:
-				semimajorbox.value = ''+planetData.pluto.semimajor;
-				eccbox.value = ''+planetData.pluto.ecc;
-				minbox.value = ''+planetData.pluto.min;
-				maxbox.value = ''+planetData.pluto.max;
+				currentPlanet = 'pluto';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 9:
-				semimajorbox.value = ''+planetData.halley.semimajor;
-				eccbox.value = ''+planetData.halley.ecc;
-				minbox.value = ''+planetData.halley.min;
-				maxbox.value = ''+planetData.halley.max;
+				currentPlanet = 'halley';
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 10:
-			semimajorbox.value = '';
-			eccbox.value = '';
-			minbox.value = ''; // TODO
-			maxbox.value = ''; // TODO
-			semimajorbox.disabled = false; eccbox.disabled = false;
+				currentPlanet = 'custom';
+				semimajorbox.value = '';
+				eccbox.value = '';
+				minbox.value = ''; // TODO
+				maxbox.value = ''; // TODO
+				semimajorbox.disabled = false; eccbox.disabled = false;
+				return;
 			break;
 		}
+				semimajorbox.value = ''+planetData[currentPlanet].semimajor + ' AU';
+				eccbox.value = ''+planetData[currentPlanet].ecc;
+				minbox.value = ''+planetData[currentPlanet].min + ' km/s';
+				maxbox.value = ''+planetData[currentPlanet].max + ' km/s';
+				//orbitSemiMajor = planetData[currentPlanet].semimajor;
+				orbitEcc = planetData[currentPlanet].ecc;
 	}
 
 	interval = setInterval(render,1000/60);
@@ -175,7 +162,19 @@ render = function(){
 	gfx.fill();
 	gfx.stroke();
 
+	gfx.fillStyle = gfx.strokeStyle = 'green';
+	gfx.lineWidth = 3;
+	gfx.beginPath();
+	gfx.moveTo(500,400);
+	gfx.lineTo(675,400);
+	gfx.fill();
+	gfx.stroke();
+	gfx.lineWidth = 1;
+	gfx.font = '17px verdana';
+	gfx.fillText(planetData[currentPlanet].semimajor + ' AU',557,395);
+	
 	orbiter.draw();
+
 }
 
 orbiter = {
@@ -199,11 +198,17 @@ orbiter = {
 		orbiter.pos.x = 1.0*orbitSemiMajor*Math.cos(orbiter.rot);
 		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
-		orbiter.rot += lerp(75,275,d,.025,.008);
+
+		if(slow){
+			orbiter.rot += (lerp(75,275,d,.025,.008)/3);
+		}else{
+			orbiter.rot += lerp(75,275,d,.025,.008);
+		}
+
 		if(orbiter.rot > Math.PI*2){ orbiter.rot = orbiter.rot % Math.PI*2 }
 
-		distbox.value = (''+d).substr(0,8);
-		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8); // TODO
+		distbox.value = (''+d).substr(0,8) + ' AU';
+		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8) + ' km/s'; // TODO
 	},
 	init:function(){
 		orbiter.pos = new vec2(325,400);
@@ -261,34 +266,34 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 				<option value = "9">Halley's Comet</option>
 				<option value = "10">Custom</option>
 		</select><br></br>
-		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor'><br></br>
-		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity'><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
 		<input type='button' id='playpause' value='Play / Pause'><br></br>
 		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
 		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
 		&nbsp;&nbsp;&nbsp;&nbsp;
-		<input type='range' id='slider'><br></br>
+		<b1>Sector Size: </b1><input type='range' id='slider'><br></br>
 		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
 		
 		<b1>Distance from the Sun: </b1>
-		<input type = 'textbox' id='distbox' disabled>
+		<input type = 'textbox' id='distbox' style='width:28%' disabled>
 		<br></br>
 		
 		<b1>Velocity</b1><br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<b1>Currently: </b1>
-		<input type = 'textbox' id='curvel' disabled>
+		<input type = 'textbox' id='curvel' style='width:33%' disabled>
 		<br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<b1>Min: </b1>
-		<input type = 'textbox' id='minvel' disabled>
+		<input type = 'textbox' id='minvel' style='width:22%' disabled>
 		<br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<b1>Max: </b1>
-		<input type = 'textbox' id='maxvel' disabled>
+		<input type = 'textbox' id='maxvel' style='width:22%' disabled>
 		<br></br>
 	</form>
 </body>
