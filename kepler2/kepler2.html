@@ -170,23 +170,29 @@ render = function(){
 	drawSectors();
 
 	gfx.fillStyle = gfx.strokeStyle = 'white';
-	ellipse2(400,400,600,400,orbitEcc,orbitSemiMajor);
+	ellipse2(cwidth/2-200,400,cwidth/2+200,400,orbitEcc,orbitSemiMajor);
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.beginPath();
-	gfx.arc(600,400,20,0,Math.PI*2);
+	gfx.arc(cwidth/2+100,400,20,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
 
 	gfx.fillStyle = gfx.strokeStyle = 'green';
 	gfx.lineWidth = 3;
 	gfx.beginPath();
-	gfx.moveTo(325,210);
+	/*gfx.moveTo(325,210);
 	gfx.lineTo(325,190);
 	gfx.moveTo(500,210);
 	gfx.lineTo(500,190);
 	gfx.moveTo(325,200);
-	gfx.lineTo(500,200);
+	gfx.lineTo(500,200);*/
+	gfx.moveTo(cwidth/2-175,700);
+	gfx.lineTo(cwidth/2-175,190);
+	gfx.moveTo(cwidth/2,700);
+	gfx.lineTo(cwidth/2,190);
+	gfx.moveTo(cwidth/2-175,200);
+	gfx.lineTo(cwidth/2,200);
 	gfx.fill();
 	gfx.stroke();
 	gfx.lineWidth = 1;
@@ -218,7 +224,7 @@ orbiter = {
 	},
 	update:function(){
 		// calculate distance
-		var d = mag(sub(orbiter.pos,new vec2(400,400)));
+		var d = mag(sub(orbiter.pos,new vec2(600,400)));
 		
 		// update position
 		orbiter.pos.x = 1.0*orbitSemiMajor*Math.cos(orbiter.rot);
@@ -247,7 +253,7 @@ drawSectors = function(){
 
 		if(showsectorsbox.checked){
 		gfx.save();
-		gfx.translate(500,400);
+		gfx.translate(cwidth/2,400);
 		gfx.lineWidth = 2;
 		gfx.fillStyle = 'cyan'
 		gfx.strokeStyle = 'white';
