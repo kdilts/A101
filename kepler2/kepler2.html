@@ -55,8 +55,14 @@ window.onload = function(){
 	minbox.value = ''+planetData.mercury.min + ' km/s';
 	maxbox.value = ''+planetData.mercury.max + ' km/s';
 
-	semimajorbox.onchange = function(){ updateOrbit(); }
-	eccbox.onchange = function(){ updateOrbit(); }
+	semimajorbox.onchange = function(){
+		if(isNaN(parseFloat(semimajorbox.value))){ semimajorbox.value = ''; return; }
+		updateOrbit();
+	}
+	eccbox.onchange = function(){
+		if(isNaN(parseFloat(eccbox.value))){ eccbox.value = ''; return; }
+		updateOrbit();
+	}
 
 	playpausebutton.onclick = function(){
 		if(playing){
@@ -156,6 +162,8 @@ render = function(){
 	gfx.fillStyle='black';
 	gfx.fillRect(0,0,cwidth,cheight);
 
+	drawSectors();
+
 	gfx.fillStyle = gfx.strokeStyle = 'white';
 	ellipse2(400,400,600,400,orbitEcc,orbitSemiMajor);
 
@@ -181,7 +189,9 @@ render = function(){
 	if(currentPlanet !== 'custom'){
 		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',380,195);
 	}else{
-		gfx.fillText(semimajorbox.value + ' AU',380,195);
+		if(semimajorbox.value.indexOf('U') !== -1 && !isNaN(parseFloat(semimajorbox.value))){
+			gfx.fillText(semimajorbox.value,380,195);
+		}
 	}
 	
 	orbiter.draw();
@@ -227,12 +237,68 @@ orbiter = {
 	}
 }
 
+drawSectors = function(){
+		var angle = lerp(0,100,slider.value,0,Math.PI/2);
+
+		if(showsectorsbox.checked){
+		gfx.save();
+		gfx.translate(500,400);
+		gfx.lineWidth = 2;
+		gfx.fillStyle = 'cyan'
+		gfx.strokeStyle = 'white';
+
+		gfx.beginPath();
+		for(var i = 0; i < angle; i += .01){
+			var x = 1.0*orbitSemiMajor*Math.cos(i);
+			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i)*(-1);
+			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
+		}
+		gfx.lineTo(100,0);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.beginPath();
+		for(var i = 0; i > -angle; i -= .01){
+			var x = 1.0*orbitSemiMajor*Math.cos(i);
+			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i)*(-1);
+			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
+		}
+		gfx.lineTo(100,0);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.fillStyle = 'magenta'
+		gfx.beginPath();
+		for(var i = 0; i < angle; i += .01){
+			var x = 1.0*orbitSemiMajor*Math.cos(i+Math.PI);
+			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i+Math.PI)*(-1);
+			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
+		}
+		gfx.lineTo(100,0);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.beginPath();
+		for(var i = 0; i > -angle; i -= .01){
+			var x = 1.0*orbitSemiMajor*Math.cos(i+Math.PI);
+			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i+Math.PI)*(-1);
+			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
+		}
+		gfx.lineTo(100,0);
+		gfx.fill();
+		gfx.stroke();
+
+		gfx.restore();
+	}
+}
+
 updateOrbit = function(){
 	orbitEcc = eccbox.value;
 	if(eccbox.value < 0){ eccbox.value = 0; orbitEcc = 0; }
 	if(eccbox.value > 1){ eccbox.value = 1; orbitEcc = 1; }
-	minbox.value = (''+aphelioVel()).substr(0,4) + ' km/s';
-	maxbox.value = (''+perihelioVel()).substr(0,4) + ' km/s';
+	minbox.value = (''+aphelioVel()).substr(0,8) + ' km/s';
+	maxbox.value = (''+perihelioVel()).substr(0,8) + ' km/s';
+	if(semimajorbox.value.length > 0 && semimajorbox.value.indexOf('U') === -1){ semimajorbox.value += ' AU'; }
 }
 
 // equation from: http://people.bridgewater.edu/~rbowman/ISAW/KeplerCalc.html
@@ -336,17 +402,17 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 		<b1>Currently: </b1>
-		<input type = 'textbox' id='curvel' style='width:33%' disabled>
+		<input type = 'textbox' id='curvel' style='width:30%' disabled>
 		<br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<b1>Min: </b1>
-		<input type = 'textbox' id='minvel' style='width:22%' disabled>
+		<b1>Minimum: </b1>
+		<input type = 'textbox' id='minvel' style='width:30%' disabled>
 		<br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<b1>Max: </b1>
-		<input type = 'textbox' id='maxvel' style='width:22%' disabled>
+		<b1>Maximum: </b1>
+		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
 		<br></br>
 	</form>
 </body>
