@@ -12,6 +12,8 @@ var interval; var playing = true; var currentPlanet = 'mercury';
 
 var orbitEcc = .17; var orbitSemiMajor = 175; var slow = false;
 
+var timer1 = 0.5; var timer2 = 0.5; var timerMax = 0.5;
+
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
 	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
@@ -74,7 +76,10 @@ window.onload = function(){
 		}
 	}
 
-	slider.onchange = function(){ } // TODO
+	slider.onchange = function(){
+		timerMax = lerp(0,100,slider.value,0,.5);
+		timer1 = timer2 = timerMax;
+	}
 
 	slowmobox.onchange = function(){
 		if(slowmobox.checked){
@@ -238,7 +243,7 @@ orbiter = {
 }
 
 drawSectors = function(){
-		var angle = lerp(0,100,slider.value,0,Math.PI/2);
+		var angle = lerp(0,100,slider.value,.0001,Math.PI/2);
 
 		if(showsectorsbox.checked){
 		gfx.save();
@@ -290,6 +295,26 @@ drawSectors = function(){
 
 		gfx.restore();
 	}
+
+	gfx.strokeStyle = gfx.fillStyle = 'magenta';
+	gfx.fillRect(220,600,200,100);
+
+	gfx.strokeStyle = gfx.fillStyle = 'cyan';
+	gfx.fillRect(620,600,200,100);
+
+	gfx.strokeStyle = gfx.fillStyle = 'black';
+	gfx.fillRect(240,620,160,60);
+	gfx.fillRect(640,620,160,60);
+
+	gfx.strokeStyle = gfx.fillStyle = 'red';
+
+	var pad = '';
+	while((''+timer1+pad).length < 8){ pad += '0'; }
+	gfx.fillText(timer1 + pad + ' T',270,655);
+
+	pad = '';
+	while((''+timer2+pad).length < 8){ pad += '0'; }
+	gfx.fillText(timer2 + pad + ' T',670,655);
 }
 
 updateOrbit = function(){
