@@ -161,23 +161,27 @@ render = function(){
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.beginPath();
-	gfx.arc(400,400,20,0,Math.PI*2);
+	gfx.arc(600,400,20,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
 
 	gfx.fillStyle = gfx.strokeStyle = 'green';
 	gfx.lineWidth = 3;
 	gfx.beginPath();
-	gfx.moveTo(500,400);
-	gfx.lineTo(675,400);
+	gfx.moveTo(325,210);
+	gfx.lineTo(325,190);
+	gfx.moveTo(500,210);
+	gfx.lineTo(500,190);
+	gfx.moveTo(325,200);
+	gfx.lineTo(500,200);
 	gfx.fill();
 	gfx.stroke();
 	gfx.lineWidth = 1;
 	gfx.font = '17px verdana';
 	if(currentPlanet !== 'custom'){
-		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',557,395);
+		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',380,195);
 	}else{
-		gfx.fillText(semimajorbox.value + ' AU',557,395);
+		gfx.fillText(semimajorbox.value + ' AU',380,195);
 	}
 	
 	orbiter.draw();
@@ -225,6 +229,8 @@ orbiter = {
 
 updateOrbit = function(){
 	orbitEcc = eccbox.value;
+	if(eccbox.value < 0){ eccbox.value = 0; orbitEcc = 0; }
+	if(eccbox.value > 1){ eccbox.value = 1; orbitEcc = 1; }
 	minbox.value = (''+aphelioVel()).substr(0,4) + ' km/s';
 	maxbox.value = (''+perihelioVel()).substr(0,4) + ' km/s';
 }
