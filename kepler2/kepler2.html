@@ -31,7 +31,7 @@ window.onload = function(){
 	canvas = document.createElement('canvas');
 	document.body.appendChild(canvas);
 	cwidth = canvas.width = window.innerWidth*.6;
-	cheight = canvas.height = window.innerHeight*.99;
+	cheight = canvas.height = window.innerHeight;
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
 
 	gfx = canvas.getContext('2d');
@@ -155,8 +155,7 @@ window.onload = function(){
 
 window.onresize = function(){
 	cwidth = canvas.width = window.innerWidth*.6;
-	cheight = canvas.height = window.innerHeight*.99;
-	render();
+	cheight = canvas.height = window.innerHeight;
 }
 
 window.onmousemove = function(){}
@@ -170,38 +169,32 @@ render = function(){
 	drawSectors();
 
 	gfx.fillStyle = gfx.strokeStyle = 'white';
-	ellipse2(cwidth/2-200,400,cwidth/2+200,400,orbitEcc,orbitSemiMajor);
+	ellipse2(cwidth/2-200,250,cwidth/2+200,250,orbitEcc,orbitSemiMajor);
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.beginPath();
-	gfx.arc(cwidth/2+100,400,20,0,Math.PI*2);
+	gfx.arc(cwidth/2+100,250,20,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
 
 	gfx.fillStyle = gfx.strokeStyle = 'green';
 	gfx.lineWidth = 3;
 	gfx.beginPath();
-	/*gfx.moveTo(325,210);
-	gfx.lineTo(325,190);
-	gfx.moveTo(500,210);
-	gfx.lineTo(500,190);
-	gfx.moveTo(325,200);
-	gfx.lineTo(500,200);*/
-	gfx.moveTo(cwidth/2-175,700);
-	gfx.lineTo(cwidth/2-175,190);
-	gfx.moveTo(cwidth/2,700);
-	gfx.lineTo(cwidth/2,190);
-	gfx.moveTo(cwidth/2-175,200);
-	gfx.lineTo(cwidth/2,200);
+	gfx.moveTo(cwidth/2-175,60);
+	gfx.lineTo(cwidth/2-175,40);
+	gfx.moveTo(cwidth/2,60);
+	gfx.lineTo(cwidth/2,40);
+	gfx.moveTo(cwidth/2-175,50);
+	gfx.lineTo(cwidth/2,50);
 	gfx.fill();
 	gfx.stroke();
 	gfx.lineWidth = 1;
 	gfx.font = '17px verdana';
 	if(currentPlanet !== 'custom'){
-		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',380,195);
+		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',cwidth/2-125,45);
 	}else{
 		if(semimajorbox.value.indexOf('U') !== -1 && !isNaN(parseFloat(semimajorbox.value))){
-			gfx.fillText(semimajorbox.value,380,195);
+			gfx.fillText(semimajorbox.value,cwidth/2-125,45);
 		}
 	}
 	
@@ -224,9 +217,11 @@ orbiter = {
 	},
 	update:function(){
 		// calculate distance
-		var d = mag(sub(orbiter.pos,new vec2(600,400)));
+		var d = mag(sub(orbiter.pos,new vec2(cwidth/2+100,250)));
 		
 		// update position
+		orbiter.offset.x = cwidth/2;
+
 		orbiter.pos.x = 1.0*orbitSemiMajor*Math.cos(orbiter.rot);
 		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
@@ -243,8 +238,8 @@ orbiter = {
 		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8) + ' km/s'; // TODO
 	},
 	init:function(){
-		orbiter.pos = new vec2(325,400);
-		orbiter.offset = new vec2(500,400);
+		orbiter.pos = new vec2(325,250);
+		orbiter.offset = new vec2(500,250);
 	}
 }
 
@@ -253,7 +248,7 @@ drawSectors = function(){
 
 		if(showsectorsbox.checked){
 		gfx.save();
-		gfx.translate(cwidth/2,400);
+		gfx.translate(cwidth/2,250);
 		gfx.lineWidth = 2;
 		gfx.fillStyle = 'cyan'
 		gfx.strokeStyle = 'white';
@@ -303,24 +298,24 @@ drawSectors = function(){
 	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'magenta';
-	gfx.fillRect(220,600,200,100);
+	gfx.fillRect(cwidth/2-300,450,200,100);
 
 	gfx.strokeStyle = gfx.fillStyle = 'cyan';
-	gfx.fillRect(620,600,200,100);
+	gfx.fillRect(cwidth/2+100,450,200,100);
 
 	gfx.strokeStyle = gfx.fillStyle = 'black';
-	gfx.fillRect(240,620,160,60);
-	gfx.fillRect(640,620,160,60);
+	gfx.fillRect(cwidth/2-280,470,160,60);
+	gfx.fillRect(cwidth/2+120,470,160,60);
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
 
 	var pad = '';
 	while((''+timer1+pad).length < 8){ pad += '0'; }
-	gfx.fillText(timer1 + pad + ' T',270,655);
+	gfx.fillText(timer1 + pad + ' T',cwidth/2-250,505);
 
 	pad = '';
 	while((''+timer2+pad).length < 8){ pad += '0'; }
-	gfx.fillText(timer2 + pad + ' T',670,655);
+	gfx.fillText(timer2 + pad + ' T',cwidth/2+150,505);
 }
 
 updateOrbit = function(){
