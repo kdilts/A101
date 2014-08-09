@@ -276,14 +276,14 @@ orbiter = {
 drawSectors = function(){
 		var angle = lerp(0,100,slider.value,.0001,Math.PI/2);
 
-		console.clear();
+		/*console.clear();
 		if(orbiter.rot > Math.PI*2-angle || orbiter.rot < angle){
 			console.log('cyan');
 		}
 
 		if(orbiter.rot > -angle+Math.PI && orbiter.rot < angle+Math.PI){
 			console.log('magenta');
-		}
+		}*/
 
 		if(showsectorsbox.checked){
 		gfx.save();
@@ -398,6 +398,21 @@ perihelioVel = function(){
 	temp = Math.sqrt(temp);
 	temp /= 1000;
 	return temp;
+}
+
+// formulas from: http://keisan.casio.com/exec/system/1343722709
+ellipticalArchArea = function(theta0,theta1,a,e){
+	var b = a*Math.sqrt(1-(e*e));
+
+	var F = function(theta){
+		return ((a*b)/2)*(theta-Math.atan(	((b-a)*Math.sin(2*theta)) /	(b+a+(b-a)*Math.cos(2*theta)) ));
+	}
+	
+	var R = function(theta){
+		return Math.sqrt((a*a*b*b)/(b*b*Math.cos(theta)*Math.cos(theta) + a*a*Math.sin(theta)*Math.sin(theta)));
+	}
+
+	return F(theta1)-F(theta0)-((R(theta0)*R(theta1))/2)*Math.sin(theta1-theta0);
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
