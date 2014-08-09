@@ -206,12 +206,39 @@ orbiter = {
 	pos:null,
 	offset:null,
 	rot:Math.PI,
+	mem:[],
+	idx:0,
+	vel:null,
 	draw:function(){
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.beginPath();
 		gfx.arc(orbiter.pos.x,orbiter.pos.y,10,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+
+		if(showvelbox.checked){
+			orbiter.mem[orbiter.idx] = orbiter.pos;
+			orbiter.idx++;
+			if(orbiter.idx > 5){ orbiter.idx = 0; }
+			
+			var i = orbiter.idx-3;
+			if(i < 0){ i += 5; }
+			if(orbiter.mem[i]){
+				orbiter.vel = sub(orbiter.pos,add(orbiter.offset,orbiter.mem[i]));
+				orbiter.vel = mult(unit(orbiter.vel),55);
+			}
+
+			if(orbiter.vel){
+				gfx.save();
+				gfx.strokeStyle='blue';
+				gfx.lineWidth=4;
+				gfx.beginPath();
+				gfx.moveTo(orbiter.pos.x,orbiter.pos.y);
+				gfx.lineTo(orbiter.pos.x+orbiter.vel.x,orbiter.pos.y+orbiter.vel.y);
+				gfx.stroke();
+				orbiter.vel = null;
+			}
+		}
 
 		orbiter.update();
 	},
@@ -372,6 +399,8 @@ add = function(v1,v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
 sub = function(v1,v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y+v2.y; }
 mag = function(v){ return dist(0,0,v.x,v.y); }
+mult = function(v,s){ return new vec2(v.x*s,v.y*s); }
+unit = function(v){ return new vec2(v.x/mag(v),v.y/mag(v)); }
 
 ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 	var center = new vec2((x1+x2)/2,(y1+y2)/2);
