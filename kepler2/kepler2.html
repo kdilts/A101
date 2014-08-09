@@ -225,7 +225,7 @@ orbiter = {
 			if(i < 0){ i += 5; }
 			if(orbiter.mem[i]){
 				orbiter.vel = sub(orbiter.pos,add(orbiter.offset,orbiter.mem[i]));
-				orbiter.vel = mult(unit(orbiter.vel),55);
+				orbiter.vel = mult(unit(orbiter.vel),55+30);
 			}
 
 			if(orbiter.vel){
@@ -237,6 +237,7 @@ orbiter = {
 				gfx.lineTo(orbiter.pos.x+orbiter.vel.x,orbiter.pos.y+orbiter.vel.y);
 				gfx.stroke();
 				orbiter.vel = null;
+				gfx.restore();
 			}
 		}
 
@@ -261,7 +262,9 @@ orbiter = {
 
 		if(orbiter.rot > Math.PI*2){ orbiter.rot = orbiter.rot % Math.PI*2 }
 
-		distbox.value = (''+d).substr(0,8) + ' AU';
+		var scale = parseFloat(semimajorbox.value)/200;
+
+		distbox.value = (''+(d*scale)).substr(0,8) + ' AU';
 		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8) + ' km/s'; // TODO
 	},
 	init:function(){
