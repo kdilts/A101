@@ -276,6 +276,15 @@ orbiter = {
 drawSectors = function(){
 		var angle = lerp(0,100,slider.value,.0001,Math.PI/2);
 
+		console.clear();
+		if(orbiter.rot > Math.PI*2-angle || orbiter.rot < angle){
+			console.log('cyan');
+		}
+
+		if(orbiter.rot > -angle+Math.PI && orbiter.rot < angle+Math.PI){
+			console.log('magenta');
+		}
+
 		if(showsectorsbox.checked){
 		gfx.save();
 		gfx.translate(cwidth/2,250);
