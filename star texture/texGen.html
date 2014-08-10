@@ -84,11 +84,13 @@ render = function(){
 
 	if(data !== null){
 		tgfx.putImageData(data,offset,offset);
-		/*tgfx.globalCompositeOperation='destination-atop';
+		tgfx.globalCompositeOperation='destination-atop';
 		tgfx.beginPath();
-		tgfx.arc(offset+size/2,offset+size/2,20,0,Math.PI*2);
+		for(var i = 0; i < 9; i++){
+			tgfx.arc(offset+i*50+30,offset+30,20,0,Math.PI*2);
+		}
 		tgfx.fill();
-		pasted = true;*/
+		//pasted = true;
 	}
 	
 	for(var w in walkers){ walkers[w].draw(); }

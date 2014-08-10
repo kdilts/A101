@@ -1,48 +1,50 @@
 <head>
 	<script language=javascript>
 var canvas; var gfx;
-var tcanvas; var tgfx;
 var cwidth; var cheight;
 
-var data = null;
+var imgs = [];
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
-
-	tcanvas = document.createElement('canvas');
-	tcanvas.setAttribute('style','position:absolute; left:0; top:0');
-
-	cwidth = canvas.width  = tcanvas.width = window.innerWidth;
-	cheight = canvas.height = tcanvas.height = window.innerHeight;
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
-	document.body.appendChild(tcanvas);
 	gfx = canvas.getContext('2d');
-	tgfx = tcanvas.getContext('2d');
 
-	data = document.getElementById('sunTex');
+	for(var i = 1; i <= 6; i++){
+		imgs[i-1] = new Image();
+		imgs[i-1].src = './'+i+'.jpg';
+	}
 
 	setInterval(render,1000/60);
 }
 
 window.onresize = function(){ render(); }
 
+var lastImg = 0; var delayMax = 8; var delay = 0;
 render = function(){
-	cwidth =  canvas.width = window.innerWidth;
+	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 
-	gfx.fillStyle = 'black'; gfx.fillRect(0,0,cwidth,cheight);
-	tgfx.clearRect(0,0,cwidth,cheight);
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
 
-	gfx.drawImage(data,0,0);
-	tgfx.strokeStyle = tgfx.fillStyle = 'black';
-	for(var x = 0; x < 8; x++){
-		for(var y = 0; y < 8; y++){
-			tgfx.beginPath();
-			tgfx.arc(25+x*50,25+y*50,20,0,Math.PI*2);
-			tgfx.fill();
-		}		
+	delay++;
+	if(delay === delayMax){
+		delay = 0;
+		if(Math.random() > .7){
+			lastImg++;
+		}else{
+			lastImg--;
+		}
 	}
+	if(lastImg < 0){ lastImg = imgs.length-1; }
+	if(lastImg > imgs.length-1){ lastImg = 0; }
+
+	gfx.drawImage(imgs[lastImg],100,100);
+
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
@@ -63,5 +65,4 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 	</script>
 </head>
 <body bgcolor="grey">
-	<img src="./sunTex.jpg" id='sunTex' style='display:none'></img>
 </body>
