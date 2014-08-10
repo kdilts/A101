@@ -1,0 +1,86 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var data = null;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	data = new Image();
+	data.src='./sunTex.jpg';
+	data.onload = function(){ console.log('loaded img'); }
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth =  canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black'; gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.drawImage(data,0,0);
+
+	copyCircle(60,60,30,600,60,true);
+}
+
+copyCircle = function(cx,cy,r,nx,ny,debug){
+	
+	if(debug){
+		gfx.save();
+		gfx.lineWidth = 3; gfx.strokeStyle = 'red';
+		gfx.beginPath(); gfx.arc(cx,cy,r,0,Math.PI*2); gfx.stroke();
+		gfx.beginPath(); gfx.arc(nx,ny,r,0,Math.PI*2); gfx.stroke();
+		gfx.strokeRect(cx-r,cy-r,2*r,2*r);
+		gfx.strokeRect(nx-r,ny-r,2*r,2*r);
+		gfx.restore();
+	}
+	
+	var center = new vec2(cx,cy);
+	for(var x = cx-r; x < cx+r; x++){
+		for(var y = cy-r; y < cy+r; y++){
+			if(dist(new vec2(x,y), center) > r){
+				gfx.fillStyle = 'white';
+				gfx.fillRect(x+(nx-cx),y+(ny-cy),1,1);
+			}else{
+				var pixNum = ((x-cx) + (y-cy)*data.length)*4;
+				var r = data.data[pixNum];
+				var g = data.data[pixNum+1];
+				var b = data.data[pixNum+2];
+				var a = data.data[pixNum+3];
+				gfx.fillStyle = 'rgba('+r+','+g+','+b+','+a+')';
+				gfx.fillRect(x+(nx-cx),y+(ny-cy),1,1);
+			}
+		}		
+	}
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
