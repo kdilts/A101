@@ -14,8 +14,8 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	data = new Image();
-	data.src='./sunTex.jpg';
+	data = document.getElementById('sunTex');
+
 	data.onload = function(){ console.log('loaded img'); }
 
 	setInterval(render,1000/60);
@@ -31,7 +31,7 @@ render = function(){
 
 	gfx.drawImage(data,0,0);
 
-	copyCircle(60,60,30,600,60,true);
+	//copyCircle(60,60,30,600,60,true);
 }
 
 copyCircle = function(cx,cy,r,nx,ny,debug){
@@ -39,29 +39,25 @@ copyCircle = function(cx,cy,r,nx,ny,debug){
 	if(debug){
 		gfx.save();
 		gfx.lineWidth = 3; gfx.strokeStyle = 'red';
-		gfx.beginPath(); gfx.arc(cx,cy,r,0,Math.PI*2); gfx.stroke();
-		gfx.beginPath(); gfx.arc(nx,ny,r,0,Math.PI*2); gfx.stroke();
 		gfx.strokeRect(cx-r,cy-r,2*r,2*r);
 		gfx.strokeRect(nx-r,ny-r,2*r,2*r);
 		gfx.restore();
 	}
 	
 	var center = new vec2(cx,cy);
-	for(var x = cx-r; x < cx+r; x++){
-		for(var y = cy-r; y < cy+r; y++){
-			if(dist(new vec2(x,y), center) > r){
-				gfx.fillStyle = 'white';
-				gfx.fillRect(x+(nx-cx),y+(ny-cy),1,1);
-			}else{
-				var pixNum = ((x-cx) + (y-cy)*data.length)*4;
-				var r = data.data[pixNum];
-				var g = data.data[pixNum+1];
-				var b = data.data[pixNum+2];
-				var a = data.data[pixNum+3];
-				gfx.fillStyle = 'rgba('+r+','+g+','+b+','+a+')';
-				gfx.fillRect(x+(nx-cx),y+(ny-cy),1,1);
+	for(var x = 0; x < r*2; x++){
+		for(var y = 0; y < r*2; y++){
+			if(dist(new vec2(cx-r+x,cy-r+y),center) < r){
+				var pix = gfx.getImageData(cx-r+x,cy-r+y,1,1).data;
+				var red = pix.data[0];
+				var g = pix.data[1];
+				var b = pix.data[2];
+				var a = pix.data[3];
+				gfx.fillStyle = 'rgba('+red+','+g+','+b+','+a+')';
+				gfx.fillRect(nx-r+x,ny-r+y,1,1);
+				if(debug){ gfx.fillRect(cx-r+x,cy-r+y,1,1); }
 			}
-		}		
+		}
 	}
 }
 
@@ -83,4 +79,5 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 	</script>
 </head>
 <body bgcolor="grey">
+	<img src="./sunTex.jpg" id='sunTex' style='display:none'></img>
 </body>
