@@ -35,15 +35,30 @@ render = function(){
 	if(delay === delayMax){
 		delay = 0;
 		if(Math.random() > .7){
-			lastImg++;
+			lastImg += Math.floor(Math.random()*3)+1;
 		}else{
-			lastImg--;
+			lastImg -= Math.floor(Math.random()*3)+1;
 		}
 	}
 	if(lastImg < 0){ lastImg = imgs.length-1; }
 	if(lastImg > imgs.length-1){ lastImg = 0; }
 
-	gfx.drawImage(imgs[lastImg],100,100);
+	gfx.save()
+	gfx.translate(100,100);
+	gfx.scale(.5,.5);
+	gfx.drawImage(imgs[lastImg],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.restore();
+
+	gfx.save()
+	gfx.translate(200,100);
+	gfx.scale(.75,.75);
+	gfx.drawImage(imgs[(lastImg+3)%(imgs.length-1)],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.restore();
+
+	gfx.save()
+	gfx.translate(300,100);
+	gfx.drawImage(imgs[(lastImg+5)%(imgs.length-1)],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.restore();
 
 }
 
