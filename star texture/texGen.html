@@ -1,0 +1,173 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var tcanvas; var tgfx;
+var cwidth; var cheight;
+
+walkers = []; numWalkers = 10000;
+
+grid = [];
+
+offset = 100;
+size = 400;
+
+pasted = copied = stop = false;
+var data = null;
+
+tick = 0; stopTime = 8;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	tcanvas = document.createElement('canvas');
+	tcanvas.setAttribute('style','position:absolute; left:0; top:0;');
+	//tcanvas.setAttribute('style','position:absolute; left:0; top:0; display:none');
+	cwidth = tcanvas.width = canvas.width = window.innerWidth;
+	cheight = tcanvas.height = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	document.body.appendChild(tcanvas);
+	tgfx = tcanvas.getContext('2d');
+
+	for(var i = 0; i < numWalkers; i++){
+		var tr = Math.floor(Math.random()*100)+150; // change other VVVVVVVVV
+		var tg = Math.floor(Math.random()*175)+75; // change other VVVVVVVVV
+		var tb = 0;
+		if(tr < tg){ tb = tr = tg = 255; }
+		walkers.push(new walker(new vec2(Math.random()*size, Math.random()*size),
+			tr,
+			tg,
+			tb,
+			Math.floor(Math.random()*.0175)+.075
+		));
+	}
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	tick++;
+	//console.clear(); console.log(tick,stop,copied,pasted,data);
+	if(tick === stopTime){ stop = true; }
+
+	cwidth = tcanvas.width =  canvas.width = window.innerWidth;
+	cheight = tcanvas.height = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black'; gfx.fillRect(0,0,cwidth,cheight);
+	tgfx.clearRect(0,0,cwidth,cheight);
+
+	//gfx.strokeStyle = 'white'; gfx.strokeRect(offset,offset,size,size);
+
+	if(pasted === true && copied === true){
+		tick = 0;
+		walkers = [];
+		//data = null;
+
+		for(var i = 0; i < numWalkers; i++){
+			var tr = Math.floor(Math.random()*75)+175;  // change other ^^^^^^^^^
+			var tg = Math.floor(Math.random()*150)+100;  // change other ^^^^^^^^^
+			var tb = 0;
+			if(tr < tg){ tb = tr = tg = 255; }
+			walkers.push(new walker(new vec2(Math.random()*size, Math.random()*size),
+				tr,
+				tg,
+				tb,
+				Math.floor(Math.random()*0.175)+.075
+			));
+		}
+
+		stop = pasted = copied = false;
+	}
+
+	if(data !== null){
+		tgfx.putImageData(data,offset,offset);
+		/*tgfx.globalCompositeOperation='destination-atop';
+		tgfx.beginPath();
+		tgfx.arc(offset+size/2,offset+size/2,20,0,Math.PI*2);
+		tgfx.fill();
+		pasted = true;*/
+	}
+	
+	for(var w in walkers){ walkers[w].draw(); }
+	if(stop && !copied){ copy(); }
+
+}
+
+copy = function(){ data = gfx.getImageData(offset,offset,size,size); copied = true; }
+
+walker = function(p,r,g,b,a){
+	this.pos = new vec2(p.x,p.y);
+	this.dir = Math.random()*(Math.PI*2);
+	this.smallTurnChance = .35;
+	this.bigTurnChance = .75;
+	this.trail = [];
+	this.size = Math.random()*5+2;
+
+	if(r === g && g === b){
+		r = Math.floor(Math.random()*75)+175;  // change other ^^^^^^^^^
+		g = Math.floor(Math.random()*150)+100;  // change other ^^^^^^^^^
+		b = 0;
+		if(r < g){ b = r = g = 255; }
+	}
+
+	if(r === g && g === b){
+		r = Math.floor(Math.random()*75)+175;  // change other ^^^^^^^^^
+		g = Math.floor(Math.random()*150)+100;  // change other ^^^^^^^^^
+		b = 0;
+		if(r < g){ b = r = g = 255; }
+	}
+
+	if(this.r === this.g === this.b){
+		this.size = Math.random()*3+1;
+	}
+
+	this.draw = function(){
+		//gfx.fillStyle = 'red';
+		//gfx.fillRect(offset + this.pos.x,offset + this.pos.y,this.size,this.size);
+
+		if(!stop){
+			this.pos.x += Math.cos(this.dir);
+			this.pos.y += Math.sin(this.dir);
+
+			if(Math.random() > this.smallTurnChance){ this.dir += (Math.random()-.5)*(Math.PI/6); }
+			if(Math.random() > this.bigTurnChance){ this.dir += (Math.random()-.5)*(Math.PI/4); }
+
+			if(this.pos.x < 0){ this.pos.x = size; } if(this.pos.y < 0){ this.pos.y = size; }
+			if(this.pos.x > size){ this.pos.x = 0; } if(this.pos.y > size){ this.pos.y = 0; }
+
+			this.trail.push(new vec2(this.pos.x,this.pos.y));
+		}else if(!copied){
+			for(var t in this.trail){
+				gfx.fillStyle = gfx.strokeStyle = 'rgba('+r+','+g+','+b+','+a+')';
+				gfx.beginPath();
+				gfx.arc(offset+this.trail[t].x,offset+this.trail[t].y,this.size,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+		}
+	}
+
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
