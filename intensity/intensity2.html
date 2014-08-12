@@ -1,0 +1,81 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var bg; var bgfx;
+
+var cwidth; var cheight;
+var mx; var my;
+var img;
+
+var rad = 1;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+
+	bg = document.createElement('canvas');
+	bg.setAttribute('style','position:absolute; left:0; top:0');
+
+	bg.style.zIndex = 0;
+	canvas.style.zIndex = 1;
+
+	cwidth = bg.width = canvas.width = window.innerWidth;
+	cheight = bg.height = canvas.height = window.innerHeight;
+
+	document.body.appendChild(canvas);
+	document.body.appendChild(bg);
+
+	gfx = canvas.getContext('2d');
+	bgfx = bg.getContext('2d');
+
+	img = new Image();
+	img.src = './forest.jpg';
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+window.onmousedown = function(){  }
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black';
+	gfx.globalAlpha = .8;
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	bgfx.drawImage(img,0,0);
+
+	gfx.globalCompositeOperation = 'destination-out';
+	gfx.beginPath();
+	gfx.arc(mx,my,40*rad,0,Math.PI*2);
+	gfx.fill();
+
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
