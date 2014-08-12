@@ -62,11 +62,28 @@ render = function(){
 	for(var i = 0; i < 3; i++){
 		if(dist(centers[i],new vec2(mx,my)) < .23*cheight){
 			document.body.style='cursor:none';
-			gfx.fillStyle = 'red'; gfx.strokeStyle = 'red';
+			gfx.save();
+			gfx.fillStyle = 'blue'; gfx.strokeStyle = 'cyan';
 			gfx.beginPath();
-			gfx.arc(mx,my,3,0,Math.PI*2);
+			gfx.translate(mx,my);
+
+			var r = dot(centers[i], add(neg(centers[i]), new vec2(mx,my)));
+			r = r / (mag(centers[i])*mag(add(neg(centers[i]), new vec2(mx,my))));
+
+			if(my > centers[i].y){
+				r = Math.acos(r)-Math.PI/2;
+			}else{
+				r = -Math.acos(r)-Math.PI/2;
+			}
+
+			gfx.rotate(r);
+
+			gfx.moveTo(0,14);
+			gfx.arc(0,0,8,Math.PI,Math.PI*2);
+			gfx.lineTo(0,14);
 			gfx.fill();
 			gfx.stroke();
+			gfx.restore();
 
 			var d = dist(centers[i], new vec2(mx,my));
 			d = lerp(0,195,d,0,300);
