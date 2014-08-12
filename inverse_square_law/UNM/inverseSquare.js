@@ -13,10 +13,17 @@ var noiseThreshold = 8; var noiseRange = 2;
 
 var show = 0;
 
+var imgs = [];
+
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
 	gfx = canvas.getContext('2d');
+
+	for(var i = 1; i <= 6; i++){
+		imgs[i-1] = new Image();
+		imgs[i-1].src = './suns/'+i+'.jpg';
+	}
 
 	for(var i = 0; i < 3; i++){
 		graphs[i] = new graph(i);
@@ -112,20 +119,11 @@ drawPanels = function(){
 		gfx.stroke();
 		gfx.restore();
 
-		gfx.strokeStyle = gfx.fillStyle = 'yellow';
-		gfx.beginPath();
-		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight*starRad[i],0,Math.PI*2);
-		gfx.fill();
-		gfx.stroke();
-
-		for(var z = 0; z < 30; z++){
-			var temp = Math.floor(Math.random()*100)+120;
-			gfx.strokeStyle = gfx.fillStyle = 'rgb('+temp+','+temp+','+0+')';
-			gfx.beginPath();
-			gfx.arc(.33*cwidth/2+(i*.33*cwidth)+Math.random()*24-12,.25*cheight+Math.random()*24-12,Math.random()*6,0,Math.PI*2);
-			gfx.fill();
-			gfx.stroke();
-		}
+		gfx.save();
+		gfx.translate(.33*cwidth/2+(i*.33*cwidth)-imgs[i].width/2,.25*cheight-imgs[i].height/2);
+		gfx.scale(i*.3+.8,i*.3+.8);
+		gfx.drawImage(imgs[Math.floor(Math.random()*imgs.length)],0,0);
+		gfx.restore();
 
 		gfx.fillStyle = 'yellow';
 		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.03*cheight);

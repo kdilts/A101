@@ -44,20 +44,21 @@ render = function(){
 	if(lastImg > imgs.length-1){ lastImg = 0; }
 
 	gfx.save()
-	gfx.translate(100,100);
-	gfx.scale(.5,.5);
-	gfx.drawImage(imgs[lastImg],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.translate(200,300);
+	//gfx.scale(.5,.5);
+	gfx.drawImage(imgs[lastImg],-imgs[lastImg].width/2,-imgs[lastImg].height/2);
 	gfx.restore();
 
 	gfx.save()
-	gfx.translate(200,100);
-	gfx.scale(.75,.75);
-	gfx.drawImage(imgs[(lastImg+3)%(imgs.length-1)],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.translate(600,300);
+	gfx.scale(2,2);
+	gfx.drawImage(imgs[(lastImg+3)%(imgs.length-1)],-imgs[lastImg].width/2,-imgs[lastImg].height/2);
 	gfx.restore();
 
 	gfx.save()
-	gfx.translate(300,100);
-	gfx.drawImage(imgs[(lastImg+5)%(imgs.length-1)],imgs[lastImg].width/2,-imgs[lastImg].height/2);
+	gfx.translate(1000,300);
+	gfx.scale(3,3);
+	gfx.drawImage(imgs[(lastImg+5)%(imgs.length-1)],-imgs[lastImg].width/2,-imgs[lastImg].height/2);
 	gfx.restore();
 
 }
