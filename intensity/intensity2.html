@@ -3,6 +3,7 @@
 var canvas; var gfx;
 var bg; var bgfx;
 var fg; var fgfx;
+var menu; var mgfx;
 
 var cwidth; var cheight;
 var mx; var my;
@@ -20,20 +21,26 @@ window.onload = function(){
 	fg = document.createElement('canvas');
 	fg.setAttribute('style','position:absolute; left:0; top:0');
 
+	menu = document.createElement('canvas');
+	menu.setAttribute('style','position:absolute; left:0; top:0');
+
 	bg.style.zIndex = 0;
 	bg.style.zIndex = 1;
 	canvas.style.zIndex = 2;
+	menu.style.zIndex= 3;
 
-	cwidth = fg.width = bg.width = canvas.width = window.innerWidth;
-	cheight = fg.width = bg.height = canvas.height = window.innerHeight;
+	cwidth = menu.width = fg.width = bg.width = canvas.width = window.innerWidth;
+	cheight = menu.height = fg.height = bg.height = canvas.height = window.innerHeight;
 
 	document.body.appendChild(canvas);
 	document.body.appendChild(bg);
 	document.body.appendChild(fg);
+	document.body.appendChild(menu);
 
 	gfx = canvas.getContext('2d');
 	bgfx = bg.getContext('2d');
 	fgfx = bg.getContext('2d');
+	mgfx = menu.getContext('2d');
 
 	img = new Image();
 	img.src = './forest.jpg';
@@ -54,46 +61,101 @@ render = function(){
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 
+	fgfx.clearRect(0,0,cwidth,cheight);
 	gfx.fillStyle = 'black';
 	gfx.globalAlpha = 1;
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	bgfx.drawImage(img,0,0);
 
-	fgfx.fillStyle = 'black';
-	switch(rad){
-		case 1:
-			//fgfx.globalAlpha = .2;
-			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
-			grd.addColorStop(0,'rgba(20,20,18,0)');
-			grd.addColorStop(1,'rgba(20,20,18,.7)');
-			fgfx.fillStyle=grd;
-			break;
-		case 2:
-			//fgfx.globalAlpha = .7;
-			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
-			grd.addColorStop(0,'rgba(20,20,18,.4)');
-			grd.addColorStop(1,'rgba(20,20,18,.9)');
-			fgfx.fillStyle=grd;
-			break;
-		case 3:
-			//fgfx.globalAlpha = .9;
-			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
-			grd.addColorStop(0,'rgba(20,20,18,.7)');
-			grd.addColorStop(1,'rgba(20,20,18,1)');
-			fgfx.fillStyle=grd;
-			break;
+	if(mx){
+		fgfx.fillStyle = 'black';
+		switch(rad){
+			case 1:
+				//fgfx.globalAlpha = .2;
+				var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+				grd.addColorStop(0,'rgba(20,20,18,0)');
+				grd.addColorStop(1,'rgba(20,20,18,.7)');
+				fgfx.fillStyle=grd;
+				break;
+			case 2:
+				//fgfx.globalAlpha = .7;
+				var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+				grd.addColorStop(0,'rgba(20,20,18,.4)');
+				grd.addColorStop(1,'rgba(20,20,18,.9)');
+				fgfx.fillStyle=grd;
+				break;
+			case 3:
+				//fgfx.globalAlpha = .9;
+				var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+				grd.addColorStop(0,'rgba(20,20,18,.7)');
+				grd.addColorStop(1,'rgba(20,20,18,.95)');
+				fgfx.fillStyle=grd;
+				break;
+		}
+		fgfx.beginPath();
+		fgfx.arc(mx,my,40*rad+1,0,Math.PI*2);
+		fgfx.fill();
+
+		mgfx.fillStyle='black';
+		mgfx.fillRect(0,600,600,cheight-600);
+		mgfx.fillRect(600,0,cwidth-600,cheight);
+
+		var offX = 200;
+		mgfx.strokeStyle = 'yellow'; mgfx.lineWidth = 3;
+		mgfx.fillStyle='grey';
+		for(var i = 0; i < 3; i++){
+			mgfx.strokeRect(1,600+i*54,196,50);
+			mgfx.strokeRect(offX+1,600+i*54,100,50);
+			mgfx.strokeRect(offX+105,600+i*54,100,50);
+			mgfx.strokeRect(offX+209,600+i*54,100,50);
+
+			mgfx.fillRect(1,600+i*54,196,50);
+			mgfx.fillRect(offX+1,600+i*54,100,50);
+			mgfx.fillRect(offX+105,600+i*54,100,50);
+			mgfx.fillRect(offX+209,600+i*54,100,50);
+		}
+
+		mgfx.fillStyle='black'; mgfx.font='26px verdana bold';
+		mgfx.fillText('Distance =',15,633);
+		mgfx.fillText('D',offX+40,633);
+		mgfx.fillText('2*D',offX+125,633);
+		mgfx.fillText('3*D',offX+230,633);
+
+		mgfx.fillText('Radius =',15,686);
+		mgfx.fillText('R',offX+40,686);
+		mgfx.fillText('4*R',offX+125,686);
+		mgfx.fillText('9*R',offX+230,686);
+
+		mgfx.fillText('Intensity =',15,742);
+		mgfx.fillText('I',offX+40,742);
+		mgfx.fillText('I/4',offX+125,742);
+		mgfx.fillText('I/9',offX+230,742);
+
+		mgfx.strokeStyle = 'red'; mgfx.lineWidth = 4;
+		switch(rad){
+			case 1:
+				mgfx.strokeRect(offX+1,600,100,50);
+				mgfx.strokeRect(offX+1,654,100,50);
+				mgfx.strokeRect(offX+1,708,100,50);
+				break;
+			case 2:
+				mgfx.strokeRect(offX+105,600,100,50);
+				mgfx.strokeRect(offX+105,654,100,50);
+				mgfx.strokeRect(offX+105,708,100,50);
+				break;
+			case 3:
+				mgfx.strokeRect(offX+209,600,100,50);
+				mgfx.strokeRect(offX+209,654,100,50);
+				mgfx.strokeRect(offX+209,708,100,50);
+				break;
+		}
 	}
-	fgfx.beginPath();
-	fgfx.arc(mx,my,40*rad+1,0,Math.PI*2);
-	fgfx.fill();
 
 	gfx.globalCompositeOperation = 'destination-out';
 	gfx.beginPath();
 	gfx.arc(mx,my,40*rad,0,Math.PI*2);
 	gfx.fill();
-
-
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
