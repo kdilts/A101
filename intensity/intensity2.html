@@ -9,6 +9,8 @@ var cwidth; var cheight;
 var mx; var my;
 var img;
 
+var offX;
+
 var rad = 1;
 
 window.onload = function(){
@@ -50,7 +52,13 @@ window.onload = function(){
 
 window.onresize = function(){ render(); }
 
-window.onmousedown = function(){ rad++; if(rad === 4){ rad = 1; } }
+window.onmousedown = function(){
+	if(my > 600 && my < 762){
+		if(mx > offX+1 && mx < offX+101){ rad = 1; }
+		else if(mx > offX+105 && mx < offX+205){ rad = 2; }
+		else if(mx > offX+209 && mx < offX+309){ rad = 3; }
+	}
+}
 
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
@@ -81,15 +89,15 @@ render = function(){
 			case 2:
 				//fgfx.globalAlpha = .7;
 				var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
-				grd.addColorStop(0,'rgba(20,20,18,.4)');
-				grd.addColorStop(1,'rgba(20,20,18,.9)');
+				grd.addColorStop(0,'rgba(15,15,12,.4)');
+				grd.addColorStop(1,'rgba(15,15,12,.9)');
 				fgfx.fillStyle=grd;
 				break;
 			case 3:
 				//fgfx.globalAlpha = .9;
 				var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
-				grd.addColorStop(0,'rgba(20,20,18,.7)');
-				grd.addColorStop(1,'rgba(20,20,18,.95)');
+				grd.addColorStop(0,'rgba(10,10,9,.7)');
+				grd.addColorStop(1,'rgba(10,10,9,.95)');
 				fgfx.fillStyle=grd;
 				break;
 		}
@@ -101,7 +109,7 @@ render = function(){
 		mgfx.fillRect(0,600,600,cheight-600);
 		mgfx.fillRect(600,0,cwidth-600,cheight);
 
-		var offX = 200;
+		offX = 200;
 		mgfx.strokeStyle = 'yellow'; mgfx.lineWidth = 3;
 		mgfx.fillStyle='grey';
 		for(var i = 0; i < 3; i++){
