@@ -6,7 +6,7 @@ var fg; var fgfx;
 var menu; var mgfx;
 
 var cwidth; var cheight;
-var mx; var my;
+var mx=0; var my=0;
 var img;
 
 var offX;
@@ -50,7 +50,7 @@ window.onload = function(){
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ render(); }
+window.onresize = function(){ window.resizeTo(600,828); }
 
 window.onmousedown = function(){
 	if(my > 600 && my < 762){
@@ -63,11 +63,13 @@ window.onmousedown = function(){
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
 	if(!mx){ mx = e.clientX; my = e.clientY; }
+	if(my < 600 && mx > 0 && mx < 600){ document.body.style='cursor:none'; }
+	else{ document.body.style=''; }
 }
 
 render = function(){
-	cwidth = canvas.width = window.innerWidth;
-	cheight = canvas.height = window.innerHeight;
+	cwidth = menu.width = fg.width = bg.width = canvas.width = window.innerWidth;
+	cheight = menu.height = fg.height = bg.height = canvas.height = window.innerHeight;
 
 	fgfx.clearRect(0,0,cwidth,cheight);
 	gfx.fillStyle = 'black';
@@ -109,33 +111,33 @@ render = function(){
 		mgfx.fillRect(0,600,600,cheight-600);
 		mgfx.fillRect(600,0,cwidth-600,cheight);
 
-		offX = 200;
+		offX = 273;
 		mgfx.strokeStyle = 'yellow'; mgfx.lineWidth = 3;
 		mgfx.fillStyle='grey';
 		for(var i = 0; i < 3; i++){
-			mgfx.strokeRect(1,600+i*54,196,50);
+			mgfx.strokeRect(1,600+i*54,269,50);
 			mgfx.strokeRect(offX+1,600+i*54,100,50);
 			mgfx.strokeRect(offX+105,600+i*54,100,50);
 			mgfx.strokeRect(offX+209,600+i*54,100,50);
 
-			mgfx.fillRect(1,600+i*54,196,50);
+			mgfx.fillRect(1,600+i*54,269,50);
 			mgfx.fillRect(offX+1,600+i*54,100,50);
 			mgfx.fillRect(offX+105,600+i*54,100,50);
 			mgfx.fillRect(offX+209,600+i*54,100,50);
 		}
 
 		mgfx.fillStyle='black'; mgfx.font='26px verdana bold';
-		mgfx.fillText('Distance =',15,633);
+		mgfx.fillText('Distance =',45,633);
 		mgfx.fillText('D',offX+40,633);
 		mgfx.fillText('2*D',offX+125,633);
 		mgfx.fillText('3*D',offX+230,633);
 
-		mgfx.fillText('Radius =',15,686);
+		mgfx.fillText('Radius =',45,686);
 		mgfx.fillText('R',offX+40,686);
 		mgfx.fillText('4*R',offX+125,686);
 		mgfx.fillText('9*R',offX+230,686);
 
-		mgfx.fillText('Intensity =',15,742);
+		mgfx.fillText('Intensity =',45,742);
 		mgfx.fillText('I',offX+40,742);
 		mgfx.fillText('I/4',offX+125,742);
 		mgfx.fillText('I/9',offX+230,742);
