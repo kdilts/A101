@@ -63,13 +63,25 @@ render = function(){
 	fgfx.fillStyle = 'black';
 	switch(rad){
 		case 1:
-			fgfx.globalAlpha = .2;
+			//fgfx.globalAlpha = .2;
+			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+			grd.addColorStop(0,'rgba(20,20,18,0)');
+			grd.addColorStop(1,'rgba(20,20,18,.7)');
+			fgfx.fillStyle=grd;
 			break;
 		case 2:
-			fgfx.globalAlpha = .7;
+			//fgfx.globalAlpha = .7;
+			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+			grd.addColorStop(0,'rgba(20,20,18,.4)');
+			grd.addColorStop(1,'rgba(20,20,18,.9)');
+			fgfx.fillStyle=grd;
 			break;
 		case 3:
-			fgfx.globalAlpha = .9;
+			//fgfx.globalAlpha = .9;
+			var grd = fgfx.createRadialGradient(mx,my,0,mx,my,40*rad-2);
+			grd.addColorStop(0,'rgba(20,20,18,.7)');
+			grd.addColorStop(1,'rgba(20,20,18,1)');
+			fgfx.fillStyle=grd;
 			break;
 	}
 	fgfx.beginPath();
