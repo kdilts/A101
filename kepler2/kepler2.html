@@ -267,9 +267,11 @@ orbiter = {
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
 
 		if(slow){
-			orbiter.rot += (lerp(75,275,d,.025,.008)/3);
+			var g = mag(new vec2(orbiter.pos.x-(cwidth/2+100),orbiter.pos.y-250));
+			orbiter.rot += Math.sqrt(2*g/planetData[currentPlanet].semimajor)/3000;
 		}else{
-			orbiter.rot += lerp(75,275,d,.025,.008);
+			var g = mag(new vec2(orbiter.pos.x-(cwidth/2+100),orbiter.pos.y-250));
+			orbiter.rot += Math.sqrt(2*g/planetData[currentPlanet].semimajor)/1000;
 		}
 
 		if(orbiter.rot > Math.PI*2){ orbiter.rot = orbiter.rot % Math.PI*2 }
