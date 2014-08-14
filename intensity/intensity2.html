@@ -113,9 +113,33 @@ render = function(){
 
 	//gfx.globalCompositeOperation = 'destination-out';
 	gfx.strokeStyle = 'yellow'; gfx.lineWidth = 4;
+	
+	var grd = gfx.createRadialGradient(cwidth/2,cheight/2.7,0,cwidth/2,cheight/2.7,20*rad*rad);
+	switch(rad){
+		case 1:
+			grd.addColorStop(0,'rgb(255,255,255)');
+			grd.addColorStop(1,'rgb(0,0,0)');
+			break;
+		case 2:
+			grd.addColorStop(0,'rgb(240,240,240)');
+			grd.addColorStop(.125,'rgb(150,150,150)');
+			grd.addColorStop(.5,'rgb(75,75,75)');
+			grd.addColorStop(1,'rgb(0,0,0)');
+			break;
+		case 3:
+			grd.addColorStop(0,'rgb(220,220,220)');
+			grd.addColorStop(.125,'rgb(150,150,150)');
+			grd.addColorStop(.5,'rgb(75,75,75)');
+			grd.addColorStop(1,'rgb(0,0,0)');
+			break;
+	}
+
+	gfx.fillStyle = grd;
 	gfx.beginPath();
 	gfx.arc(cwidth/2,cheight/2.7,20*rad*rad,0,Math.PI*2);
-	gfx.stroke();
+	gfx.fill();
+	
+	
 
 }
 
