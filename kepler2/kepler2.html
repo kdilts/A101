@@ -5,7 +5,7 @@ var canvas; var gfx;
 var cwidth; var cheight;
 
 var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
-var slowmobox; var showsectorsbox; var slider; var showvelbox;
+var slowmobox; var showsectorsbox; var slider; var showvelbox; var showposbox;
 var minbox; var maxbox; var curbox; var distbox;
 
 var interval; var playing = true; var currentPlanet = 'mercury';
@@ -45,6 +45,7 @@ window.onload = function(){
 	showsectorsbox = document.getElementById('showsectors');
 	slider = document.getElementById('slider');
 	showvelbox = document.getElementById('showvel');
+	showposbox = document.getElementById('showpos');
 
 	minbox = document.getElementById('minvel');
 	maxbox = document.getElementById('maxvel');
@@ -215,6 +216,17 @@ orbiter = {
 		gfx.arc(orbiter.pos.x,orbiter.pos.y,10,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+
+		if(showposbox.checked){
+			gfx.save();
+			gfx.strokeStyle = 'red'; gfx.lineWidth = 4;
+			gfx.translate(cwidth/2+100,250);
+			gfx.beginPath();
+			gfx.moveTo(0,0);
+			gfx.lineTo(orbiter.pos.x-(cwidth/2+100),orbiter.pos.y-250);
+			gfx.stroke();
+			gfx.restore();
+		}
 
 		if(showvelbox.checked){
 			orbiter.mem[orbiter.idx] = orbiter.pos;
@@ -475,6 +487,7 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 		&nbsp;&nbsp;&nbsp;&nbsp;
 		<b1>Sector Size: </b1><input type='range' id='slider'><br></br>
 		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<input type='checkbox' id='showpos'><b1>Show Position Vector</b1><br></br>
 		
 		<b1>Distance from the Sun: </b1>
 		<input type = 'textbox' id='distbox' style='width:28%' disabled>
