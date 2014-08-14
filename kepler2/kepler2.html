@@ -266,7 +266,7 @@ orbiter = {
 		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
 
-		sunMass = 10;
+		sunMass = 1;
 		if(slow){
 			var g = mag(new vec2(orbiter.pos.x-(cwidth/2-100),orbiter.pos.y-250));
 			orbiter.rot += Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/3000;
@@ -280,7 +280,11 @@ orbiter = {
 		var scale = parseFloat(semimajorbox.value)/200;
 
 		distbox.value = (''+(d*scale)).substr(0,8) + ' AU';
-		curvel.value = (''+lerp(75,275,d,.025,.008)).substr(0,8) + ' km/s'; // TODO
+
+		var v = Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/1000;
+		v = lerp(.02,.04,v,parseFloat(minvel.value),parseFloat(maxvel.value));
+
+		curvel.value = (''+ v).substr(0,8) + ' km/s'; // TODO
 	},
 	init:function(){
 		orbiter.pos = new vec2(325,250);
