@@ -142,11 +142,33 @@ render = function(){
 	gfx.fillStyle = gfx.strokeStyle = 'blue';
 	gfx.lineWidth = 4; gfx.font = '20px verdana bold';
 
-	gfx.beginPath();
-	gfx.moveTo(cwidth/2,cheight/2.7);
-	gfx.lineTo(cwidth/2+20*rad*rad,cheight/2.7);
-	gfx.stroke();
+	for(var i = 0; i < rad*rad; i++){
+		gfx.save();
+		gfx.translate(cwidth/2+20*i,cheight/2.7);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(18,0);
+		gfx.stroke();
+		gfx.restore();
+	}
 
+	gfx.beginPath();
+	gfx.moveTo(cwidth*.75,cheight*.75);
+	gfx.lineTo(cwidth*.75+18,cheight*.75);
+	gfx.stroke();
+	gfx.fillText('= R', cwidth*.75+24,cheight*.7575);
+
+	switch(rad){
+		case 1:
+			gfx.fillText('R', cwidth/2 + 20*rad,cheight/2.75);
+			break;
+		case 2:
+			gfx.fillText('4*R', cwidth/2 + 20*rad,cheight/2.75);
+			break;
+		case 3:
+			gfx.fillText('9*R', cwidth/2 + 20*rad,cheight/2.75);
+			break;
+	}
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
