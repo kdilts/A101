@@ -118,19 +118,19 @@ render = function(){
 	switch(rad){
 		case 1:
 			grd.addColorStop(0,'rgb(255,255,255)');
-			grd.addColorStop(1,'rgb(0,0,0)');
+			grd.addColorStop(1,'rgb(10,10,10)');
 			break;
 		case 2:
 			grd.addColorStop(0,'rgb(240,240,240)');
 			grd.addColorStop(.125,'rgb(150,150,150)');
 			grd.addColorStop(.5,'rgb(75,75,75)');
-			grd.addColorStop(1,'rgb(0,0,0)');
+			grd.addColorStop(1,'rgb(10,10,10)');
 			break;
 		case 3:
 			grd.addColorStop(0,'rgb(220,220,220)');
 			grd.addColorStop(.125,'rgb(150,150,150)');
 			grd.addColorStop(.5,'rgb(75,75,75)');
-			grd.addColorStop(1,'rgb(0,0,0)');
+			grd.addColorStop(1,'rgb(10,10,10)');
 			break;
 	}
 
@@ -139,7 +139,13 @@ render = function(){
 	gfx.arc(cwidth/2,cheight/2.7,20*rad*rad,0,Math.PI*2);
 	gfx.fill();
 	
-	
+	gfx.fillStyle = gfx.strokeStyle = 'blue';
+	gfx.lineWidth = 4; gfx.font = '20px verdana bold';
+
+	gfx.beginPath();
+	gfx.moveTo(cwidth/2,cheight/2.7);
+	gfx.lineTo(cwidth/2+20*rad*rad,cheight/2.7);
+	gfx.stroke();
 
 }
 
