@@ -120,7 +120,7 @@ drawPanels = function(){
 		gfx.stroke();
 
 		gfx.fillStyle = 'yellow';
-		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.03*cheight);
+		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.495*cheight);
 	}
 }
 
@@ -150,7 +150,7 @@ graph = function(n){
 		gfx.save();
 		gfx.translate(.02*cwidth+(n*.33*cwidth), .85*cheight);
 		gfx.rotate(-Math.PI/2);
-		gfx.fillText('Intensity', 0,0);
+		gfx.fillText('Intensity', -58,3);
 		gfx.restore();
 
 		for(var i = 0; i < 3; i++){
@@ -263,7 +263,7 @@ clearButton = function(n){
 		gfx.strokeRect(.33*cwidth+(n*.33*cwidth),.94*cheight,-.295*cwidth/6,.05*cheight);
 		gfx.fillStyle = 'black';
 		gfx.font='20px verdana';
-		gfx.fillText('Clear',.295*cwidth+(n*.33*cwidth),.97*cheight);
+		gfx.fillText('Clear',.29*cwidth+(n*.33*cwidth),.97*cheight);
 		gfx.restore();
 	}
 }
