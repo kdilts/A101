@@ -40,8 +40,6 @@ photometry
 
 
 intensity
-	remove bg image - more diagram like
-	show original radius "R" arrows
 
 cephied
 	cosmetics
