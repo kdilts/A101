@@ -3,15 +3,13 @@ var mx; var my;
 
 var cwidth; var cheight;
 
-var starRad = [.05,.075,.1];
+var starRad = [.075,.1,.125];
 var lum = ['4.0e+004','4.0e+005','4.0e+006']
 var centers = [];
 
 var graphs = []; var buttons = [];
 
 var noiseThreshold = 8; var noiseRange = 2;
-
-var show = 0;
 
 window.onload = function(){
 	canvas = document.getElementById('c1');
@@ -53,7 +51,7 @@ render = function(){
 	drawPanels();
 
 	for(var i = 0; i < 3; i++){
-		if(dist(centers[i],new vec2(mx,my)) < .23*cheight){
+		if(dist(centers[i],new vec2(mx,my)) < .21*cheight){
 			document.body.style='cursor:none';
 			gfx.fillStyle = 'red'; gfx.strokeStyle = 'red';
 			gfx.beginPath();
@@ -68,7 +66,7 @@ render = function(){
 
 			gfx.fillStyle = 'white'; gfx.strokeStyle = 'white';
 			gfx.font = '20px verdana';
-			if(d- .5*cheight*starRad[i] > 0){
+			if(d- .4*cheight*starRad[i] > 0){
 				gfx.fillText('Distance: ' + truncate(''+d), mx+5, my+19);
 				gfx.fillText('Intensity: ' + truncate(''+intens), mx+5, my+37);
 				graphs[i].mouseIn = true;
@@ -81,12 +79,6 @@ render = function(){
 			document.body.style='';
 			graphs[i].mouseIn = false;
 		}
-	}
-
-	if(show === 1){
-		gfx.fillStyle='yellow';
-		gfx.fillRect(.33*cwidth,0,.01*cwidth,cheight);
-		gfx.fillRect(.66*cwidth,0,.01*cwidth,cheight);
 	}
 
 	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
