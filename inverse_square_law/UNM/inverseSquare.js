@@ -91,6 +91,10 @@ render = function(){
 
 	for(var g in graphs){ graphs[g].draw(); buttons[g].draw(); }
 
+	gfx.fillStyle = 'yellow';
+	gfx.font = '24px verdana'
+	gfx.fillText('Simulated Photometry', .42*cwidth, .03*cheight);
+
 }
 
 drawPanels = function(){
@@ -102,25 +106,26 @@ drawPanels = function(){
 		gfx.fillStyle = 'rgb(190,190,190)';
 		gfx.fillRect(.01*cwidth+(i*.33*cwidth),.5*cheight,.32*cwidth,.49*cheight);
 
+		// outer rings
 		gfx.save();
 		gfx.lineWidth = 2.5;
 		gfx.strokeStyle = 'grey';
 		gfx.fillStyle = 'black';
 		gfx.beginPath();
-		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight,0,Math.PI*2);
+		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.21*cheight,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
 		gfx.restore();
 
-		gfx.strokeStyle = 'white';
-		gfx.fillStyle = 'white';
+		// stars
+		gfx.fillStyle = gfx.strokeStyle = 'white';
 		gfx.beginPath();
 		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight*starRad[i],0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
 
 		gfx.fillStyle = 'yellow';
-		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.495*cheight);
+		gfx.fillText('Luminosity: ' + lum[i],.1*cwidth+(i*.33*cwidth),.495*cheight);
 	}
 }
 
