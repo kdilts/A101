@@ -283,3 +283,10 @@ mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
 mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+angleBetween = function(v1, v2){
+	var angle = dot(v1,v2);
+	angle = angle/(mag(v1)*mag(v2));
+	angle = Math.acos(angle);
+	return angle;
+}
