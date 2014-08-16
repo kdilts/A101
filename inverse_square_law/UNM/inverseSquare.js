@@ -13,17 +13,10 @@ var noiseThreshold = 8; var noiseRange = 2;
 
 var show = 0;
 
-var imgs = [];
-
 window.onload = function(){
 	canvas = document.getElementById('c1');
 
 	gfx = canvas.getContext('2d');
-
-	for(var i = 1; i <= 6; i++){
-		imgs[i-1] = new Image();
-		imgs[i-1].src = './suns/'+i+'.jpg';
-	}
 
 	for(var i = 0; i < 3; i++){
 		graphs[i] = new graph(i);
@@ -62,28 +55,11 @@ render = function(){
 	for(var i = 0; i < 3; i++){
 		if(dist(centers[i],new vec2(mx,my)) < .23*cheight){
 			document.body.style='cursor:none';
-			gfx.save();
-			gfx.fillStyle = 'blue'; gfx.strokeStyle = 'cyan';
+			gfx.fillStyle = 'red'; gfx.strokeStyle = 'red';
 			gfx.beginPath();
-			gfx.translate(mx,my);
-
-			var r = dot(centers[i], add(neg(centers[i]), new vec2(mx,my)));
-			r = r / (mag(centers[i])*mag(add(neg(centers[i]), new vec2(mx,my))));
-
-			if(my > centers[i].y){
-				r = Math.acos(r)-Math.PI/2;
-			}else{
-				r = -Math.acos(r)-Math.PI/2;
-			}
-
-			gfx.rotate(r);
-
-			gfx.moveTo(0,14);
-			gfx.arc(0,0,8,Math.PI,Math.PI*2);
-			gfx.lineTo(0,14);
+			gfx.arc(mx,my,3,0,Math.PI*2);
 			gfx.fill();
 			gfx.stroke();
-			gfx.restore();
 
 			var d = dist(centers[i], new vec2(mx,my));
 			d = lerp(0,195,d,0,300);
@@ -136,11 +112,12 @@ drawPanels = function(){
 		gfx.stroke();
 		gfx.restore();
 
-		gfx.save();
-		gfx.translate(.33*cwidth/2+(i*.33*cwidth)-imgs[i].width/2,.25*cheight-imgs[i].height/2);
-		gfx.scale(i*.3+.8,i*.3+.8);
-		gfx.drawImage(imgs[Math.floor(Math.random()*imgs.length)],0,0);
-		gfx.restore();
+		gfx.strokeStyle = 'white';
+		gfx.fillStyle = 'white';
+		gfx.beginPath();
+		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight*starRad[i],0,Math.PI*2);
+		gfx.fill();
+		gfx.stroke();
 
 		gfx.fillStyle = 'yellow';
 		gfx.fillText('Luminosity: ' + lum[i],.005*cwidth+(i*.33*cwidth),.03*cheight);
