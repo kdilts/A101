@@ -35,9 +35,8 @@ photometry
 	title
 	label blue thing as light detector
 	instructions on the bottom
-	remove star animation - wait for decision of color
+	wait for decision for star color
 	text size issues
-
 
 intensity
 
