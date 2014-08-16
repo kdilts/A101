@@ -34,7 +34,7 @@ kepler2
 photometry
 	title
 	label blue thing as light detector
-	instructions on the bottom
+	instructions on the bottom -- separate instructions?
 	wait for decision for star color
 	text size issues
 

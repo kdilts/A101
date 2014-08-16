@@ -38,7 +38,7 @@ window.onmousedown = function(e){
 	}
 }
 
-window.onresize = function(){ window.resizeTo(1400,800); render(); };
+window.onresize = function(){ window.resizeTo(1600,1000); render(); };
 
 clearAll = function(){
 	gfx.fillStyle='rgb(0,0,0)';
@@ -47,7 +47,7 @@ clearAll = function(){
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth*.999;
-	cheight = canvas.height = window.innerHeight*.999;
+	cheight = canvas.height = window.innerHeight*.998;
 
 	clearAll();
 	drawPanels();
