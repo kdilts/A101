@@ -1,0 +1,67 @@
+Priority---------------
+
+set one window size scheme
+	- scaling vs fixed
+	** we actually can control window size in some circumstances, and sorta prevent user window resizing
+	** we can set minimum areas so that the window will gain scroll bars instead of distort under a certain size
+	
+
+-----------------------
+
+1) finish keppler law apps
+2) finish photometry and intensity
+
+-----------------------
+
+kepler2
+	m1 - mass of the sun - kg
+	g - gravity
+	r - meters
+
+
+	-G*m1/r + 1/2*v^2 = 0 <-- solve other app to verify the constant is zero
+
+	.5*v^2 = G*m1/r
+
+	v^2 = 2*(G*m1/r)
+
+	v = sqrt(2*(g*m1/r))
+
+
+	gives: m/s
+
+
+photometry
+	title
+	label blue thing as light detector
+	instructions on the bottom
+	remove star animation - wait for decision of color
+	text size issues
+
+
+intensity
+	remove bg image - more diagram like
+	show original radius "R" arrows
+
+cephied
+	cosmetics
+	missing sectors
+	back button so wrong guesses don't have to go through the main grid page
+
+
+retrograde
+	additional bar on top or bottom
+	fix the red dot bug in motion trail
+	change venus speed to accentuate retrograde motion seen in from earth
+	bigger stars so they show up in all browsers
+
+
+helio / geo centric retrograde
+	verify functionality of top bar
+	possiblity of second dot / bar
+
+
+black hole
+	R instead of M for distance
+	make sure three different perspectives are available as well as distance
+
