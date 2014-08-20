@@ -5,6 +5,8 @@
 		<script>
 			// credit to: threejs.org. Some of this is from their introductory tutorial to 3d in javascript.
 			var planets = []; var orbitRings = [];
+			var semiMajorAxis = [ .39, .72, 1, 1.52, 5.2, 9.54, 19.18, 30.060, 39.44 ];
+			var period = [ .24, .62, 1, 1.88, 3.62, 4.61, 11.88, 29.46, 84.07, 164.82, 248.6 ]
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -21,11 +23,11 @@
 			for(var i = 0; i < 8; i++){
 				geometry = new THREE.SphereGeometry(.25/8,20,20);
 				material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-				planets[i] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:.5+i*.5 }
+				planets[i] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3/period[i], rad:semiMajorAxis[i]/2 }
 				planets[i].obj.position.x = .5+i*.5;
 				scene.add(planets[i].obj);
 
-				geometry = new THREE.TorusGeometry(.5+i*.5,.005,8,60);
+				geometry = new THREE.TorusGeometry(semiMajorAxis[i]/2,.005,8,60);
 				material = new THREE.MeshBasicMaterial({color: 0xffffff});
 				orbitRings[i] = new THREE.Mesh(geometry, material);
 				orbitRings[i].rotation.x = 90*Math.PI/180;
