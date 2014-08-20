@@ -16,40 +16,21 @@
 			var geometry = new THREE.SphereGeometry(.3/8,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
 			var star = new THREE.Mesh(geometry, material);
-
-			geometry = new THREE.SphereGeometry(.25/8,20,20);
-			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-			planets[0] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:1 }
-			planets[0].obj.position.x = 1;
-
-			geometry = new THREE.SphereGeometry(.25/8,20,20);
-			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-			planets[1] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.5, rad:1.5 }
-			planets[1].obj.position.x = 1.5;
-
-			geometry = new THREE.SphereGeometry(.25/8,20,20);
-			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
-			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
-			planets[2].obj.position.x = 2;
-
-			geometry = new THREE.TorusGeometry(1,.005,8,40);
-			material = new THREE.MeshBasicMaterial({color: 0xffffff});
-			orbitRings[0] = new THREE.Mesh(geometry, material);
-			orbitRings[0].rotation.x = 90*Math.PI/180;
-			scene.add(orbitRings[0]);
-
-			geometry = new THREE.TorusGeometry(1.5,.005,8,40);
-			orbitRings[1] = new THREE.Mesh(geometry, material);
-			orbitRings[1].rotation.x = 90*Math.PI/180;
-			scene.add(orbitRings[1]);
-
-			geometry = new THREE.TorusGeometry(2,.005,8,40);
-			orbitRings[2] = new THREE.Mesh(geometry, material);
-			orbitRings[2].rotation.x = 90*Math.PI/180;
-			scene.add(orbitRings[2]);
-
 			scene.add(star);
-			for(var p in planets){ scene.add(planets[p].obj); }
+
+			for(var i = 0; i < 8; i++){
+				geometry = new THREE.SphereGeometry(.25/8,20,20);
+				material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+				planets[i] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:.5+i*.5 }
+				planets[i].obj.position.x = .5+i*.5;
+				scene.add(planets[i].obj);
+
+				geometry = new THREE.TorusGeometry(.5+i*.5,.005,8,60);
+				material = new THREE.MeshBasicMaterial({color: 0xffffff});
+				orbitRings[i] = new THREE.Mesh(geometry, material);
+				orbitRings[i].rotation.x = 90*Math.PI/180;
+				scene.add(orbitRings[i]);
+			}
 
 			geometry = new THREE.Geometry();
 			geometry.vertices.push(new THREE.Vector3(0,-100,0));
@@ -94,7 +75,7 @@
 				if(e.which === 38){ // up
 					var d = camera.position.length();
 					camera.position.y += .1;
-					if(camera.position.y > 4){ camera.position.y = 4; }
+					if(camera.position.y > 8){ camera.position.y = 8; }
 					camera.position.setLength(d);
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
@@ -103,13 +84,14 @@
 				if(e.which === 40){ // down
 					var d = camera.position.length();
 					camera.position.y -= .1;
-					if(camera.position.y < -4){ camera.position.y = -4; }
+					if(camera.position.y < -8){ camera.position.y = -8; }
 					camera.position.setLength(d);
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
 				}
 
 				if(e.which === 37){ // left
+					//var oldY = camera.position.y;
 					var d = camera.position.length();
 					var pos = camera.position;
 					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
@@ -118,15 +100,16 @@
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
-					console.log(rot);
-
 					camera.position.setLength(d);
+
+					//camera.position.y = oldY;
 
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
 				}
 
 				if(e.which === 39){ // right
+					//var oldY = camera.position.y;
 					var d = camera.position.length();
 					var pos = camera.position;
 					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
@@ -135,9 +118,9 @@
 
 					camera.position.x = Math.cos(rot)*d;
 					camera.position.z = Math.sin(rot)*d;
-					console.log(rot);
 
 					camera.position.setLength(d);
+					//camera.position.y = oldY;
 
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
