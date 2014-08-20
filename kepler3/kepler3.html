@@ -13,37 +13,37 @@
 			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
 			document.body.appendChild(renderer.domElement);
 
-			var geometry = new THREE.SphereGeometry(.5,20,20);
-			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+			var geometry = new THREE.SphereGeometry(.3/8,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
 			var star = new THREE.Mesh(geometry, material);
 
-			geometry = new THREE.SphereGeometry(.25/3,20,20);
-			material = new THREE.MeshBasicMaterial({color: 0xff0000});
+			geometry = new THREE.SphereGeometry(.25/8,20,20);
+			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 			planets[0] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:1 }
 			planets[0].obj.position.x = 1;
 
-			geometry = new THREE.SphereGeometry(.25/2.5,20,20);
+			geometry = new THREE.SphereGeometry(.25/8,20,20);
 			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 			planets[1] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.5, rad:1.5 }
 			planets[1].obj.position.x = 1.5;
 
-			geometry = new THREE.SphereGeometry(.25/2,20,20);
-			material = new THREE.MeshBasicMaterial({color: 0x0000ff});
+			geometry = new THREE.SphereGeometry(.25/8,20,20);
+			material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 			planets[2] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.7, rad:2 }
 			planets[2].obj.position.x = 2;
 
-			geometry = new THREE.TorusGeometry(1,.01,8,40);
+			geometry = new THREE.TorusGeometry(1,.005,8,40);
 			material = new THREE.MeshBasicMaterial({color: 0xffffff});
 			orbitRings[0] = new THREE.Mesh(geometry, material);
 			orbitRings[0].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[0]);
 
-			geometry = new THREE.TorusGeometry(1.5,.01,8,40);
+			geometry = new THREE.TorusGeometry(1.5,.005,8,40);
 			orbitRings[1] = new THREE.Mesh(geometry, material);
 			orbitRings[1].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[1]);
 
-			geometry = new THREE.TorusGeometry(2,.01,8,40);
+			geometry = new THREE.TorusGeometry(2,.005,8,40);
 			orbitRings[2] = new THREE.Mesh(geometry, material);
 			orbitRings[2].rotation.x = 90*Math.PI/180;
 			scene.add(orbitRings[2]);
@@ -51,11 +51,26 @@
 			scene.add(star);
 			for(var p in planets){ scene.add(planets[p].obj); }
 
+			geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(0,-100,0));
+			geometry.vertices.push(new THREE.Vector3(0,100,0));
+
+			material = new THREE.LineBasicMaterial({
+				color: 0xffffff
+			});
+
+			scene.add(new THREE.Line(geometry,material));
+
+			geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(100,0,0));
+			geometry.vertices.push(new THREE.Vector3(-100,0,0));
+
+			scene.add(new THREE.Line(geometry,material));
+
 			camera.position.set(1,2,5);
 			camera.lookAt(new THREE.Vector3(0,0,0));
 
-			var axisHelper = new THREE.AxisHelper(15);
-			scene.add(axisHelper);
+			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
 
 			window.onmousedown = function(){ }
 
