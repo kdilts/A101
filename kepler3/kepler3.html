@@ -5,8 +5,12 @@
 		<script>
 			// credit to: threejs.org. Some of this is from their introductory tutorial to 3d in javascript.
 			var planets = []; var orbitRings = [];
+
 			var semiMajorAxis = [ .39, .72, 1, 1.52, 5.2, 9.54, 19.18, 30.060, 39.44 ];
 			var period = [ .24, .62, 1, 1.88, 3.62, 4.61, 11.88, 29.46, 84.07, 164.82, 248.6 ]
+
+			var eclipticIncl = [ 7.01, 3.39, 0, 1.85, 1.31, 2.49, .77, 1.77 ];
+			var sunsEqIncl = [ 3.38, 3.86, 7.155, 5.65, 6.09, 5.51, 6.48, 6.43 ];
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -15,7 +19,7 @@
 			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
 			document.body.appendChild(renderer.domElement);
 
-			var geometry = new THREE.SphereGeometry(.3/8,20,20);
+			var geometry = new THREE.SphereGeometry(.35/8,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
 			var star = new THREE.Mesh(geometry, material);
 			scene.add(star);
@@ -32,6 +36,9 @@
 				orbitRings[i] = new THREE.Mesh(geometry, material);
 				orbitRings[i].rotation.x = 90*Math.PI/180;
 				scene.add(orbitRings[i]);
+
+				orbitRings[i].rotation.y = eclipticIncl[i]*Math.PI/180;
+				orbitRings[i].rotation.z = sunsEqIncl[i]*Math.PI/180;
 			}
 
 			geometry = new THREE.Geometry();
@@ -39,7 +46,7 @@
 			geometry.vertices.push(new THREE.Vector3(0,100,0));
 
 			material = new THREE.LineBasicMaterial({
-				color: 0xffffff
+				color: 0xffff00
 			});
 
 			scene.add(new THREE.Line(geometry,material));
@@ -59,8 +66,7 @@
 
 			window.onkeydown = function(e){
 
-				console.clear();
-				console.log(camera.position);
+				//console.clear(); console.log(camera.position);
 
 				if(e.which === 65){ // a (zoom in)
 					camera.position.setLength(camera.position.length()-.1);
