@@ -9,8 +9,11 @@
 			var semiMajorAxis = [ .39, .72, 1, 1.52, 5.2, 9.54, 19.18, 30.060, 39.44 ];
 			var period = [ .24, .62, 1, 1.88, 3.62, 4.61, 11.88, 29.46, 84.07, 164.82, 248.6 ]
 
-			var eclipticIncl = [ 7.01, 3.39, 0, 1.85, 1.31, 2.49, .77, 1.77 ];
-			var sunsEqIncl = [ 3.38, 3.86, 7.155, 5.65, 6.09, 5.51, 6.48, 6.43 ];
+			//var eclipticIncl = [ 7.01, 3.39, 0, 1.85, 1.31, 2.49, .77, 1.77 ];
+			//var sunsEqIncl = [ 3.38, 3.86, 7.155, 5.65, 6.09, 5.51, 6.48, 6.43 ];
+
+			var eclipticIncl = [ 10, 3.39, 0, 1.85, 1.31, 2.49, .77, 1.77 ];
+			var sunsEqIncl = [ 10, 3.86, 7.155, 5.65, 6.09, 5.51, 6.48, 6.43 ];
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
@@ -24,7 +27,7 @@
 			var star = new THREE.Mesh(geometry, material);
 			scene.add(star);
 
-			for(var i = 0; i < 8; i++){
+			for(var i = 0; i < 1; i++){
 				geometry = new THREE.SphereGeometry(.25/8,20,20);
 				material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 				planets[i] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3/period[i], rad:semiMajorAxis[i]/2 }
@@ -138,12 +141,17 @@
 			var updatePos = function(){
 				for(var p in planets){
 
-					var x = planets[p];
+					var curPlanet = planets[p];
 
-					planets[p].obj.position.set(Math.cos(x.rot*Math.PI/180) * x.rad, 0,
-						Math.sin(x.rot*Math.PI/180) * x.rad);
+					planets[p].obj.position.set(
+						Math.cos(curPlanet.rot*Math.PI/180) * curPlanet.rad,
+						
+	-(Math.tan(sunsEqIncl[p]*Math.PI/180)*curPlanet.obj.position.x)*Math.abs(Math.cos(curPlanet.rot*Math.PI/180))
+	+ (Math.tan(eclipticIncl[p]*Math.PI/180)*curPlanet.obj.position.z)*Math.abs(Math.sin(curPlanet.rot*Math.PI/180)),
 
-					planets[p].rot -= x.spd;
+						Math.sin(curPlanet.rot*Math.PI/180) * curPlanet.rad);
+
+					planets[p].rot -= curPlanet.spd;
 				}
 			}
 
