@@ -1,0 +1,38 @@
+<html>
+<head>
+	<script language=javascript>
+		window.onresize = function(){
+			window.resizeTo(155,110);
+		}
+
+		window.onload = function(){
+
+		// get time
+		var time = new Date();
+		var hour = time.getHours();
+		var minute = time.getMinutes();
+
+		var canvas = document.getElementById('myCanvas');
+		var gfx = canvas.getContext('2d');
+
+		if(hour > 12){ hour = hour - 12; }
+
+		// draw digital clock with minutes
+		gfx.fillStyle = 'rgb(0,0,0)';
+		gfx.fillRect(0,0,200,200);
+
+		gfx.fillStyle = 'rgb(200,200,200)';
+		gfx.font = '24px Verdana';
+		if(minute < 10){
+			gfx.fillText(hour + ':0' + minute,25,25);
+		}else{
+			gfx.fillText(hour + ':' + minute,25,25);
+		}
+	}
+
+	</script>
+</head>
+<body bgcolor='black'>
+	<canvas id='myCanvas' width='105' height='32'></canvas>
+</body>
+</html>

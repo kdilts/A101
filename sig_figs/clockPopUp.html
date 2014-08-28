@@ -1,0 +1,104 @@
+<html>
+<head>
+	<script language=javascript>
+		window.onresize = function(){
+			window.resizeTo(162,210);
+		}
+
+		var gfx;
+
+		window.onload = function(){
+
+		// get time
+		var time = new Date();
+		var hour = time.getHours();
+		var minute = time.getMinutes();
+
+		var canvas = document.getElementById('myCanvas');
+		gfx = canvas.getContext('2d');
+
+		if(hour > 12){ hour = hour - 12; }
+
+		gfx.fillStyle = 'rgb(0,0,0)';
+		gfx.fillRect(0,0,200,200);
+
+		gfx.strokeStyle = 'rgb(200,200,200)';
+		gfx.fillStyle = 'rgb(200,200,200)';
+		gfx.lineWidth = 2.5;
+
+		gfx.beginPath();
+		gfx.arc(60,55,53,0,Math.PI*2);
+		gfx.stroke();
+
+		gfx.beginPath();
+		gfx.arc(60,55,3,0,Math.PI*2);
+		gfx.stroke();
+		gfx.fill();
+
+		for(i = 0; i < 4; i++){
+			gfx.save();
+			gfx.translate(60,55);
+			gfx.rotate(i*degToRad(90));
+			dots();
+			gfx.restore();
+		}
+
+		gfx.font = '12px Verdana';
+		gfx.fillText('12',50,15);
+		gfx.fillText('3',102,60);
+		gfx.fillText('9',10,60);
+		gfx.fillText('6',55,105);
+
+		// calculate angles of hands
+		var hAngle = degToRad(hour * 30 + minute * .5);
+		var mAngle = degToRad(minute * 6);
+
+		gfx.save();
+		gfx.translate(60,55);
+		gfx.rotate(hAngle);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(0,-25);
+		gfx.stroke();
+		gfx.restore();
+
+		gfx.save();
+		gfx.translate(60,55);
+		gfx.rotate(mAngle);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(0,-40);
+		gfx.stroke();
+		gfx.restore();
+	}
+
+	dots = function(){
+			gfx.save();
+			gfx.rotate(degToRad(30));
+			gfx.translate(0,-46);
+			gfx.beginPath();
+			gfx.arc(0,0,1,0,Math.PI*2);
+			gfx.stroke();
+			gfx.fill();
+			gfx.restore();
+
+			gfx.save();
+			gfx.rotate(2*degToRad(30));
+			gfx.translate(0,-46);
+			gfx.beginPath();
+			gfx.arc(0,0,1,0,Math.PI*2);
+			gfx.stroke();
+			gfx.fill();
+			gfx.restore();
+	}
+
+	degToRad = function(x){
+		return x*Math.PI/180;
+	}
+
+	</script>
+</head>
+<body bgcolor='black'>
+	<canvas id='myCanvas' width='140' height='120'></canvas>
+</body>
+</html>
