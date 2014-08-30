@@ -1,8 +1,7 @@
-// TODO compatibility testing
-
 var roundCtx;
 var minCtx;
 var secCtx;
+var sec2Ctx;
 
 window.onload = function(){
 
@@ -18,6 +17,7 @@ window.onload = function(){
 	roundCtx = document.getElementById('round').getContext('2d');
 	minCtx = document.getElementById('min').getContext('2d');
 	secCtx = document.getElementById('sec').getContext('2d');
+	sec2Ctx = document.getElementById('sec2').getContext('2d');
 
 	// draw round clock
 	roundCtx.fillStyle = 'rgb(0,0,0)';
@@ -99,6 +99,27 @@ window.onload = function(){
 			secCtx.fillText(hour + ':' + minute + ':' + second,10,35);
 		}
 	}
+
+	// draw second digital clock with seconds
+	sec2Ctx.fillStyle = 'rgb(0,0,0)';
+	sec2Ctx.fillRect(0,0,200,200);
+
+	sec2Ctx.fillStyle = 'rgb(200,200,200)';
+	sec2Ctx.font = '30px Verdana';
+	if(minute < 10){
+		if(second < 10){
+			sec2Ctx.fillText(hour + ':0' + minute + ':0' + second,10,35);
+		}else{
+			sec2Ctx.fillText(hour + ':0' + minute + ':' + second,10,35);
+		}
+	}else{
+		if(second < 10){
+			sec2Ctx.fillText(hour + ':' + minute + ':0' + second,10,35);
+		}else{
+			sec2Ctx.fillText(hour + ':' + minute + ':' + second,10,35);
+		}
+	}
+
 }
 
 dots = function(){
