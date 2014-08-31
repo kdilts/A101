@@ -23,7 +23,8 @@
 				material = new THREE.MeshBasicMaterial({color: 0x00ff00});
 				planets[i] = new THREE.Mesh(geometry, material);
 				planets[i].matrixAutoUpdate = false;
-				planets[i].matrix.setPosition(new THREE.Matrix4().makeTranslation(0,.1,0));
+				planets[i].applyMatrix(new THREE.Matrix4().makeTranslation(0,1,0));
+				planets[i].updateMatrix();
 				scene.add(planets[i]);
 			}
 

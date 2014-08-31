@@ -33,7 +33,30 @@ render = function(){
 	gfx.fill();
 	gfx.stroke();
 
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.lineWidth = 3;
+	line(160,220,180,220);
+	line(220,220,240,220);
+	line(160,210,160,230);
+	line(240,210,240,230);
+
+	line(240,220,230,210);
+	line(240,220,230,230);
+
+	line(160,220,170,210);
+	line(160,220,170,230);
+
+	gfx.font = '16px verdana';
+	gfx.fillText('1 m',185,225);
+
 	if(circleY < 200){ circleY++; }
+}
+
+line = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
