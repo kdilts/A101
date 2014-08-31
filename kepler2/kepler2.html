@@ -14,6 +14,8 @@ var orbitEcc = .17; var orbitSemiMajor = 175; var slow = false;
 
 var timer1 = 0.5; var timer2 = 0.5; var timerMax = 0.5;
 
+var sunMass = 1;
+
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
 	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
@@ -95,43 +97,52 @@ window.onload = function(){
 			case 0:
 				currentPlanet = 'mercury';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 1;
 				break;
 			case 1:
 				currentPlanet = 'venus';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 2;
 				break;
 			case 2:
 				currentPlanet = 'earth';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 4;
 				break;
 			case 3:
 				currentPlanet = 'mars';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 6;
 				break;
 			case 4:
 				currentPlanet = 'jupiter';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 8;
 				break;
 			case 5:
 				currentPlanet = 'saturn';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 10;
 				break;
 			case 6:
 				currentPlanet = 'uranus';
-
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 10;
 				break;
 			case 7:
 				currentPlanet = 'neptune';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 15;
 				break;
 			case 8:
 				currentPlanet = 'pluto';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 45;
 				break;
 			case 9:
 				currentPlanet = 'halley';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				sunMass = 65;
 				break;
 			case 10:
 				currentPlanet = 'custom';
@@ -140,6 +151,7 @@ window.onload = function(){
 				minbox.value = ''; // TODO
 				maxbox.value = ''; // TODO
 				semimajorbox.disabled = false; eccbox.disabled = false;
+				sunMass = 1;
 				return;
 			break;
 		}
@@ -164,6 +176,7 @@ window.onmousemove = function(){}
 window.onmousedown = function(){}
 
 render = function(){
+
 	gfx.fillStyle='black';
 	gfx.fillRect(0,0,cwidth,cheight);
 
@@ -266,7 +279,6 @@ orbiter = {
 		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
 		orbiter.pos = add(orbiter.pos,orbiter.offset);
 
-		sunMass = 1;
 		if(slow){
 			var g = mag(new vec2(orbiter.pos.x-(cwidth/2-100),orbiter.pos.y-250));
 			orbiter.rot += Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/3000;
@@ -292,11 +304,12 @@ orbiter = {
 	}
 }
 
+var angle;
 drawSectors = function(){
-		var angle = lerp(0,100,slider.value,.0001,Math.PI/2);
+		angle = lerp(0,100,slider.value,.0001,Math.PI/2);
 
-		/*console.clear();
-		if(orbiter.rot > Math.PI*2-angle || orbiter.rot < angle){
+		//console.clear();
+		/*if(orbiter.rot > Math.PI*2-angle || orbiter.rot < angle){
 			console.log('cyan');
 		}
 
@@ -321,6 +334,8 @@ drawSectors = function(){
 		gfx.fill();
 		gfx.stroke();
 
+		console.log('cyan area: ' + ellipticalArchArea(-angle,angle,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
+
 		gfx.beginPath();
 		for(var i = 0; i > -angle; i -= .01){
 			var x = 1.0*orbitSemiMajor*Math.cos(i);
@@ -341,6 +356,8 @@ drawSectors = function(){
 		gfx.lineTo(100,0);
 		gfx.fill();
 		gfx.stroke();
+
+		console.log('magenta area: ' + ellipticalArchArea(-angle+Math.PI,angle+Math.PI,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
 
 		gfx.beginPath();
 		for(var i = 0; i > -angle; i -= .01){
