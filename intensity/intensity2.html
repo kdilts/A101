@@ -82,10 +82,10 @@ render = function(){
 	mgfx.fillText('2*D',offX+125,633);
 	mgfx.fillText('3*D',offX+230,633);
 
-	mgfx.fillText('Radius =',45,686);
-	mgfx.fillText('R',offX+40,686);
-	mgfx.fillText('4*R',offX+125,686);
-	mgfx.fillText('9*R',offX+230,686);
+	mgfx.fillText('Area =',45,686);
+	mgfx.fillText('A',offX+40,686);
+	mgfx.fillText('2*A',offX+125,686);
+	mgfx.fillText('3*A',offX+230,686);
 
 	mgfx.fillText('Intensity =',45,742);
 	mgfx.fillText('I',offX+40,742);
@@ -114,27 +114,18 @@ render = function(){
 	//gfx.globalCompositeOperation = 'destination-out';
 	gfx.strokeStyle = 'yellow'; gfx.lineWidth = 4;
 	
-	var grd = gfx.createRadialGradient(cwidth/2,cheight/2.7,0,cwidth/2,cheight/2.7,20*rad*rad);
 	switch(rad){
 		case 1:
-			grd.addColorStop(0,'rgb(255,255,255)');
-			grd.addColorStop(1,'rgb(10,10,10)');
+			gfx.fillStyle = 'rgb(255,255,255)';
 			break;
 		case 2:
-			grd.addColorStop(0,'rgb(200,200,200)');
-			grd.addColorStop(.125,'rgb(120,120,120)');
-			grd.addColorStop(.5,'rgb(65,65,65)');
-			grd.addColorStop(1,'rgb(10,10,10)');
+			gfx.fillStyle = 'rgb(180,180,180)';
 			break;
 		case 3:
-			grd.addColorStop(0,'rgb(180,180,180)');
-			grd.addColorStop(.125,'rgb(120,120,120)');
-			grd.addColorStop(.5,'rgb(55,55,55)');
-			grd.addColorStop(1,'rgb(10,10,10)');
+			gfx.fillStyle = 'rgb(100,100,100)';
 			break;
 	}
 
-	gfx.fillStyle = grd;
 	gfx.beginPath();
 	gfx.arc(cwidth/2,cheight/2.7,20*rad*rad,0,Math.PI*2);
 	gfx.fill();
