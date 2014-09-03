@@ -4,6 +4,21 @@ var canvas; var gfx;
 var cwidth; var cheight;
 var circleY = 0;
 
+var mx = -1; var my = -1;
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	if(mx > 230 && mx < 297){
+		if(my > 270 && my < 298){
+			circleY = 0;
+		}		
+	}
+}
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
@@ -15,7 +30,7 @@ window.onload = function(){
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ render(); }
+window.onresize = function(){ window.resizeTo(315,370); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
@@ -25,29 +40,38 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	gfx.fillStyle = gfx.strokeStyle = 'red';
-	gfx.fillRect(160,240,80,80);
+	gfx.fillRect(110,220,80,80);
 
 	gfx.fillStyle = gfx.strokeStyle = 'blue';
 	gfx.beginPath();
-	gfx.arc(200,80+circleY,40,0,Math.PI*2);
+	gfx.arc(150,60+circleY,40,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.lineWidth = 3;
-	line(160,220,180,220);
-	line(220,220,240,220);
-	line(160,210,160,230);
-	line(240,210,240,230);
+	line(110,200,130,200);
+	line(170,200,190,200);
+	line(110,190,110,210);
+	line(190,190,190,210);
 
-	line(240,220,230,210);
-	line(240,220,230,230);
+	line(190,200,180,190);
+	line(190,200,180,210);
 
-	line(160,220,170,210);
-	line(160,220,170,230);
+	line(110,200,120,190);
+	line(110,200,120,210);
 
 	gfx.font = '16px verdana';
-	gfx.fillText('1 m',185,225);
+	gfx.fillText('1 m',133,206);
+
+	gfx.fillStyle = 'rgb(175,175,175)';
+	gfx.strokeStyle = 'rgb(100,100,100)';
+	gfx.fillRect(230,270,67,28);
+	gfx.strokeRect(230,270,67,28);
+
+	gfx.font = '22px verdana bold';
+	gfx.fillStyle = 'black';
+	gfx.fillText('Reset', 240,292);
 
 	if(circleY < 200){ circleY++; }
 }
