@@ -35,7 +35,7 @@ window.onload = function(){
 window.onresize = function(){ window.resizeTo(600,828); }
 
 window.onmousedown = function(){
-	if(my > 600 && my < 762){
+	if(my > 545 && my < 762){
 		if(mx > offX+1 && mx < offX+101){ rad = 1; }
 		else if(mx > offX+105 && mx < offX+205){ rad = 2; }
 		else if(mx > offX+209 && mx < offX+309){ rad = 3; }
@@ -61,53 +61,61 @@ render = function(){
 	mgfx.fillRect(0,600,600,cheight-600);
 	mgfx.fillRect(600,0,cwidth-600,cheight);
 
-	offX = 273;
+	offX = 273; offY = -53;
 	mgfx.strokeStyle = 'yellow'; mgfx.lineWidth = 3;
 	mgfx.fillStyle='grey';
-	for(var i = 0; i < 3; i++){
-		mgfx.strokeRect(1,600+i*54,269,50);
-		mgfx.strokeRect(offX+1,600+i*54,100,50);
-		mgfx.strokeRect(offX+105,600+i*54,100,50);
-		mgfx.strokeRect(offX+209,600+i*54,100,50);
+	for(var i = 0; i < 4; i++){
+		mgfx.strokeRect(1,600+i*54+offY,269,50);
+		mgfx.strokeRect(offX+1,600+i*54+offY,100,50);
+		mgfx.strokeRect(offX+105,600+i*54+offY,100,50);
+		mgfx.strokeRect(offX+209,600+i*54+offY,100,50);
 
-		mgfx.fillRect(1,600+i*54,269,50);
-		mgfx.fillRect(offX+1,600+i*54,100,50);
-		mgfx.fillRect(offX+105,600+i*54,100,50);
-		mgfx.fillRect(offX+209,600+i*54,100,50);
+		mgfx.fillRect(1,600+i*54+offY,269,50);
+		mgfx.fillRect(offX+1,600+i*54+offY,100,50);
+		mgfx.fillRect(offX+105,600+i*54+offY,100,50);
+		mgfx.fillRect(offX+209,600+i*54+offY,100,50);
 	}
 
 	mgfx.fillStyle='black'; mgfx.font='26px verdana bold';
-	mgfx.fillText('Distance =',45,633);
-	mgfx.fillText('D',offX+40,633);
-	mgfx.fillText('2*D',offX+125,633);
-	mgfx.fillText('3*D',offX+230,633);
+	mgfx.fillText('Distance =',45,633+offY);
+	mgfx.fillText('D',offX+40,633+offY);
+	mgfx.fillText('2*D',offX+125,633+offY);
+	mgfx.fillText('3*D',offX+230,633+offY);
 
-	mgfx.fillText('Area =',45,686);
-	mgfx.fillText('A',offX+40,686);
-	mgfx.fillText('2*A',offX+125,686);
-	mgfx.fillText('3*A',offX+230,686);
+	mgfx.fillText('Area =',45,686+offY);
+	mgfx.fillText('A',offX+40,686+offY);
+	mgfx.fillText('4*A',offX+125,686+offY);
+	mgfx.fillText('9*A',offX+230,686+offY);
 
-	mgfx.fillText('Intensity =',45,742);
-	mgfx.fillText('I',offX+40,742);
-	mgfx.fillText('I/4',offX+125,742);
-	mgfx.fillText('I/9',offX+230,742);
+	mgfx.fillText('Intensity =',45,742+offY);
+	mgfx.fillText('I',offX+40,742+offY);
+	mgfx.fillText('I/4',offX+125,742+offY);
+	mgfx.fillText('I/9',offX+230,742+offY);
+
+	mgfx.fillText('Lux =',45,794+offY);
+	mgfx.fillText('A*I',offX+30,794+offY);
+	mgfx.fillText('4*A * I/4',offX+105,794+offY);
+	mgfx.fillText('9*A * I/9',offX+210,794+offY);
 
 	mgfx.strokeStyle = 'red'; mgfx.lineWidth = 4;
 	switch(rad){
 		case 1:
-			mgfx.strokeRect(offX+1,600,100,50);
-			mgfx.strokeRect(offX+1,654,100,50);
-			mgfx.strokeRect(offX+1,708,100,50);
+			mgfx.strokeRect(offX+1,600+offY,100,50);
+			mgfx.strokeRect(offX+1,654+offY,100,50);
+			mgfx.strokeRect(offX+1,708+offY,100,50);
+			mgfx.strokeRect(offX+1,762+offY,100,50);
 			break;
 		case 2:
-			mgfx.strokeRect(offX+105,600,100,50);
-			mgfx.strokeRect(offX+105,654,100,50);
-			mgfx.strokeRect(offX+105,708,100,50);
+			mgfx.strokeRect(offX+105,600+offY,100,50);
+			mgfx.strokeRect(offX+105,654+offY,100,50);
+			mgfx.strokeRect(offX+105,708+offY,100,50);
+			mgfx.strokeRect(offX+105,762+offY,100,50);
 			break;
 		case 3:
-			mgfx.strokeRect(offX+209,600,100,50);
-			mgfx.strokeRect(offX+209,654,100,50);
-			mgfx.strokeRect(offX+209,708,100,50);
+			mgfx.strokeRect(offX+209,600+offY,100,50);
+			mgfx.strokeRect(offX+209,654+offY,100,50);
+			mgfx.strokeRect(offX+209,708+offY,100,50);
+			mgfx.strokeRect(offX+209,762+offY,100,50);
 			break;
 	}
 
@@ -119,10 +127,10 @@ render = function(){
 			gfx.fillStyle = 'rgb(255,255,255)';
 			break;
 		case 2:
-			gfx.fillStyle = 'rgb(180,180,180)';
+			gfx.fillStyle = 'rgb(200,200,200)';
 			break;
 		case 3:
-			gfx.fillStyle = 'rgb(100,100,100)';
+			gfx.fillStyle = 'rgb(180,180,180)';
 			break;
 	}
 
@@ -143,11 +151,11 @@ render = function(){
 		gfx.restore();
 	}
 
-	gfx.beginPath();
+	/*gfx.beginPath();
 	gfx.moveTo(cwidth*.75,cheight*.75);
 	gfx.lineTo(cwidth*.75+18,cheight*.75);
 	gfx.stroke();
-	gfx.fillText('= R', cwidth*.75+24,cheight*.7575);
+	gfx.fillText('= R', cwidth*.75+24,cheight*.7575);*/
 
 	switch(rad){
 		case 1:
