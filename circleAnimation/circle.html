@@ -6,15 +6,25 @@ var circleY = 0;
 
 var mx = -1; var my = -1;
 
+var play = false;
+
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
 	if(!mx){ mx = e.clientX; my = e.clientY; }
 }
 
 window.onmousedown = function(e){
+	// reset button
 	if(mx > 230 && mx < 297){
 		if(my > 270 && my < 298){
-			circleY = 0;
+			circleY = 0; play = false;
+		}		
+	}
+
+	// play button
+	if(mx > 3 && mx < 70){
+		if(my > 270 && my < 298){
+			play = true;
 		}		
 	}
 }
@@ -30,25 +40,25 @@ window.onload = function(){
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ window.resizeTo(315,370); render(); }
+window.onresize = function(){ window.resizeTo(325,370); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 
-	gfx.fillStyle = 'black';
+	gfx.fillStyle = 'rgb(0,0,0)';
 	gfx.fillRect(0,0,cwidth,cheight);
 
-	gfx.fillStyle = gfx.strokeStyle = 'red';
+	gfx.fillStyle = gfx.strokeStyle = 'rgb(200,25,25)';
 	gfx.fillRect(110,220,80,80);
 
-	gfx.fillStyle = gfx.strokeStyle = 'blue';
+	gfx.fillStyle = gfx.strokeStyle = 'rgb(25,25,200)';
 	gfx.beginPath();
-	gfx.arc(150,60+circleY,40,0,Math.PI*2);
+	gfx.arc(150,90+circleY,40,0,Math.PI*2);
 	gfx.fill();
 	gfx.stroke();
 
-	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.fillStyle = gfx.strokeStyle = 'rgb(200,200,50)';
 	gfx.lineWidth = 3;
 	line(110,200,130,200);
 	line(170,200,190,200);
@@ -69,11 +79,15 @@ render = function(){
 	gfx.fillRect(230,270,67,28);
 	gfx.strokeRect(230,270,67,28);
 
+	gfx.fillRect(3,270,67,28);
+	gfx.strokeRect(3,270,67,28);
+
 	gfx.font = '22px verdana bold';
 	gfx.fillStyle = 'black';
 	gfx.fillText('Reset', 240,292);
+	gfx.fillText('Play', 18,292);
 
-	if(circleY < 200){ circleY++; }
+	if(circleY < 169 && play){ circleY += 1.5; }
 }
 
 line = function(x1,y1,x2,y2){
