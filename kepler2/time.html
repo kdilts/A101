@@ -3,8 +3,14 @@
 var canvas; var gfx;
 var cwidth; var cheight;
 var time = 0; var tick = 1000/60;
+var tminusone;
 
 var planet; var center;
+
+var showVecs = false;
+var showTrail = true;
+
+var trail = [];
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -14,11 +20,11 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	center = new vec2(500,500);
+	center = new vec2(800,500);
 
 	planet = {
-		pos:new vec2(center.x+150,center.y),
-		vel:new vec2(0,-40),
+		pos:new vec2(center.x+250,center.y),
+		vel:new vec2(0,-13),
 		acel:new vec2(0,0)
 	}
 
@@ -34,46 +40,63 @@ render = function(){
 	gfx.fillStyle = 'black';
 	gfx.fillRect(0,0,cwidth,cheight);
 
-	gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x,center.y,center.x+200,center.y,.5,250);
+	/*gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
+	ellipse2(center.x,center.y,center.x+200,center.y,.5,250);*/
 
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
 	gfx.beginPath(); gfx.arc(center.x,center.y,10,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
+
+
 	// planet
 	gfx.strokeStyle = gfx.fillStyle = 'red';
 	gfx.beginPath(); gfx.arc(planet.pos.x,planet.pos.y,10,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	// velocity vector
-	gfx.strokeStyle = gfx.fillStyle = 'cyan'; gfx.lineWidth = 4;
-	gfx.save();
-	gfx.translate(planet.pos.x,planet.pos.y);
-	gfx.beginPath();
-	gfx.moveTo(0,0);
-	gfx.lineTo(planet.vel.x,planet.vel.y);
-	gfx.stroke();
-	gfx.restore();
+	if(showTrail){
+		gfx.strokeStyle = gfx.fillStyle = 'white';
+		for(var i in trail){
+			gfx.beginPath(); gfx.arc(trail[i].x,trail[i].y,3,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+		}
+	}
 
-	// acceleration vector
-	gfx.strokeStyle = gfx.fillStyle = 'magenta'; gfx.lineWidth = 4;
-	gfx.save();
-	gfx.translate(planet.pos.x,planet.pos.y);
-	gfx.beginPath();
-	gfx.moveTo(0,0);
-	gfx.lineTo(planet.acel.x,planet.acel.y);
-	gfx.stroke();
-	gfx.restore();
+	if(showVecs){
+		// velocity vector
+		gfx.strokeStyle = gfx.fillStyle = 'cyan'; gfx.lineWidth = 4;
+		gfx.save();
+		gfx.translate(planet.pos.x,planet.pos.y);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(planet.vel.x,planet.vel.y);
+		gfx.stroke();
+		gfx.restore();
+
+		// acceleration vector
+		gfx.strokeStyle = gfx.fillStyle = 'magenta'; gfx.lineWidth = 4;
+		gfx.save();
+		gfx.translate(planet.pos.x,planet.pos.y);
+		gfx.beginPath();
+		gfx.moveTo(0,0);
+		gfx.lineTo(planet.acel.x,planet.acel.y);
+		gfx.stroke();
+		gfx.restore();
+	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';  gfx.lineWidth = 1;
 	gfx.font = '20px verdana';
 	gfx.fillText('Time: ' + parseInt(time), 100, 50);
+	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 100, 75);
 
-	planet.pos = add(planet.pos, mult(planet.vel,.1));
-	planet.vel = add(planet.vel, mult(planet.acel,.03));
-	planet.acel = sub(center,planet.pos);
+	planet.pos = add(planet.pos, planet.vel);
+	planet.vel = add(planet.vel, planet.acel);
+	//planet.vel = mult(unit(planet.vel),100);
+	planet.acel = mult(sub(center,planet.pos),.01);
+			
+	if(showTrail){ trail.push(new vec2(planet.pos.x,planet.pos.y)); }
+
 	time += tick;
 }
 
