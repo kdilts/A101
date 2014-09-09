@@ -7,7 +7,7 @@ var tminusone;
 
 var planet; var center;
 
-var showVecs = true;
+var showVecs = false;
 var showTrail = true;
 
 var trail = [];
@@ -23,12 +23,12 @@ window.onload = function(){
 	center = new vec2(800,500);
 
 	planet = {
-		pos:new vec2(center.x+50,center.y),
-		vel:new vec2(0,-5),
-		acel:new vec2(0,0)
+		pos:new vec2(center.x+250,center.y),
+		vel:new vec2(0,-13),
+		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 
-	setInterval(render,1000/60);
+	setInterval(render,tick);
 }
 
 window.onresize = function(){ render(); }
@@ -90,13 +90,10 @@ render = function(){
 	gfx.fillText('Time: ' + parseInt(time), 100, 50);
 	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 100, 75);
 
-	planet.pos = add(planet.pos, planet.vel);
 	planet.vel = add(planet.vel, planet.acel);
+	planet.pos = add(planet.pos, mult(planet.vel, 1000/60));
 	//planet.vel = mult(unit(planet.vel),100);
-	planet.acel = mult(
-		unit(sub(center,planet.pos)),
-		1/Math.pow(mag(sub(center,planet.pos)),2)
-	);
+	planet.acel = mult(sub(center,planet.pos),.01);
 			
 	if(showTrail){ trail.push(new vec2(planet.pos.x,planet.pos.y)); }
 
