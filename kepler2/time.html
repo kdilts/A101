@@ -13,16 +13,26 @@ var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
 var planetData = {
-	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
-	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
-	earth:{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3 },
-	mars:{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5 },
-	jupiter:{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7 },
-	saturn:{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2 },
-	uranus:{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12 },
-	neptune:{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48 },
-	pluto:{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12 },
-	halley:{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4 }
+	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1,
+		initV:950, xoffset1:-33, xoffset2:-143, ellipseRad: 165 },
+	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3, 
+		initV:1700, xoffset1:-40, xoffset2:30, ellipseRad: 150 },
+	earth:{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	mars:{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	jupiter:{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	saturn:{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	uranus:{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	neptune:{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48, 
+		initV:950, xoffset1:-33, xoffset2:-143 },
+	pluto:{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12,
+		initV:600, xoffset1:-33, xoffset2:-183 },
+	halley:{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4, 
+		initV:950, xoffset1:-33, xoffset2:-143 }
 }
 
 window.onload = function(){
@@ -39,7 +49,7 @@ window.onload = function(){
 
 	planet = {
 		pos:new vec2(center.x-250,center.y),
-		vel:new vec2(0,1000),
+		vel:new vec2(0,planetData[currentPlanet].initV),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 
@@ -71,14 +81,23 @@ menuInit = function(){
 	maxbox.value = planetData[currentPlanet].max + 'km/s';
 
 	planetSelector.onchange = function(){
+		time = 0;
 		switch(parseInt(planetSelector.value)){
 			case 0:
 				currentPlanet = 'mercury';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				center = new vec2(300,250);
+				planet.pos = new vec2(center.x-250,center.y);
+				planet.vel = new vec2(0,planetData[currentPlanet].initV);
+				planet.acc = new vec2(0,0);
 				break;
 			case 1:
 				currentPlanet = 'venus';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				center = new vec2(230,250);
+				planet.pos = new vec2(center.x-160,center.y);
+				planet.vel = new vec2(0,planetData[currentPlanet].initV);
+				planet.acc = new vec2(0,0);
 				break;
 			case 2:
 				currentPlanet = 'earth';
@@ -143,7 +162,7 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x-33,center.y,center.x-133,center.y,planetData[currentPlanet].ecc,165);
+	ellipse2(center.x+planetData[currentPlanet].xoffset1,center.y,center.x+planetData[currentPlanet].xoffset2,center.y,planetData[currentPlanet].ecc,planetData[currentPlanet].ellipseRad);
 
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
