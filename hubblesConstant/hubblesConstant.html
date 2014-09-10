@@ -1,0 +1,92 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var origX = 130; var origY = 525;
+var width = 600; var height = 450;
+var cellSize = 15;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.fillStyle = 'red';
+	gfx.font = '20px verdana';
+	gfx.fillText('Hubble\'s Law', 300,45);
+
+	gfx.fillStyle = 'green';
+	gfx.font = '20px verdana';
+	gfx.fillText('Distance (Mpc)', 300,580);
+
+	gfx.save();
+	gfx.translate(50,400);
+	gfx.rotate(Math.PI/2*3);
+	gfx.fillText('Velocity (kms/sec)', 0,0);
+	gfx.restore();
+
+	gfx.strokeStyle = 'yellow';
+	gfx.strokeRect(130,75,600,450);
+
+	gfx.strokeStyle = 'red';
+
+	for(var i = 1; i*cellSize < width; i++){
+		gfx.beginPath(); gfx.moveTo(origX+i*cellSize,origY);
+		gfx.lineTo(origX+i*cellSize,origY-450); gfx.stroke();
+	}
+
+	for(var i = 1; i*cellSize < height; i++){
+		gfx.beginPath(); gfx.moveTo(origX,origY-i*cellSize);
+		gfx.lineTo(origX+width,origY-i*cellSize); gfx.stroke();
+	}
+
+	gfx.strokeStyle = gfx.fillStyle = 'white';
+	gfx.font = '12px verdana';
+	for(var i = 0; i < 13; i++){
+		gfx.fillText(''+i*90, origX+i*46.5, origY+20);
+	}
+
+	gfx.save();
+	gfx.translate(origX-48, origY-54);
+	for(var i = 1; i <= 6; i++){
+		gfx.fillText(i+'0,000', 0,-(i-1)*66);
+	}
+	gfx.restore();
+
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
