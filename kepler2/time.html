@@ -13,26 +13,35 @@ var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
 var planetData = {
-	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1,
-		initV:950, xoffset1:-33, xoffset2:-143, ellipseRad: 165 },
+	mercury:{ semimajor: .387, ecc: .050, min:38.9, max:59.1,
+		initV:490, xoffset1:-28, xoffset2:-8, ellipseRad: 165 },
+	
 	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3, 
-		initV:1700, xoffset1:-40, xoffset2:30, ellipseRad: 150 },
+		initV:550, xoffset1:-38, xoffset2:28, ellipseRad: 154 },
+	
 	earth:{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:550, xoffset1:-38, xoffset2:28, ellipseRad: 154 },
+	
 	mars:{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:490, xoffset1:-45, xoffset2:20, ellipseRad: 170 },
+	
 	jupiter:{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:550, xoffset1:-33, xoffset2:28, ellipseRad: 154 },
+	
 	saturn:{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:550, xoffset1:-33, xoffset2:28, ellipseRad: 154 },
+	
 	uranus:{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:550, xoffset1:-33, xoffset2:28, ellipseRad: 154 },
+	
 	neptune:{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48, 
-		initV:950, xoffset1:-33, xoffset2:-143 },
+		initV:550, xoffset1:-33, xoffset2:28, ellipseRad: 154 },
+	
 	pluto:{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12,
-		initV:600, xoffset1:-33, xoffset2:-183 },
+		initV:600, xoffset1:-33, xoffset2:-183, ellipseRad: 154 },
+	
 	halley:{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4, 
-		initV:950, xoffset1:-33, xoffset2:-143 }
+		initV:550, xoffset1:-33, xoffset2:28, ellipseRad: 154 }
 }
 
 window.onload = function(){
@@ -45,10 +54,10 @@ window.onload = function(){
 
 	menuInit();
 
-	center = new vec2(300,250);
+	center = new vec2(260,250);
 
 	planet = {
-		pos:new vec2(center.x-250,center.y),
+		pos:new vec2(center.x-183,center.y),
 		vel:new vec2(0,planetData[currentPlanet].initV),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
@@ -102,10 +111,18 @@ menuInit = function(){
 			case 2:
 				currentPlanet = 'earth';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				center = new vec2(230,250);
+				planet.pos = new vec2(center.x-160,center.y);
+				planet.vel = new vec2(0,planetData[currentPlanet].initV);
+				planet.acc = new vec2(0,0);
 				break;
 			case 3:
 				currentPlanet = 'mars';
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				center = new vec2(240,250);
+				planet.pos = new vec2(center.x-180,center.y);
+				planet.vel = new vec2(0,planetData[currentPlanet].initV);
+				planet.acc = new vec2(0,0);
 				break;
 			case 4:
 				currentPlanet = 'jupiter';
@@ -181,7 +198,7 @@ render = function(){
 		gfx.translate(planet.pos.x,planet.pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.lineTo(planet.vel.x/50,planet.vel.y/50);
+		gfx.lineTo(planet.vel.x/20,planet.vel.y/20);
 		gfx.stroke();
 		gfx.restore();
 	}
@@ -193,7 +210,8 @@ render = function(){
 		gfx.translate(planet.pos.x,planet.pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.lineTo(planet.acel.x,planet.acel.y);
+		var offsetVec = mult(unit(planet.acel),12);
+		gfx.lineTo(offsetVec.x + planet.acel.x*15, offsetVec.y + planet.acel.y*15);
 		gfx.stroke();
 		gfx.restore();
 	}
@@ -205,7 +223,7 @@ render = function(){
 
 	planet.vel = add(planet.vel, planet.acel);
 	planet.pos = add(planet.pos, mult(planet.vel, tick));
-	planet.acel = mult(unit(sub(center,planet.pos)),500000/Math.pow(mag(sub(center,planet.pos)),2));
+	planet.acel = mult(unit(sub(center,planet.pos)),50000/Math.pow(mag(sub(center,planet.pos)),2));
 
 	time += tick;
 }
