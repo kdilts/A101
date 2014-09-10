@@ -7,40 +7,38 @@ var time = 0; var tick = .001;
 var planet; var center;
 
 var showVecs = true;
-var showTrail = true;
+var showTrail = false;
 
 var trail = [];
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
-	cwidth = canvas.width = window.innerWidth;
-	cheight = canvas.height = window.innerHeight;
+	cwidth = canvas.width = 500;
+	cheight = canvas.height = 580;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	center = new vec2(800,500);
+	center = new vec2(300,250);
 
 	planet = {
-		pos:new vec2(center.x+250,center.y),
-		vel:new vec2(0,-1000),
+		pos:new vec2(center.x-250,center.y),
+		vel:new vec2(0,+1000),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 
 	setInterval(render,tick);
 }
 
-window.onresize = function(){ render(); }
+window.onresize = function(){ window.resizeTo(750,650); render(); }
 
 render = function(){
-	cwidth = canvas.width = window.innerWidth;
-	cheight = canvas.height = window.innerHeight;
 
 	gfx.fillStyle = 'black';
 	gfx.fillRect(0,0,cwidth,cheight);
 
-	/*gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x-200,center.y,center.x+200,center.y,.43,250);*/
+	gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
+	ellipse2(center.x-33,center.y,center.x-133,center.y,.13,165);
 
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
@@ -84,8 +82,8 @@ render = function(){
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';  gfx.lineWidth = 1;
 	gfx.font = '20px verdana';
-	gfx.fillText('Time: ' + parseInt(time), 100, 50);
-	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 100, 75);
+	gfx.fillText('Time: ' + ('' + parseFloat(time)*10).substr(0,4), 20, 20);
+	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 20, 45);
 
 	planet.vel = add(planet.vel, planet.acel);
 	planet.pos = add(planet.pos, mult(planet.vel, tick));
@@ -136,4 +134,49 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 	</script>
 </head>
 <body bgcolor="grey">
+	<form style='position:absolute; left:510px; top:10px;'>
+		<select id='planetSelect' style='width:200'>
+				<option value = "0">Mercury</option>
+				<option value = "1">Venus</option>
+				<option value = "2">Earth</option>
+				<option value = "3">Mars</option>
+				<option value = "4">Jupiter</option>
+				<option value = "5">Saturn</option>
+				<option value = "6">Uranus</option>
+				<option value = "7">Neptune</option>
+				<option value = "8">Pluto</option>
+				<option value = "9">Halley's Comet</option>
+				<option value = "10">Custom</option>
+		</select><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
+		<input type='button' id='playpause' value='Play / Pause'><br></br>
+		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
+		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Sector Size: </b1><input type='range' id='slider'><br></br>
+		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<input type='checkbox' id='showpos'><b1>Show Position Vector</b1><br></br>
+		
+		<b1>Distance from the Sun: </b1>
+		<input type = 'textbox' id='distbox' style='width:28%' disabled>
+		<br></br>
+		
+		<b1>Velocity</b1><br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Currently: </b1>
+		<input type = 'textbox' id='curvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Minimum: </b1>
+		<input type = 'textbox' id='minvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Maximum: </b1>
+		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
+		<br></br>
+	</form>
 </body>
