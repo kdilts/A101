@@ -7,7 +7,7 @@ var tminusone;
 
 var planet; var center;
 
-var showVecs = false;
+var showVecs = true;
 var showTrail = true;
 
 var trail = [];
@@ -24,7 +24,7 @@ window.onload = function(){
 
 	planet = {
 		pos:new vec2(center.x+250,center.y),
-		vel:new vec2(0,-13),
+		vel:new vec2(0,-25000),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 
@@ -41,14 +41,12 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	/*gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x,center.y,center.x+200,center.y,.5,250);*/
+	ellipse2(center.x-200,center.y,center.x+200,center.y,.43,250);*/
 
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
 	gfx.beginPath(); gfx.arc(center.x,center.y,10,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
-
-
 
 	// planet
 	gfx.strokeStyle = gfx.fillStyle = 'red';
@@ -91,9 +89,8 @@ render = function(){
 	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 100, 75);
 
 	planet.vel = add(planet.vel, planet.acel);
-	planet.pos = add(planet.pos, mult(planet.vel, 1000/60));
-	//planet.vel = mult(unit(planet.vel),100);
-	planet.acel = mult(sub(center,planet.pos),.01);
+	planet.pos = add(planet.pos, mult(planet.vel, .0001));
+	planet.acel = sub(center,planet.pos);
 			
 	if(showTrail){ trail.push(new vec2(planet.pos.x,planet.pos.y)); }
 
