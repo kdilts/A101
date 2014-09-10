@@ -4,33 +4,138 @@ var canvas; var gfx;
 var cwidth; var cheight;
 var time = 0; var tick = .001;
 
-var planet; var center;
+var planet; var center; var currentPlanet;
 
-var showVecs = true;
-var showTrail = false;
+var showVel = true; var showAccel = true;
 
-var trail = [];
+var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
+var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
+var minbox; var maxbox; var curbox; var distbox;
+
+var planetData = {
+	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
+	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
+	earth:{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3 },
+	mars:{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5 },
+	jupiter:{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7 },
+	saturn:{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2 },
+	uranus:{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12 },
+	neptune:{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48 },
+	pluto:{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12 },
+	halley:{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4 }
+}
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
 	cwidth = canvas.width = 500;
-	cheight = canvas.height = 580;
+	cheight = canvas.height = 602;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	menuInit();
 
 	center = new vec2(300,250);
 
 	planet = {
 		pos:new vec2(center.x-250,center.y),
-		vel:new vec2(0,+1000),
+		vel:new vec2(0,1000),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 
 	setInterval(render,tick);
 }
 
-window.onresize = function(){ window.resizeTo(750,650); render(); }
+window.onresize = function(){ window.resizeTo(775,670); render(); }
+
+menuInit = function(){
+	planetSelector =  document.getElementById('planetSelect');
+	semimajorbox = document.getElementById('semimajor');
+	eccbox = document.getElementById('eccentricity');
+	playpausebutton = document.getElementById('playpause');
+	slowmobox = document.getElementById('slowmo');
+	showsectorsbox = document.getElementById('showsectors');
+	slider = document.getElementById('slider');
+	showvelbox = document.getElementById('showvel');
+	showaccelbox = document.getElementById('showpos');
+
+	minbox = document.getElementById('minvel');
+	maxbox = document.getElementById('maxvel');
+	curbox = document.getElementById('curvel');
+	distbox = document.getElementById('distbox');
+
+	currentPlanet = 'mercury';
+	semimajorbox.value = planetData[currentPlanet].semimajor + ' AU';
+	eccbox.value = planetData[currentPlanet].ecc;
+	minbox.value = planetData[currentPlanet].min + 'km/s';
+	maxbox.value = planetData[currentPlanet].max + 'km/s';
+
+	planetSelector.onchange = function(){
+		switch(parseInt(planetSelector.value)){
+			case 0:
+				currentPlanet = 'mercury';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 1:
+				currentPlanet = 'venus';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 2:
+				currentPlanet = 'earth';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 3:
+				currentPlanet = 'mars';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 4:
+				currentPlanet = 'jupiter';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 5:
+				currentPlanet = 'saturn';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 6:
+				currentPlanet = 'uranus';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 7:
+				currentPlanet = 'neptune';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 8:
+				currentPlanet = 'pluto';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 9:
+				currentPlanet = 'halley';
+				semimajorbox.disabled = true; eccbox.disabled = true;
+				break;
+			case 10:
+				currentPlanet = 'custom';
+				semimajorbox.value = '';
+				eccbox.value = '';
+				minbox.value = ''; // TODO
+				maxbox.value = ''; // TODO
+				semimajorbox.disabled = false; eccbox.disabled = false;
+				return;
+			break;
+		}
+				semimajorbox.value = ''+planetData[currentPlanet].semimajor + ' AU';
+				eccbox.value = ''+planetData[currentPlanet].ecc;
+				minbox.value = ''+planetData[currentPlanet].min + ' km/s';
+				maxbox.value = ''+planetData[currentPlanet].max + ' km/s';
+	}
+
+	showvelbox.onchange = function(){
+		if(showvelbox.checked){ showVel = true; }else{ showVel = false; }
+	}
+
+	showaccelbox.onchange = function(){
+		if(showaccelbox.checked){ showAccel = true; }else{ showAccel = false; }
+	}
+}
 
 render = function(){
 
@@ -38,7 +143,7 @@ render = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 
 	gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x-33,center.y,center.x-133,center.y,.13,165);
+	ellipse2(center.x-33,center.y,center.x-133,center.y,planetData[currentPlanet].ecc,165);
 
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
@@ -50,32 +155,26 @@ render = function(){
 	gfx.beginPath(); gfx.arc(planet.pos.x,planet.pos.y,10,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	if(showTrail){
-		gfx.strokeStyle = gfx.fillStyle = 'white';
-		for(var i in trail){
-			gfx.beginPath(); gfx.arc(trail[i].x,trail[i].y,3,0,Math.PI*2);
-			gfx.fill(); gfx.stroke();
-		}
-	}
-
-	if(showVecs){
+	if(showVel){
 		// velocity vector
 		gfx.strokeStyle = gfx.fillStyle = 'cyan'; gfx.lineWidth = 4;
 		gfx.save();
 		gfx.translate(planet.pos.x,planet.pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.lineTo(planet.vel.x/25,planet.vel.y/25);
+		gfx.lineTo(planet.vel.x/50,planet.vel.y/50);
 		gfx.stroke();
 		gfx.restore();
+	}
 
+	if(showAccel){
 		// acceleration vector
 		gfx.strokeStyle = gfx.fillStyle = 'magenta'; gfx.lineWidth = 4;
 		gfx.save();
 		gfx.translate(planet.pos.x,planet.pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.lineTo(planet.acel.x*5,planet.acel.y*5);
+		gfx.lineTo(planet.acel.x,planet.acel.y);
 		gfx.stroke();
 		gfx.restore();
 	}
@@ -88,8 +187,6 @@ render = function(){
 	planet.vel = add(planet.vel, planet.acel);
 	planet.pos = add(planet.pos, mult(planet.vel, tick));
 	planet.acel = mult(unit(sub(center,planet.pos)),500000/Math.pow(mag(sub(center,planet.pos)),2));
-			
-	if(showTrail){ trail.push(new vec2(planet.pos.x,planet.pos.y)); }
 
 	time += tick;
 }
@@ -148,15 +245,15 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 				<option value = "9">Halley's Comet</option>
 				<option value = "10">Custom</option>
 		</select><br></br>
-		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
-		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:26%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:18%'><br></br>
 		<input type='button' id='playpause' value='Play / Pause'><br></br>
 		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
 		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
-		&nbsp;&nbsp;&nbsp;&nbsp;
+		&nbsp;&nbsp;&nbsp;&nbsp;<br></br>
 		<b1>Sector Size: </b1><input type='range' id='slider'><br></br>
-		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
-		<input type='checkbox' id='showpos'><b1>Show Position Vector</b1><br></br>
+		<input type='checkbox' id='showvel' checked><b1>Show Velocity Vector</b1><br></br>
+		<input type='checkbox' id='showpos' checked><b1>Show Acceleration Vector</b1><br></br>
 		
 		<b1>Distance from the Sun: </b1>
 		<input type = 'textbox' id='distbox' style='width:28%' disabled>
@@ -165,7 +262,7 @@ ellipse2 = function(x1,y1,x2,y2,e,semimajor){
 		<b1>Velocity</b1><br></br>
 		
 		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-		<b1>Currently: </b1>
+		<b1>Current: </b1>
 		<input type = 'textbox' id='curvel' style='width:30%' disabled>
 		<br></br>
 		
