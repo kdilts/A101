@@ -7,6 +7,24 @@ var origX = 130; var origY = 525;
 var width = 600; var height = 450;
 var cellSize = 15;
 
+var mx; var my;
+var mousedown = false;
+
+var objects = [];
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	mousedown = true;
+}
+
+window.onmouseup = function(e){
+	mousedown = false;
+}
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
@@ -14,6 +32,14 @@ window.onload = function(){
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	for(var i = 0; i < 12; i++){
+		if(i%2 !== 0){
+			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40));
+		}else{
+			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40));
+		}
+	}
 
 	setInterval(render,1000/60);
 }
@@ -69,6 +95,32 @@ render = function(){
 	}
 	gfx.restore();
 
+	gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
+
+	for(var o in objects){ objects[o].draw(); }
+
+}
+
+dragableObject = function(x,y,sx,sy){
+	this.x = x; this.y = y;
+	this.sx = sx; this.sy = sy;
+
+	this.draw = function(){
+		gfx.fillStyle = 'white';
+		gfx.fillRect(this.x-this.sx/2,this.y-this.sy/2,this.sx,this.sy);
+
+		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
+			if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
+				if(!mousedown){
+					gfx.fillText('hover',20,40);
+				}
+				else{
+					gfx.fillText('drag',20,40);
+					this.x = mx; this.y = my;
+				}
+			}
+		}
+	}
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
