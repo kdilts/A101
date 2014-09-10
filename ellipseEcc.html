@@ -1,0 +1,76 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.fillStyle = gfx.strokeStyle = 'white'; gfx.lineWidth = 4;
+	gfx.font = '20px verdana';
+
+	for(var i = 0; i <= 1; i += .2){	
+		ellipse2(100+i*1250,200,150+i*1250,200,i,100);
+		gfx.fillText(('ecc: '+i).substr(0,8),100+i*1250,350);
+	}
+
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+ellipse2 = function(x1,y1,x2,y2,e,semimajor){
+	var center = new vec2((x1+x2)/2,(y1+y2)/2);
+
+	var up = new vec2(0,-1);
+	var f = sub(new vec2(x1,y1), new vec2(x2,y2));
+	var rot = Math.acos(dot(f,up)/(mag(f)*mag(up)));
+	rot -= Math.PI/2;
+	if(rot !== 0 && !rot){ rot = Math.PI/2; }
+
+	gfx.save();
+	gfx.translate(center.x,center.y);
+	gfx.rotate(rot);
+	gfx.beginPath();
+	for(var i = 0; i < Math.PI*2; i += .01){
+		var x = 1.0*semimajor*Math.cos(i);
+		var y = (1-e)*semimajor*Math.sin(i)*(-1);
+		if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); } 
+	}
+	gfx.stroke();
+	gfx.restore();
+}
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
