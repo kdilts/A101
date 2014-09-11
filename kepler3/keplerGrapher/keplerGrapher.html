@@ -51,13 +51,11 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	img = new Image(); img.src = 'cluster.gif';
-
 	for(var i = 0; i < 11; i++){
 		if(i%2 !== 0){
-			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
-		}else{
 			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40,i));
+		}else{
+			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
 		}
 	}
 
@@ -132,9 +130,8 @@ dragableObject = function(x,y,sx,sy,id){
 	this.id = id;
 
 	this.draw = function(){
-		//gfx.drawImage(img, this.x-this.sx/2, this.y - this.sy/2);
-		gfx.strokeStyle = gfx.fillStyle = 'white';
-		gfx.beginPath(); gfx.arc(this.x,this.y,20,0,Math.PI*2);
+		gfx.strokeStyle = gfx.fillStyle = 'yellow';
+		gfx.beginPath(); gfx.arc(this.x,this.y,12,0,Math.PI*2);
 		gfx.fill(); gfx.stroke();
 
 		if(drag === this.id){
@@ -143,8 +140,9 @@ dragableObject = function(x,y,sx,sy,id){
 			gfx.fillText(strings[id], 20, 600)
 		}
 
-		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
-			if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
+		//if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
+			//if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
+			if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 12){
 				if(!mousedown){
 					//gfx.fillText('hover',20,40);
 					gfx.font = '20px verdana';
@@ -158,7 +156,7 @@ dragableObject = function(x,y,sx,sy,id){
 					gfx.fillText(strings[id], 20, 600)
 				}
 			}
-		}
+		//}
 	}
 }
 
