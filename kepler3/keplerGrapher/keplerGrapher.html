@@ -1,0 +1,183 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var origX = 130; var origY = 525;
+var width = 600; var height = 450;
+var cellSize = 15;
+
+var mx; var my;
+var mousedown = false;
+var drag = -1;
+
+var objects = [];
+
+var img;
+
+var strings = [
+	'Mercury (.39,.24)',
+	'Venus (.72,.62)',
+	'Earth (1,1)',
+	'Mars (1.52,1.88)',
+	'Pallas (??,3.62)',
+	'Ceres (??,4.61)',
+	'Jupiter (5.2,11.88)',
+	'Saturn (9.54,29.46)',
+	'Uranus (19.18,84.07)',
+	'Neptune (30.060,164.82)',
+	'Pluto (39.44,248.6)'
+];
+
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	mousedown = true;
+}
+
+window.onmouseup = function(e){
+	mousedown = false; drag = -1;
+}
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	img = new Image(); img.src = 'cluster.gif';
+
+	for(var i = 0; i < 11; i++){
+		if(i%2 !== 0){
+			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
+		}else{
+			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40,i));
+		}
+	}
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ window.resizeTo(1085,750); render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.fillStyle = 'red';
+	gfx.font = '20px verdana';
+	gfx.fillText('Kepler\'s 3rd Law', 300,45);
+
+	gfx.fillStyle = 'green';
+	gfx.font = '20px verdana';
+	gfx.fillText('Semimajor Axis (AU)', 300,580);
+
+	gfx.save();
+	gfx.translate(50,400);
+	gfx.rotate(Math.PI/2*3);
+	gfx.fillText('Orbital Period (years)', 0,0);
+	gfx.restore();
+
+	gfx.strokeStyle = 'yellow';
+	gfx.strokeRect(130,75,600,450);
+
+	gfx.strokeStyle = 'red';
+
+	for(var i = 1; i*cellSize < width; i++){
+		gfx.beginPath(); gfx.moveTo(origX+i*cellSize,origY);
+		gfx.lineTo(origX+i*cellSize,origY-450); gfx.stroke();
+	}
+
+	for(var i = 1; i*cellSize < height; i++){
+		gfx.beginPath(); gfx.moveTo(origX,origY-i*cellSize);
+		gfx.lineTo(origX+width,origY-i*cellSize); gfx.stroke();
+	}
+
+	gfx.strokeStyle = gfx.fillStyle = 'white';
+	gfx.font = '12px verdana';
+	for(var i = 0; i < 11; i++){
+		gfx.fillText(''+i*4, origX+i*58, origY+20);
+	}
+
+	gfx.save();
+	gfx.translate(origX-48, origY-40);
+	for(var i = 1; i <= 10; i++){
+		gfx.fillText(i*25, 0,-(i-1)*40);
+	}
+	gfx.restore();
+
+	//gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
+
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.font = '22px verdana bold';
+	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,625);
+	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,650);
+	
+	for(var o in objects){ objects[o].draw(); }
+
+}
+
+dragableObject = function(x,y,sx,sy,id){
+	this.x = x; this.y = y;
+	this.sx = sx; this.sy = sy;
+	this.id = id;
+
+	this.draw = function(){
+		//gfx.drawImage(img, this.x-this.sx/2, this.y - this.sy/2);
+		gfx.strokeStyle = gfx.fillStyle = 'white';
+		gfx.beginPath(); gfx.arc(this.x,this.y,20,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		if(drag === this.id){
+			this.x = mx; this.y = my;
+			gfx.font = '20px verdana';
+			gfx.fillText(strings[id], 20, 600)
+		}
+
+		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
+			if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
+				if(!mousedown){
+					//gfx.fillText('hover',20,40);
+					gfx.font = '20px verdana';
+					gfx.fillText(strings[id], 20, 600)
+				}
+				else if(drag === -1){
+					//gfx.fillText('drag',20,40);
+					this.x = mx; this.y = my;
+					drag = id;
+					gfx.font = '20px verdana';
+					gfx.fillText(strings[id], 20, 600)
+				}
+			}
+		}
+	}
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
