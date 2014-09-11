@@ -9,8 +9,27 @@ var cellSize = 15;
 
 var mx; var my;
 var mousedown = false;
+var drag = -1;
 
 var objects = [];
+
+var img;
+
+var strings = [
+	'Virgo (??, 1400)',
+	'Ursa Major I (270, 15400)',
+	'Pegasus I (??, 3700)',
+	'Leo (310, 19500)',
+	'Cancer (80, 4800)',
+	'Gemini (350, 23300)',
+	'Perseus (??, 5400)',
+	'Bootes (650, 39400)',
+	'Coma (??, 6700)',
+	'Ursa Major II (680, 41000)',
+	'Hercules (175, 10300)',
+	'Hydra (1000, 60600)'
+];
+
 
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
@@ -22,7 +41,7 @@ window.onmousedown = function(e){
 }
 
 window.onmouseup = function(e){
-	mousedown = false;
+	mousedown = false; drag = -1;
 }
 
 window.onload = function(){
@@ -33,18 +52,20 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
+	img = new Image(); img.src = 'cluster.gif';
+
 	for(var i = 0; i < 12; i++){
 		if(i%2 !== 0){
-			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40));
+			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
 		}else{
-			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40));
+			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40,i));
 		}
 	}
 
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ render(); }
+window.onresize = function(){ window.resizeTo(1085,750); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
@@ -95,28 +116,45 @@ render = function(){
 	}
 	gfx.restore();
 
-	gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
+	//gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
 
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.font = '22px verdana bold';
+	gfx.fillText('Drag each cluster into the appropriate place on the graph.', 20,625);
+	gfx.fillText('Note: Some clusters will not have sufficient information to be plotted until you calculate the distance later in the lab.', 20,650);
+	
 	for(var o in objects){ objects[o].draw(); }
 
 }
 
-dragableObject = function(x,y,sx,sy){
+dragableObject = function(x,y,sx,sy,id){
 	this.x = x; this.y = y;
 	this.sx = sx; this.sy = sy;
+	this.id = id;
 
 	this.draw = function(){
 		gfx.fillStyle = 'white';
-		gfx.fillRect(this.x-this.sx/2,this.y-this.sy/2,this.sx,this.sy);
+		gfx.drawImage(img, this.x-this.sx/2, this.y - this.sy/2);
+
+		if(drag === this.id){
+			this.x = mx; this.y = my;
+			gfx.font = '20px verdana';
+			gfx.fillText(strings[id], 20, 600)
+		}
 
 		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
 			if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
 				if(!mousedown){
-					gfx.fillText('hover',20,40);
+					//gfx.fillText('hover',20,40);
+					gfx.font = '20px verdana';
+					gfx.fillText(strings[id], 20, 600)
 				}
-				else{
-					gfx.fillText('drag',20,40);
+				else if(drag === -1){
+					//gfx.fillText('drag',20,40);
 					this.x = mx; this.y = my;
+					drag = id;
+					gfx.font = '20px verdana';
+					gfx.fillText(strings[id], 20, 600)
 				}
 			}
 		}
