@@ -545,9 +545,9 @@ traceDot = function(x,y){
 	var rollOver = false;
 	if(lastDot-1 === -1){ lastDot = 50; rollOver = true; }
 	if(traceDots[lastDot-1] !== undefined){
-		this.size += 2;
+		this.size += 0;
 		if(projTheta - oldProjTheta < .2){ this.r += 255; this.size += 2; }
-		if(projTheta - oldProjTheta < .0){ this.g -= 255; this.size += 2; }
+		if(projTheta - oldProjTheta < .0){ this.g -= 255; this.size += 0; }
 		//console.clear(); console.log(this.r, this.g);
 	}
 	if(rollOver){ lastDot = 0; }
