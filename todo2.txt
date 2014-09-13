@@ -12,12 +12,7 @@ kepler 2
 	draw orbit track by storing data to array instead of using my function
 
 kepler 3 grapher
-	use planet images instead of dots
-	make it clear that values are cubed / sqaured
 	break in axis
-	table columns: a^3 , p^2 , draggable planet 
-
-
 
 
 

@@ -79,11 +79,7 @@ window.onload = function(){
 	imgs[10].src = 'planets/pluto.png';
 
 	for(var i = 0; i < 11; i++){
-		if(i%2 !== 0){
-			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40,i));
-		}else{
-			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
-		}
+		objects.push(new dragableObject(1030,55+i*55,40,40,i));
 	}
 
 	setInterval(render,1000/60);
@@ -104,16 +100,43 @@ render = function(){
 
 	gfx.fillStyle = 'green';
 	gfx.font = '20px verdana';
-	gfx.fillText('Semimajor Axis (AU)', 300,580);
+	gfx.fillText('Semimajor Axis Cubed (AU)', 300,580);
+	
+	gfx.font = '13px verdana';
+	gfx.fillText('Semimajor Axis Cubed (AU)',650,20);
+	gfx.fillText('Orbital Period Squared (years)', 850,20);
+	gfx.font = '20px verdana';
 
 	gfx.save();
 	gfx.translate(50,400);
 	gfx.rotate(Math.PI/2*3);
-	gfx.fillText('Orbital Period (years)', 0,0);
+	gfx.fillText('Orbital Period Squared (years)', 0,0);
 	gfx.restore();
 
 	gfx.strokeStyle = 'yellow';
 	gfx.strokeRect(130,75,600,450);
+
+	gfx.strokeStyle = 'green';
+	for(var i = 0; i < 11; i++){
+		gfx.strokeRect(1002,28+i*55,55,55);
+		gfx.strokeRect(880,28+i*55,123,55);
+		gfx.strokeRect(757,28+i*55,123,55);
+	}
+
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	for(var i = 0; i < 11; i++){
+		if(data[i].au !== '??'){
+			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), 763, 63+i*55);
+		}else{
+			gfx.fillText(data[i].au, 763, 63+i*55);
+		}
+		
+		if(data[i].pd !== '??'){
+			gfx.fillText(truncate(''+Math.pow(data[i].pd,2),4), 885, 63+i*55);
+		}else{
+			gfx.fillText(data[i].pd, 885, 63+i*55);
+		}
+	}
 
 	gfx.strokeStyle = 'red';
 
@@ -144,8 +167,8 @@ render = function(){
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
-	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,625);
-	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,650);
+	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,645);
+	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,670);
 	
 	for(var o in objects){ objects[o].draw(); }
 
