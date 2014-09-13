@@ -15,18 +15,32 @@ var objects = [];
 
 var img;
 
+var data = [
+	{ au:.39, pd: .24 },
+	{ au:.72, pd: .62 },
+	{ au:1, pd: 1 },
+	{ au:1.52, pd: 1.88 },
+	{ au:'??', pd: 3.62 },
+	{ au:'??', pd: 4.61 },
+	{ au:5.2, pd: 11.88 },
+	{ au:9.54, pd: 29.46 },
+	{ au:19.18, pd: 84.07 },
+	{ au:30.060, pd: 164.82 },
+	{ au:39.44, pd: 248.6 }
+]
+
 var strings = [
-	'Mercury (.39,.24)',
-	'Venus (.72,.62)',
-	'Earth (1,1)',
-	'Mars (1.52,1.88)',
-	'Pallas (??,3.62)',
-	'Ceres (??,4.61)',
-	'Jupiter (5.2,11.88)',
-	'Saturn (9.54,29.46)',
-	'Uranus (19.18,84.07)',
-	'Neptune (30.060,164.82)',
-	'Pluto (39.44,248.6)'
+	'Mercury (',
+	'Venus (',
+	'Earth (',
+	'Mars (',
+	'Pallas (',
+	'Ceres (',
+	'Jupiter (',
+	'Saturn (',
+	'Uranus (',
+	'Neptune (',
+	'Pluto ('
 ];
 
 
@@ -137,7 +151,13 @@ dragableObject = function(x,y,sx,sy,id){
 		if(drag === this.id){
 			this.x = mx; this.y = my;
 			gfx.font = '20px verdana';
-			gfx.fillText(strings[id], 20, 600)
+			var tempstring = strings[id];
+			if(id !== 4 && id !== 5){
+				tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+			}else{
+				tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+			}
+			gfx.fillText(tempstring, 20, 600);
 		}
 
 		//if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
@@ -146,14 +166,26 @@ dragableObject = function(x,y,sx,sy,id){
 				if(!mousedown){
 					//gfx.fillText('hover',20,40);
 					gfx.font = '20px verdana';
-					gfx.fillText(strings[id], 20, 600)
+					var tempstring = strings[id];
+					if(id !== 4 && id !== 5){
+						tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+					}else{
+						tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+					}
+					gfx.fillText(tempstring, 20, 600);
 				}
 				else if(drag === -1){
 					//gfx.fillText('drag',20,40);
 					this.x = mx; this.y = my;
 					drag = id;
 					gfx.font = '20px verdana';
-					gfx.fillText(strings[id], 20, 600)
+					var tempstring = strings[id];
+					if(id !== 4 && id !== 5){
+						tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+					}else{
+						tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+					}
+					gfx.fillText(tempstring, 20, 600);
 				}
 			}
 		//}

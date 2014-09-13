@@ -13,7 +13,15 @@ set one window size scheme
 
 -----------------------
 
-kepler2
+*** make pop ups for clock and sci not
+
+kepler 3
+
+	look at modified euler method
+	semi-implicit euler method <-- wikipedia
+
+
+kepler 2
 	m1 - mass of the sun - kg
 	g - gravity
 	r - meters
@@ -33,11 +41,13 @@ kepler2
 
 photometry
 	label blue thing as light detector
-	instructions on the bottom -- separate instructions?
-	wait for decision for star color
-	text size issues
+	separate instructions
 
 intensity
+	change radius to area a, 4a, 9a...
+	add slider to allow user to change distance
+	bar graph that shows area, intensity, and area * intensity
+
 
 cephied
 	cosmetics
