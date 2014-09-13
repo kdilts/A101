@@ -13,7 +13,7 @@ var drag = -1;
 
 var objects = [];
 
-var img;
+var imgs = [];
 
 var data = [
 	{ au:'??', pd: '??' }, // mercury
@@ -64,6 +64,19 @@ window.onload = function(){
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	for(var i = 0; i < 11; i++){ imgs[i] = new Image(); }
+	imgs[0].src = 'planets/mercury.png';
+	imgs[1].src = 'planets/venus.png';
+	imgs[2].src = 'planets/earth.png';
+	imgs[3].src = 'planets/mars.png';
+	imgs[4].src = 'planets/pallas.png';
+	imgs[5].src = 'planets/ceres.png';
+	imgs[6].src = 'planets/jupiter.png';
+	imgs[7].src = 'planets/saturn.png';
+	imgs[8].src = 'planets/uranus.png';
+	imgs[9].src = 'planets/neptune.png';
+	imgs[10].src = 'planets/pluto.png';
 
 	for(var i = 0; i < 11; i++){
 		if(i%2 !== 0){
@@ -144,9 +157,11 @@ dragableObject = function(x,y,sx,sy,id){
 	this.id = id;
 
 	this.draw = function(){
-		gfx.strokeStyle = gfx.fillStyle = 'yellow';
+		/*gfx.strokeStyle = gfx.fillStyle = 'yellow';
 		gfx.beginPath(); gfx.arc(this.x,this.y,12,0,Math.PI*2);
-		gfx.fill(); gfx.stroke();
+		gfx.fill(); gfx.stroke();*/
+
+		gfx.drawImage(imgs[this.id],this.x-25,this.y-25);
 
 		if(drag === this.id){
 			this.x = mx; this.y = my;
@@ -169,7 +184,7 @@ dragableObject = function(x,y,sx,sy,id){
 
 		//if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
 			//if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
-			if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 12){
+			if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 25){
 				if(!mousedown){
 					//gfx.fillText('hover',20,40);
 					gfx.font = '20px verdana';
