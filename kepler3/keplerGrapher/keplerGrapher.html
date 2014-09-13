@@ -16,17 +16,17 @@ var objects = [];
 var img;
 
 var data = [
-	{ au:.39, pd: .24 },
-	{ au:.72, pd: .62 },
-	{ au:1, pd: 1 },
-	{ au:1.52, pd: 1.88 },
-	{ au:'??', pd: 3.62 },
-	{ au:'??', pd: 4.61 },
-	{ au:5.2, pd: 11.88 },
-	{ au:9.54, pd: 29.46 },
-	{ au:19.18, pd: 84.07 },
-	{ au:30.060, pd: 164.82 },
-	{ au:39.44, pd: 248.6 }
+	{ au:'??', pd: '??' }, // mercury
+	{ au:.72, pd: .62 },   // venus
+	{ au:'??', pd: '??' }, // earth
+	{ au: 1.52, pd: 1.88 },// mars
+	{ au:'??', pd: 3.62 }, // pallas
+	{ au:'??', pd: 4.61 }, // ceres
+	{ au:'??', pd: '??' }, // jupiter
+	{ au:9.54, pd: 29.46 },// saturn
+	{ au:19.18, pd: 84.07 },//uranus
+	{ au:'??', pd: '??' }, // neptune
+	{ au:39.44, pd: 248.6 }// pluto
 ]
 
 var strings = [
@@ -152,11 +152,18 @@ dragableObject = function(x,y,sx,sy,id){
 			this.x = mx; this.y = my;
 			gfx.font = '20px verdana';
 			var tempstring = strings[id];
-			if(id !== 4 && id !== 5){
-				tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+			if(data[id].au !== '??'){
+				tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
 			}else{
-				tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+				tempstring += data[id].au + ', ';
 			}
+
+			if(data[id].pd !== '??'){
+				tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+			}else{
+				tempstring += data[id].pd + ')';
+			}
+
 			gfx.fillText(tempstring, 20, 600);
 		}
 
@@ -167,10 +174,16 @@ dragableObject = function(x,y,sx,sy,id){
 					//gfx.fillText('hover',20,40);
 					gfx.font = '20px verdana';
 					var tempstring = strings[id];
-					if(id !== 4 && id !== 5){
-						tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+					if(data[id].au !== '??'){
+						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
 					}else{
-						tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+						tempstring += data[id].au + ', ';
+					}
+
+					if(data[id].pd !== '??'){
+						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+					}else{
+						tempstring += data[id].pd + ')';
 					}
 					gfx.fillText(tempstring, 20, 600);
 				}
@@ -180,10 +193,16 @@ dragableObject = function(x,y,sx,sy,id){
 					drag = id;
 					gfx.font = '20px verdana';
 					var tempstring = strings[id];
-					if(id !== 4 && id !== 5){
-						tempstring += Math.pow(data[id].au,3) + ', ' + Math.pow(data[id].pd,2) + ')';
+					if(data[id].au !== '??'){
+						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
 					}else{
-						tempstring += data[id].au + ', ' + Math.pow(data[id].pd,2) + ')';
+						tempstring += data[id].au + ', ';
+					}
+
+					if(data[id].pd !== '??'){
+						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+					}else{
+						tempstring += data[id].pd + ')';
 					}
 					gfx.fillText(tempstring, 20, 600);
 				}
@@ -206,6 +225,11 @@ mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
 mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+truncate = function(string, n){
+	var idx = string.indexOf('.');
+	return string.substr(0,idx+n);
+}
 
 	</script>
 </head>
