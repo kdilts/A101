@@ -166,7 +166,7 @@ window.onmousemove = function(e){
 		if(activeOrbit === 0){
 			newVal = (mx-460)/newRange*oldRange;
 		}else{
-			newVal = (mx-380)/newRange*oldRange;
+			newVal = (mx-265)/newRange*oldRange;
 		}
 
 		orbitSlider.val = newVal;
