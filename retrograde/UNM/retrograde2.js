@@ -113,7 +113,7 @@ window.onload = function(){
 	// options
 	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace; traceDots = []; })); // show trace - 10
 	buttons.push(new checkBox(215,313,true,function(){showSun = !showSun;})); // show sun - 11
-	buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
+	//buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
 
 	// play / pause
 	playButton = new textButton(20,475,'Pause', function(){
@@ -125,14 +125,14 @@ window.onload = function(){
 			playButton.text = 'Pause';
 			clearMenu();
 		}
-	});
+	},100);
 	buttons.push(playButton);
 
 	// reset speed
 	resetButton = new textButton(20,445,'Reset Speed', function(){
 		speedSlider.val = 1;
 		clearMenu();
-	});
+	}, 70);
 	buttons.push(resetButton);
 
 	// background stars
@@ -213,7 +213,7 @@ clearMenu = function(){
 	var opts = 320;
 	menuGfx.fillText('Show Trace', 10, opts);
 	menuGfx.fillText('Show Sun', 130, opts);
-	menuGfx.fillText('Use Direction Coloring', 10, opts+22);
+	//menuGfx.fillText('Use Direction Coloring', 10, opts+22);
 
 	var planets = 190;
 	menuGfx.font='18px Verdana';
@@ -345,10 +345,11 @@ checkBox = function(x,y,active,action){
 	}	
 }
 
-textButton = function(x,y,text,action){
+textButton = function(x,y,text,action,textOffset){
 	this.x = x; this.y = y;
 	this.action = action;
 	this.text = text;
+	this.textOffset = textOffset;
 
 	this.clicked = function(){
 		if(mx - 510 > this.x && mx - 510 < this.x + 260){
@@ -366,7 +367,7 @@ textButton = function(x,y,text,action){
 		menuGfx.font='20px Verdana';
 		menuGfx.fillStyle='rgb(255,255,255)';
 		menuGfx.strokeStyle='rgb(255,255,255)';
-		menuGfx.fillText(this.text, this.x+100, this.y+19);
+		menuGfx.fillText(this.text, this.x+this.textOffset, this.y+19);
 	}
 }
 
