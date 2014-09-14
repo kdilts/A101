@@ -16,16 +16,27 @@ var objects = [];
 var imgs = [];
 
 var data = [
-	{ au:'??', pd: '??' }, // mercury
+	//{ au:'??', pd: '??' }, // mercury
+	{ au:.39, pd: .24 }, // mercury
+	
 	{ au:.72, pd: .62 },   // venus
-	{ au:'??', pd: '??' }, // earth
+	
+	//{ au:'??', pd: '??' }, // earth
+	{ au:1, pd:1 }, // earth
+	
 	{ au: 1.52, pd: 1.88 },// mars
 	{ au:'??', pd: 3.62 }, // pallas
 	{ au:'??', pd: 4.61 }, // ceres
-	{ au:'??', pd: '??' }, // jupiter
+	
+	//{ au:'??', pd: '??' }, // jupiter
+	{ au:5.2, pd:11.88 }, // jupiter
+
 	{ au:9.54, pd: 29.46 },// saturn
 	{ au:19.18, pd: 84.07 },//uranus
-	{ au:'??', pd: '??' }, // neptune
+	
+	//{ au:'??', pd: '??' }, // neptune
+	{ au:30.060, pd:164.82 }, // neptune
+
 	{ au:39.44, pd: 248.6 }// pluto
 ]
 
@@ -55,6 +66,13 @@ window.onmousedown = function(e){
 
 window.onmouseup = function(e){
 	mousedown = false; drag = -1;
+
+	// reset button
+	if(mx > 955 && mx < 1063){
+		if(my > 635 && my < 680){
+			location.reload();
+		}
+	}
 }
 
 window.onload = function(){
@@ -170,6 +188,14 @@ render = function(){
 	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,645);
 	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,670);
 	
+	gfx.strokeStyle = 'rgb(100,100,100)';
+	gfx.fillStyle = 'grey';
+	gfx.lineWidth = 3;
+	gfx.fillRect(955,635,108,45);
+	gfx.strokeRect(955,635,108,45);
+	gfx.fillStyle = 'black';
+	gfx.fillText('Reset', 985, 665);
+
 	for(var o in objects){ objects[o].draw(); }
 
 }
