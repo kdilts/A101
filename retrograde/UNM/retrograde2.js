@@ -16,6 +16,8 @@ var speedSlider;
 
 var starSpots = [];
 
+var imgs = [];
+
 var projTheta; var oldProjTheta;
 
 window.onload = function(){
@@ -24,6 +26,11 @@ window.onload = function(){
 
 	menuCanvas = document.getElementById('menu');
 	menuGfx = menuCanvas.getContext('2d');
+
+	for(var i = 0; i < 3; i ++){ imgs[i] = new Image(); }
+	imgs[0].src = 'planets/mars.png';
+	imgs[1].src = 'planets/earth.png';
+	imgs[2].src = 'planets/venus.png';
 
 	// planets
 	orbiters.push(new orbiter(orbitRadius[0], 1.75*2, 7, 'rgb(0,255,0)')); // venus
@@ -480,10 +487,19 @@ drawProjection = function(){
 		if(projTheta - oldProjTheta < .0){ simGfx.fillStyle='rgb(255,0,0)'; simGfx.strokeStyle='rgb(255,0,0)'; }
 	}
 
-	simGfx.beginPath();
+	/*simGfx.beginPath();
 	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+(6-(curDist/maxDist)*6),0,Math.PI*2);
 	simGfx.fill();
-	simGfx.stroke();
+	simGfx.stroke();*/
+	
+	simGfx.drawImage(imgs[toPlanet],
+		// position
+		fromPos.x+fromTo.x- (25*(1-(curDist/maxDist)*.5)),
+		fromPos.y+fromTo.y- (25*(1-(curDist/maxDist)*.5)),
+		// scale
+		50*(1-(curDist/maxDist)*.5),
+		50*(1-(curDist/maxDist)*.5)
+	);
 
 	if(play && showTrace && frameSkip === 2){
 		traceDots[lastDot] = new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
