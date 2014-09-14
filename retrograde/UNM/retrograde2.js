@@ -585,6 +585,6 @@ traceDot = function(x,y){
 drawTrace = function(){
 	simGfx.save();
 	simGfx.translate(centerX, centerY);
-	for(d in traceDots){ traceDots[d].draw(); }
+	for(var d = 0; d < traceDots.length; d++){ traceDots[d].draw(); }
 	simGfx.restore();
 }
