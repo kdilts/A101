@@ -20,13 +20,13 @@ var data = [
 	{ au:.72, pd: .62 },   // venus
 	{ au:'??', pd: '??' }, // earth
 	{ au: 1.52, pd: 1.88 },// mars
-	{ au:'??', pd: 3.62 }, // pallas
-	{ au:'??', pd: 4.61 }, // ceres
-	{ au:'??', pd: '??' }, // jupiter
+	//{ au:'??', pd: 3.62 }, // pallas
+	//{ au:'??', pd: 4.61 }, // ceres
+	//{ au:'??', pd: '??' }, // jupiter
 	{ au:9.54, pd: 29.46 },// saturn
 	{ au:19.18, pd: 84.07 },//uranus
 	{ au:'??', pd: '??' }, // neptune
-	{ au:39.44, pd: 248.6 }// pluto
+	//{ au:39.44, pd: 248.6 }// pluto
 ]
 
 var strings = [
@@ -34,13 +34,13 @@ var strings = [
 	'Venus (',
 	'Earth (',
 	'Mars (',
-	'Pallas (',
-	'Ceres (',
-	'Jupiter (',
+	//'Pallas (',
+	//'Ceres (',
+	//'Jupiter (',
 	'Saturn (',
 	'Uranus (',
 	'Neptune (',
-	'Pluto ('
+	//'Pluto ('
 ];
 
 
@@ -72,20 +72,20 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	for(var i = 0; i < 11; i++){ imgs[i] = new Image(); }
+	for(var i = 0; i < 7; i++){ imgs[i] = new Image(); }
 	imgs[0].src = 'planets/mercury.png';
 	imgs[1].src = 'planets/venus.png';
 	imgs[2].src = 'planets/earth.png';
 	imgs[3].src = 'planets/mars.png';
-	imgs[4].src = 'planets/pallas.png';
-	imgs[5].src = 'planets/ceres.png';
-	imgs[6].src = 'planets/jupiter.png';
-	imgs[7].src = 'planets/saturn.png';
-	imgs[8].src = 'planets/uranus.png';
-	imgs[9].src = 'planets/neptune.png';
-	imgs[10].src = 'planets/pluto.png';
+	imgs[4].src = 'planets/saturn.png';
+	imgs[5].src = 'planets/uranus.png';
+	imgs[6].src = 'planets/neptune.png';
+	//imgs[4].src = 'planets/pallas.png';
+	//imgs[5].src = 'planets/ceres.png';
+	//imgs[6].src = 'planets/jupiter.png';
+	//imgs[10].src = 'planets/pluto.png';
 
-	for(var i = 0; i < 11; i++){
+	for(var i = 0; i < 7; i++){
 		objects.push(new dragableObject(1030,55+i*55,40,40,i));
 	}
 
@@ -111,27 +111,27 @@ render = function(){
 	
 	gfx.font = '13px verdana';
 	gfx.fillText('Semimajor Axis Cubed (AU)',650,20);
-	gfx.fillText('Orbital Period Squared (years)', 850,20);
+	gfx.fillText('Orbital Period Squared (yrs)', 850,20);
 	gfx.font = '20px verdana';
 
 	gfx.save();
 	gfx.translate(50,400);
 	gfx.rotate(Math.PI/2*3);
-	gfx.fillText('Orbital Period Squared (years)', 0,0);
+	gfx.fillText('Orbital Period Squared (yrs)', 0,0);
 	gfx.restore();
 
 	gfx.strokeStyle = 'yellow';
 	gfx.strokeRect(130,75,600,450);
 
 	gfx.strokeStyle = 'green';
-	for(var i = 0; i < 11; i++){
+	for(var i = 0; i < 7; i++){
 		gfx.strokeRect(1002,28+i*55,55,55);
 		gfx.strokeRect(880,28+i*55,123,55);
 		gfx.strokeRect(757,28+i*55,123,55);
 	}
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
-	for(var i = 0; i < 11; i++){
+	for(var i = 0; i < 7; i++){
 		if(data[i].au !== '??'){
 			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), 763, 63+i*55);
 		}else{
@@ -152,7 +152,7 @@ render = function(){
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
 	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,645);
-	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,670);
+	gfx.fillText('Note: Planets with question marks in the data table need to be calculated earlier in the lab.', 20,670);
 	
 	gfx.strokeStyle = 'rgb(100,100,100)';
 	gfx.fillStyle = 'grey';
@@ -213,9 +213,6 @@ dragableObject = function(x,y,sx,sy,id){
 	this.id = id;
 
 	this.draw = function(){
-		/*gfx.strokeStyle = gfx.fillStyle = 'yellow';
-		gfx.beginPath(); gfx.arc(this.x,this.y,12,0,Math.PI*2);
-		gfx.fill(); gfx.stroke();*/
 
 		gfx.drawImage(imgs[this.id],this.x-25,this.y-25);
 
@@ -239,47 +236,44 @@ dragableObject = function(x,y,sx,sy,id){
 			gfx.fillText(tempstring, 20, 600);
 		}
 
-		//if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
-			//if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
-			if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 25){
-				if(!mousedown){
-					//gfx.fillText('hover',20,40);
-					gfx.font = '20px verdana';
-					var tempstring = strings[id];
-					if(data[id].au !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
-					}else{
-						tempstring += data[id].au + ', ';
-					}
-
-					if(data[id].pd !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
-					}else{
-						tempstring += data[id].pd + ')';
-					}
-					gfx.fillText(tempstring, 20, 600);
+		if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 25){
+			if(!mousedown){
+				//gfx.fillText('hover',20,40);
+				gfx.font = '20px verdana';
+				var tempstring = strings[id];
+				if(data[id].au !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
+				}else{
+					tempstring += data[id].au + ', ';
 				}
-				else if(drag === -1){
-					//gfx.fillText('drag',20,40);
-					this.x = mx; this.y = my;
-					drag = id;
-					gfx.font = '20px verdana';
-					var tempstring = strings[id];
-					if(data[id].au !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
-					}else{
-						tempstring += data[id].au + ', ';
-					}
 
-					if(data[id].pd !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
-					}else{
-						tempstring += data[id].pd + ')';
-					}
-					gfx.fillText(tempstring, 20, 600);
+				if(data[id].pd !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+				}else{
+					tempstring += data[id].pd + ')';
 				}
+				gfx.fillText(tempstring, 20, 600);
 			}
-		//}
+			else if(drag === -1){
+				//gfx.fillText('drag',20,40);
+				this.x = mx; this.y = my;
+				drag = id;
+				gfx.font = '20px verdana';
+				var tempstring = strings[id];
+				if(data[id].au !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
+				}else{
+					tempstring += data[id].au + ', ';
+				}
+
+				if(data[id].pd !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+				}else{
+					tempstring += data[id].pd + ')';
+				}
+				gfx.fillText(tempstring, 20, 600);
+			}
+		}
 	}
 }
 
