@@ -3,7 +3,7 @@
 var canvas; var gfx;
 var cwidth; var cheight;
 
-var origX = 130; var origY = 525;
+var origX = 90; var origY = 495;
 var width = 600; var height = 450;
 var cellSize = 15;
 
@@ -16,17 +16,13 @@ var objects = [];
 var imgs = [];
 
 var data = [
-	{ au:'??', pd: '??' }, // mercury
-	{ au:.72, pd: .62 },   // venus
-	{ au:'??', pd: '??' }, // earth
-	{ au: 1.52, pd: 1.88 },// mars
-	//{ au:'??', pd: 3.62 }, // pallas
-	//{ au:'??', pd: 4.61 }, // ceres
-	//{ au:'??', pd: '??' }, // jupiter
-	{ au:9.54, pd: 29.46 },// saturn
-	{ au:19.18, pd: 84.07 },//uranus
-	{ au:'??', pd: '??' }, // neptune
-	//{ au:39.44, pd: 248.6 }// pluto
+	{ au:'??', pd: '??', name:'Mercury' }, // mercury
+	{ au:.72, pd: .62, name: 'Venus' },   // venus
+	{ au:'??', pd: '??', name: 'Earth' }, // earth
+	{ au: 1.52, pd: 1.88, name: 'Mars' },// mars
+	{ au:9.54, pd: 29.46, name: 'Saturn' },// saturn
+	{ au:19.18, pd: 84.07, name: 'Uranus' },//uranus
+	{ au:'??', pd: '??', name: 'Neptune' }, // neptune
 ]
 
 var strings = [
@@ -34,13 +30,9 @@ var strings = [
 	'Venus (',
 	'Earth (',
 	'Mars (',
-	//'Pallas (',
-	//'Ceres (',
-	//'Jupiter (',
 	'Saturn (',
 	'Uranus (',
 	'Neptune (',
-	//'Pluto ('
 ];
 
 
@@ -80,10 +72,6 @@ window.onload = function(){
 	imgs[4].src = 'planets/saturn.png';
 	imgs[5].src = 'planets/uranus.png';
 	imgs[6].src = 'planets/neptune.png';
-	//imgs[4].src = 'planets/pallas.png';
-	//imgs[5].src = 'planets/ceres.png';
-	//imgs[6].src = 'planets/jupiter.png';
-	//imgs[10].src = 'planets/pluto.png';
 
 	for(var i = 0; i < 7; i++){
 		objects.push(new dragableObject(1030,55+i*55,40,40,i));
@@ -103,31 +91,32 @@ render = function(){
 
 	gfx.fillStyle = 'red';
 	gfx.font = '20px verdana';
-	gfx.fillText('Kepler\'s 3rd Law', 300,45);
+	gfx.fillText('Kepler\'s 3rd Law', 300,25);
 
 	gfx.fillStyle = 'green';
 	gfx.font = '20px verdana';
-	gfx.fillText('Semimajor Axis Cubed (AU)', 300,580);
-	
+	gfx.fillText('Semimajor Axis Cubed (AU )', 300,550);
 	gfx.font = '13px verdana';
+	gfx.fillText('3',573,540);
+	
 	gfx.fillText('Semimajor Axis Cubed (AU)',650,20);
 	gfx.fillText('Orbital Period Squared (yrs)', 850,20);
 	gfx.font = '20px verdana';
 
 	gfx.save();
-	gfx.translate(50,400);
+	gfx.translate(25,400);
 	gfx.rotate(Math.PI/2*3);
-	gfx.fillText('Orbital Period Squared (yrs)', 0,0);
+	gfx.fillText('Orbital Period Squared (yrs )', 0,0);
+	gfx.font = '13px verdana';
+	gfx.fillText('2', 275,-10);
 	gfx.restore();
-
-	gfx.strokeStyle = 'yellow';
-	gfx.strokeRect(130,75,600,450);
 
 	gfx.strokeStyle = 'green';
 	for(var i = 0; i < 7; i++){
 		gfx.strokeRect(1002,28+i*55,55,55);
 		gfx.strokeRect(880,28+i*55,123,55);
 		gfx.strokeRect(757,28+i*55,123,55);
+		gfx.strokeRect(630,28+i*55,128,55);
 	}
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
@@ -143,11 +132,11 @@ render = function(){
 		}else{
 			gfx.fillText(data[i].pd, 885, 63+i*55);
 		}
+
+		gfx.fillText(data[i].name, 645, 63+i*55);
 	}
 
 	drawGrid();
-
-	//gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
@@ -167,6 +156,10 @@ render = function(){
 }
 
 drawGrid = function(){
+
+	gfx.strokeStyle = 'yellow';
+	gfx.strokeRect(origX,origY-450,600,450);
+
 	gfx.strokeStyle = 'red';
 
 	for(var i = 1; i*cellSize < width; i++){
@@ -180,8 +173,34 @@ drawGrid = function(){
 	}
 
 	gfx.fillStyle = 'black';
-	gfx.fillRect(435,65,20,500);
-	gfx.fillRect(125,290,610,20);
+	gfx.fillRect(origX+305,origY-460,20,500);
+	gfx.fillRect(origX-5,origY-235,610,20);
+
+	// axis break lines
+	gfx.strokeStyle = 'yellow';
+	gfx.beginPath(); gfx.moveTo(origX+325,origY+5);
+	gfx.lineTo(origX+325,origY-5);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX+305,origY+5);
+	gfx.lineTo(origX+305,origY-5);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX+325,origY+5-450);
+	gfx.lineTo(origX+325,origY-5-450);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX+305,origY+5-450);
+	gfx.lineTo(origX+305,origY-5-450);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5,origY-215);
+	gfx.lineTo(origX+5,origY-215);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5,origY-235);
+	gfx.lineTo(origX+5,origY-235);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5+600,origY-215);
+	gfx.lineTo(origX+5+600,origY-215);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5+600,origY-235);
+	gfx.lineTo(origX+5+600,origY-235);	gfx.stroke();
 
 	// tick marks
 	gfx.strokeStyle = gfx.fillStyle = 'white';
@@ -193,7 +212,6 @@ drawGrid = function(){
 	for(var i = 1; i < 4; i++){
 		gfx.fillText(i*2+'0,000', origX+300+i*85, origY+20);
 	}
-
 
 	gfx.save();
 	gfx.translate(origX-15, origY);
