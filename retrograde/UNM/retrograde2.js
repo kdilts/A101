@@ -20,6 +20,8 @@ var imgs = [];
 
 var projTheta; var oldProjTheta;
 
+window.onresize = function(){ window.resizeTo(830, 580); }
+
 window.onload = function(){
 	simCanvas = document.getElementById('sim');
 	simGfx = simCanvas.getContext('2d');
