@@ -113,7 +113,7 @@ window.onload = function(){
 	// options
 	buttons.push(new checkBox(107,313,false,function(){showTrace = !showTrace; traceDots = []; })); // show trace - 10
 	buttons.push(new checkBox(215,313,true,function(){showSun = !showSun;})); // show sun - 11
-	//buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
+	buttons.push(new checkBox(177,335,false,function(){useDirectionColoring = !useDirectionColoring;})); // direction coloring - 12
 
 	// play / pause
 	playButton = new textButton(20,475,'Pause', function(){
@@ -213,7 +213,7 @@ clearMenu = function(){
 	var opts = 320;
 	menuGfx.fillText('Show Trace', 10, opts);
 	menuGfx.fillText('Show Sun', 130, opts);
-	//menuGfx.fillText('Use Direction Coloring', 10, opts+22);
+	menuGfx.fillText('Use Direction Coloring', 10, opts+22);
 
 	var planets = 190;
 	menuGfx.font='18px Verdana';
@@ -488,19 +488,22 @@ drawProjection = function(){
 		if(projTheta - oldProjTheta < .0){ simGfx.fillStyle='rgb(255,0,0)'; simGfx.strokeStyle='rgb(255,0,0)'; }
 	}
 
-	/*simGfx.beginPath();
-	simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+(6-(curDist/maxDist)*6),0,Math.PI*2);
-	simGfx.fill();
-	simGfx.stroke();*/
 	
-	simGfx.drawImage(imgs[toPlanet],
-		// position
-		fromPos.x+fromTo.x- (25*(1-(curDist/maxDist)*.5)),
-		fromPos.y+fromTo.y- (25*(1-(curDist/maxDist)*.5)),
-		// scale
-		50*(1-(curDist/maxDist)*.5),
-		50*(1-(curDist/maxDist)*.5)
-	);
+	if(!useDirectionColoring){
+		simGfx.drawImage(imgs[toPlanet],
+			// position
+			fromPos.x+fromTo.x- (25*(1-(curDist/maxDist)*.5)),
+			fromPos.y+fromTo.y- (25*(1-(curDist/maxDist)*.5)),
+			// scale
+			50*(1-(curDist/maxDist)*.5),
+			50*(1-(curDist/maxDist)*.5)
+		);
+	}else{
+		simGfx.beginPath();
+		simGfx.arc(fromPos.x+fromTo.x,fromPos.y+fromTo.y,8+(6-(curDist/maxDist)*6),0,Math.PI*2);
+		simGfx.fill();
+		simGfx.stroke();
+	}
 
 	if(play && showTrace && frameSkip === 2){
 		traceDots[lastDot] = new traceDot(fromPos.x+fromTo.x,fromPos.y+fromTo.y);
