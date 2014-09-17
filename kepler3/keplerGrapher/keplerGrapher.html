@@ -3,9 +3,11 @@
 var canvas; var gfx;
 var cwidth; var cheight;
 
-var origX = 130; var origY = 525;
-var width = 600; var height = 450;
+var origX = 90; var origY = 495;
+var width = 747; var height = 450;
 var cellSize = 15;
+
+var tblX = 115; var tblY = 635; var tblSz = 42;
 
 var mx; var my;
 var mousedown = false;
@@ -16,17 +18,13 @@ var objects = [];
 var imgs = [];
 
 var data = [
-	{ au:'??', pd: '??' }, // mercury
-	{ au:.72, pd: .62 },   // venus
-	{ au:'??', pd: '??' }, // earth
-	{ au: 1.52, pd: 1.88 },// mars
-	{ au:'??', pd: 3.62 }, // pallas
-	{ au:'??', pd: 4.61 }, // ceres
-	{ au:'??', pd: '??' }, // jupiter
-	{ au:9.54, pd: 29.46 },// saturn
-	{ au:19.18, pd: 84.07 },//uranus
-	{ au:'??', pd: '??' }, // neptune
-	{ au:39.44, pd: 248.6 }// pluto
+	{ au:'??', pd: '??', name:'Mercury' }, // mercury
+	{ au:.72, pd: .62, name: 'Venus' },   // venus
+	{ au:'??', pd: '??', name: 'Earth' }, // earth
+	{ au: 1.52, pd: 1.88, name: 'Mars' },// mars
+	{ au:9.54, pd: 29.46, name: 'Saturn' },// saturn
+	{ au:19.18, pd: 84.07, name: 'Uranus' },//uranus
+	{ au:'??', pd: '??', name: 'Neptune' }, // neptune
 ]
 
 var strings = [
@@ -34,13 +32,9 @@ var strings = [
 	'Venus (',
 	'Earth (',
 	'Mars (',
-	'Pallas (',
-	'Ceres (',
-	'Jupiter (',
 	'Saturn (',
 	'Uranus (',
 	'Neptune (',
-	'Pluto ('
 ];
 
 
@@ -57,8 +51,8 @@ window.onmouseup = function(e){
 	mousedown = false; drag = -1;
 
 	// reset button
-	if(mx > 955 && mx < 1063){
-		if(my > 635 && my < 680){
+	if(mx > 700 && mx < 808){
+		if(my > 882 && my < 927){
 			location.reload();
 		}
 	}
@@ -72,27 +66,23 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	for(var i = 0; i < 11; i++){ imgs[i] = new Image(); }
+	for(var i = 0; i < 7; i++){ imgs[i] = new Image(); }
 	imgs[0].src = 'planets/mercury.png';
 	imgs[1].src = 'planets/venus.png';
 	imgs[2].src = 'planets/earth.png';
 	imgs[3].src = 'planets/mars.png';
-	imgs[4].src = 'planets/pallas.png';
-	imgs[5].src = 'planets/ceres.png';
-	imgs[6].src = 'planets/jupiter.png';
-	imgs[7].src = 'planets/saturn.png';
-	imgs[8].src = 'planets/uranus.png';
-	imgs[9].src = 'planets/neptune.png';
-	imgs[10].src = 'planets/pluto.png';
+	imgs[4].src = 'planets/saturn.png';
+	imgs[5].src = 'planets/uranus.png';
+	imgs[6].src = 'planets/neptune.png';
 
-	for(var i = 0; i < 11; i++){
-		objects.push(new dragableObject(1030,55+i*55,40,40,i));
+	for(var i = 0; i < 7; i++){
+		objects.push(new dragableObject(tblX+395,tblY+(.5+i)*tblSz,tblSz-2,tblSz-2,i));
 	}
 
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ window.resizeTo(1085,750); render(); }
+window.onresize = function(){ window.resizeTo(900,1000); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
@@ -103,75 +93,87 @@ render = function(){
 
 	gfx.fillStyle = 'red';
 	gfx.font = '20px verdana';
-	gfx.fillText('Kepler\'s 3rd Law', 300,45);
+	gfx.fillText('Kepler\'s 3rd Law', 400,25);
 
 	gfx.fillStyle = 'green';
 	gfx.font = '20px verdana';
-	gfx.fillText('Semimajor Axis Cubed (AU)', 300,580);
-	
+	gfx.fillText('Semimajor Axis Cubed (AU )', 300,545);
 	gfx.font = '13px verdana';
-	gfx.fillText('Semimajor Axis Cubed (AU)',650,20);
-	gfx.fillText('Orbital Period Squared (years)', 850,20);
+	gfx.fillText('3',573,535); // in semimajor axis label
+	gfx.fillText('3',tblX+197,tblY-22); // in AU
+	gfx.fillText('2',tblX+320,tblY-22); // in yrs
+
 	gfx.font = '20px verdana';
+	gfx.fillText('AU',tblX+170,tblY-10);
+	gfx.fillText('yrs',tblX+290,tblY-12);
 
 	gfx.save();
-	gfx.translate(50,400);
+	gfx.translate(25,400);
 	gfx.rotate(Math.PI/2*3);
-	gfx.fillText('Orbital Period Squared (years)', 0,0);
+	gfx.fillText('Orbital Period Squared (yrs )', 0,0);
+	gfx.font = '13px verdana';
+	gfx.fillText('2', 275,-10);
 	gfx.restore();
 
-	gfx.strokeStyle = 'yellow';
-	gfx.strokeRect(130,75,600,450);
-
+	// table outlines
 	gfx.strokeStyle = 'green';
-	for(var i = 0; i < 11; i++){
-		gfx.strokeRect(1002,28+i*55,55,55);
-		gfx.strokeRect(880,28+i*55,123,55);
-		gfx.strokeRect(757,28+i*55,123,55);
+	
+	for(var i = 0; i < 7; i++){
+		gfx.strokeRect(tblX+372,tblY+i*tblSz,tblSz,tblSz);
+		gfx.strokeRect(tblX+250,tblY+i*tblSz,123,tblSz);
+		gfx.strokeRect(tblX+127,tblY+i*tblSz,123,tblSz);
+		gfx.strokeRect(tblX,tblY+i*tblSz,128,tblSz);
 	}
+	gfx.strokeRect(tblX+127,tblY-tblSz,123,tblSz);
+	gfx.strokeRect(tblX+250,tblY-tblSz,123,tblSz);
 
+	// table text
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
-	for(var i = 0; i < 11; i++){
+	for(var i = 0; i < 7; i++){
 		if(data[i].au !== '??'){
-			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), 763, 63+i*55);
+			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), tblX+133, tblY+(.6+i)*tblSz);
 		}else{
-			gfx.fillText(data[i].au, 763, 63+i*55);
+			gfx.fillText(data[i].au, tblX+133, tblY+(.6+i)*tblSz);
 		}
 		
 		if(data[i].pd !== '??'){
-			gfx.fillText(truncate(''+Math.pow(data[i].pd,2),4), 885, 63+i*55);
+			gfx.fillText(truncate(''+Math.pow(data[i].pd,2),4), tblX+255, tblY+(.6+i)*tblSz);
 		}else{
-			gfx.fillText(data[i].pd, 885, 63+i*55);
+			gfx.fillText(data[i].pd, tblX+255, tblY+(.6+i)*tblSz);
 		}
+
+		gfx.fillText(data[i].name, tblX+15, tblY+(.6+i)*tblSz);
 	}
 
 	drawGrid();
 
-	//gfx.fillText(mx + ' ' + my + ' ' + mousedown, 20,20);
-
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
-	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,645);
-	gfx.fillText('Note: Some objects will not have sufficient information to be plotted until you calculate it later in the lab.', 20,670);
+	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,565);
+	gfx.fillText('Note: Planets with question marks in the data table need to be calculated earlier in the lab.', 20,587);
 	
 	gfx.strokeStyle = 'rgb(100,100,100)';
 	gfx.fillStyle = 'grey';
 	gfx.lineWidth = 3;
-	gfx.fillRect(955,635,108,45);
-	gfx.strokeRect(955,635,108,45);
+	gfx.fillRect(700,882,108,45);
+	gfx.strokeRect(700,882,108,45);
 	gfx.fillStyle = 'black';
-	gfx.fillText('Reset', 985, 665);
+	gfx.fillText('Reset', 725, 910);
 
 	for(var o in objects){ objects[o].draw(); }
 
 }
 
 drawGrid = function(){
+
+	gfx.strokeStyle = 'yellow';
+	gfx.strokeRect(origX,origY-height,width,height);
+
 	gfx.strokeStyle = 'red';
 
 	for(var i = 1; i*cellSize < width; i++){
 		gfx.beginPath(); gfx.moveTo(origX+i*cellSize,origY);
-		gfx.lineTo(origX+i*cellSize,origY-450); gfx.stroke();
+		gfx.lineTo(origX+i*cellSize,origY-height); gfx.stroke();
 	}
 
 	for(var i = 1; i*cellSize < height; i++){
@@ -180,20 +182,49 @@ drawGrid = function(){
 	}
 
 	gfx.fillStyle = 'black';
-	gfx.fillRect(435,65,20,500);
-	gfx.fillRect(125,290,610,20);
+	gfx.fillRect(origX+width/2,origY-460,20,height+20);
+	gfx.fillRect(origX-5,origY-235,width+10,20);
+
+	// axis break lines
+	gfx.strokeStyle = 'yellow';
+		//bottom
+	gfx.beginPath(); gfx.moveTo(origX+width/2,origY+5);
+	gfx.lineTo(origX+width/2,origY-5);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX+width/2+20,origY+5);
+	gfx.lineTo(origX+width/2+20,origY-5);	gfx.stroke();
+
+		//top
+	gfx.beginPath(); gfx.moveTo(origX+width/2+20,origY+5-height);
+	gfx.lineTo(origX+width/2+20,origY-5-height);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX+width/2,origY+5-height);
+	gfx.lineTo(origX+width/2,origY-5-height);	gfx.stroke();
+
+		//left
+	gfx.beginPath(); gfx.moveTo(origX-5,origY-height/2+10);
+	gfx.lineTo(origX+5,origY-height/2+10);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5,origY-height/2-10);
+	gfx.lineTo(origX+5,origY-height/2-10);	gfx.stroke();
+
+		//right
+	gfx.beginPath(); gfx.moveTo(origX-5+width,origY-height/2-10);
+	gfx.lineTo(origX+5+width,origY-height/2-10);	gfx.stroke();
+
+	gfx.beginPath(); gfx.moveTo(origX-5+width,origY-height/2+10);
+	gfx.lineTo(origX+5+width,origY-height/2+10);	gfx.stroke();
 
 	// tick marks
 	gfx.strokeStyle = gfx.fillStyle = 'white';
 	gfx.font = '12px verdana';
 	for(var i = 0; i < 5; i++){
-		gfx.fillText(''+i, origX+i*73, origY+20);
+		gfx.fillText(''+i, origX+i*(width-23)/8, origY+20);
 	}
 
 	for(var i = 1; i < 4; i++){
-		gfx.fillText(i*2+'0,000', origX+300+i*85, origY+20);
+		gfx.fillText(i+'0,000', origX+width/1.9+i*width/8, origY+20);
 	}
-
 
 	gfx.save();
 	gfx.translate(origX-15, origY);
@@ -201,7 +232,7 @@ drawGrid = function(){
 		gfx.fillText(i, 0,-(i)*50);
 	}
 	for(var i = 1; i < 4; i++){
-		gfx.fillText(i*2+'0,000', -33,-(i)*68-230);
+		gfx.fillText(i+'0,000', -33,-(i)*68-230);
 	}
 	gfx.restore();
 
@@ -213,11 +244,8 @@ dragableObject = function(x,y,sx,sy,id){
 	this.id = id;
 
 	this.draw = function(){
-		/*gfx.strokeStyle = gfx.fillStyle = 'yellow';
-		gfx.beginPath(); gfx.arc(this.x,this.y,12,0,Math.PI*2);
-		gfx.fill(); gfx.stroke();*/
 
-		gfx.drawImage(imgs[this.id],this.x-25,this.y-25);
+		gfx.drawImage(imgs[this.id],this.x-this.sx/2,this.y-this.sy/2,this.sx,this.sy);
 
 		if(drag === this.id){
 			this.x = mx; this.y = my;
@@ -236,50 +264,50 @@ dragableObject = function(x,y,sx,sy,id){
 			}
 
 			gfx.fillStyle = gfx.strokeStyle = 'yellow';
-			gfx.fillText(tempstring, 20, 600);
+			gfx.fillText(tempstring, 20, 540);
 		}
 
-		//if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
-			//if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
-			if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 25){
-				if(!mousedown){
-					//gfx.fillText('hover',20,40);
-					gfx.font = '20px verdana';
-					var tempstring = strings[id];
-					if(data[id].au !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
-					}else{
-						tempstring += data[id].au + ', ';
-					}
-
-					if(data[id].pd !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
-					}else{
-						tempstring += data[id].pd + ')';
-					}
-					gfx.fillText(tempstring, 20, 600);
+		if(dist(new vec2(mx,my), new vec2(this.x,this.y)) < 25){
+			if(!mousedown){
+				//gfx.fillText('hover',20,40);
+				gfx.font = '20px verdana';
+				var tempstring = strings[id];
+				if(data[id].au !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
+				}else{
+					tempstring += data[id].au + ', ';
 				}
-				else if(drag === -1){
-					//gfx.fillText('drag',20,40);
-					this.x = mx; this.y = my;
-					drag = id;
-					gfx.font = '20px verdana';
-					var tempstring = strings[id];
-					if(data[id].au !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
-					}else{
-						tempstring += data[id].au + ', ';
-					}
 
-					if(data[id].pd !== '??'){
-						tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
-					}else{
-						tempstring += data[id].pd + ')';
-					}
-					gfx.fillText(tempstring, 20, 600);
+				if(data[id].pd !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+				}else{
+					tempstring += data[id].pd + ')';
 				}
+
+				gfx.fillStyle = gfx.strokeStyle = 'yellow';
+				gfx.fillText(tempstring, 20, 540);
 			}
-		//}
+			else if(drag === -1){
+				//gfx.fillText('drag',20,40);
+				this.x = mx; this.y = my;
+				drag = id;
+				gfx.font = '20px verdana';
+				var tempstring = strings[id];
+				if(data[id].au !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].au,3),4) + ', ';
+				}else{
+					tempstring += data[id].au + ', ';
+				}
+
+				if(data[id].pd !== '??'){
+					tempstring += truncate(''+Math.pow(data[id].pd,2),4) + ')';
+				}else{
+					tempstring += data[id].pd + ')';
+				}
+				gfx.fillStyle = gfx.strokeStyle = 'yellow';
+				gfx.fillText(tempstring, 20, 540);
+			}
+		}
 	}
 }
 
