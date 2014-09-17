@@ -12,6 +12,8 @@ var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
+var trace = []; var traceLength = 1;
+
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .050, min:38.9, max:59.1,
 		initV:490, xoffset1:-28, xoffset2:-8, ellipseRad: 165 },
@@ -90,7 +92,7 @@ menuInit = function(){
 	maxbox.value = planetData[currentPlanet].max + 'km/s';
 
 	planetSelector.onchange = function(){
-		time = 0;
+		time = 0; trace = [];
 		switch(parseInt(planetSelector.value)){
 			case 0:
 				currentPlanet = 'mercury';
@@ -178,9 +180,6 @@ render = function(){
 	gfx.fillStyle = 'black';
 	gfx.fillRect(0,0,cwidth,cheight);
 
-	gfx.strokeStyle = gfx.fillStyle = 'white'; gfx.lineWidth = 4;
-	ellipse2(center.x+planetData[currentPlanet].xoffset1,center.y,center.x+planetData[currentPlanet].xoffset2,center.y,planetData[currentPlanet].ecc,planetData[currentPlanet].ellipseRad);
-
 	// star
 	gfx.strokeStyle = gfx.fillStyle = 'yellow'; gfx.lineWidth = 1;
 	gfx.beginPath(); gfx.arc(center.x,center.y,10,0,Math.PI*2);
@@ -190,6 +189,11 @@ render = function(){
 	gfx.strokeStyle = gfx.fillStyle = 'red';
 	gfx.beginPath(); gfx.arc(planet.pos.x,planet.pos.y,10,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
+
+	
+	trace[traceLength] = new vec2(planet.pos.x,planet.pos.y);
+	if(traceLength === 500){ traceLength = 0; }
+	traceLength++;
 
 	if(showVel){
 		// velocity vector
@@ -214,6 +218,12 @@ render = function(){
 		gfx.lineTo(offsetVec.x + planet.acel.x*15, offsetVec.y + planet.acel.y*15);
 		gfx.stroke();
 		gfx.restore();
+	}
+
+	gfx.strokeStyle = gfx.fillStyle = 'white';
+	for(var t in trace){
+		gfx.beginPath(); gfx.arc(trace[t].x,trace[t].y,1,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
 	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';  gfx.lineWidth = 1;
@@ -242,28 +252,6 @@ mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
 dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
 unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
 mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
-
-ellipse2 = function(x1,y1,x2,y2,e,semimajor){
-	var center = new vec2((x1+x2)/2,(y1+y2)/2);
-
-	var up = new vec2(0,-1);
-	var f = sub(new vec2(x1,y1), new vec2(x2,y2));
-	var rot = Math.acos(dot(f,up)/(mag(f)*mag(up)));
-	rot -= Math.PI/2;
-	if(rot !== 0 && !rot){ rot = Math.PI/2; }
-
-	gfx.save();
-	gfx.translate(center.x,center.y);
-	gfx.rotate(rot);
-	gfx.beginPath();
-	for(var i = 0; i < Math.PI*2; i += .01){
-		var x = 1.0*semimajor*Math.cos(i);
-		var y = (1-e)*semimajor*Math.sin(i)*(-1);
-		if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); } 
-	}
-	gfx.stroke();
-	gfx.restore();
-}
 
 	</script>
 </head>
