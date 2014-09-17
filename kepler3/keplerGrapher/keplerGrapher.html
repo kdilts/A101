@@ -7,6 +7,8 @@ var origX = 90; var origY = 495;
 var width = 600; var height = 450;
 var cellSize = 15;
 
+var tblX = 430; var tblY = 228; var tblSz = 55;
+
 var mx; var my;
 var mousedown = false;
 var drag = -1;
@@ -74,13 +76,13 @@ window.onload = function(){
 	imgs[6].src = 'planets/neptune.png';
 
 	for(var i = 0; i < 7; i++){
-		objects.push(new dragableObject(1030,55+i*55,40,40,i));
+		objects.push(new dragableObject(tblX+400,tblY+(.5+i)*tblSz,40,40,i));
 	}
 
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ window.resizeTo(1085,750); render(); }
+window.onresize = function(){ window.resizeTo(1085,1000); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
@@ -111,37 +113,40 @@ render = function(){
 	gfx.fillText('2', 275,-10);
 	gfx.restore();
 
+	// table outlines
 	gfx.strokeStyle = 'green';
+	
 	for(var i = 0; i < 7; i++){
-		gfx.strokeRect(1002,28+i*55,55,55);
-		gfx.strokeRect(880,28+i*55,123,55);
-		gfx.strokeRect(757,28+i*55,123,55);
-		gfx.strokeRect(630,28+i*55,128,55);
+		gfx.strokeRect(tblX+372,tblY+i*tblSz,tblSz,tblSz);
+		gfx.strokeRect(tblX+250,tblY+i*tblSz,123,tblSz);
+		gfx.strokeRect(tblX+127,tblY+i*tblSz,123,tblSz);
+		gfx.strokeRect(tblX,tblY+i*tblSz,128,tblSz);
 	}
 
+	// table text
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	for(var i = 0; i < 7; i++){
 		if(data[i].au !== '??'){
-			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), 763, 63+i*55);
+			gfx.fillText(truncate(''+Math.pow(data[i].au,3),4), tblX+133, tblY+(.6+i)*tblSz);
 		}else{
-			gfx.fillText(data[i].au, 763, 63+i*55);
+			gfx.fillText(data[i].au, tblX+133, tblY+(.6+i)*tblSz);
 		}
 		
 		if(data[i].pd !== '??'){
-			gfx.fillText(truncate(''+Math.pow(data[i].pd,2),4), 885, 63+i*55);
+			gfx.fillText(truncate(''+Math.pow(data[i].pd,2),4), tblX+255, tblY+(.6+i)*tblSz);
 		}else{
-			gfx.fillText(data[i].pd, 885, 63+i*55);
+			gfx.fillText(data[i].pd, tblX+255, tblY+(.6+i)*tblSz);
 		}
 
-		gfx.fillText(data[i].name, 645, 63+i*55);
+		gfx.fillText(data[i].name, tblX+15, tblY+(.6+i)*tblSz);
 	}
 
 	drawGrid();
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
-	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,645);
-	gfx.fillText('Note: Planets with question marks in the data table need to be calculated earlier in the lab.', 20,670);
+	gfx.fillText('Drag each object into the appropriate place on the graph.', 20,590);
+	gfx.fillText('Note: Planets with question marks in the data table need to be calculated earlier in the lab.', 20,612);
 	
 	gfx.strokeStyle = 'rgb(100,100,100)';
 	gfx.fillStyle = 'grey';
