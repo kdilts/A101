@@ -4,7 +4,7 @@ var canvas; var gfx;
 var cwidth; var cheight;
 var time = 0; var tick = .001;
 
-var planet; var center; var currentPlanet;
+var planets = []; var center; var currentPlanet;
 
 var showVel = true; var showAccel = true;
 
@@ -12,7 +12,7 @@ var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
-var trace = []; var tracing = true;
+var trace = []; var tracing = [];
 
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .050, min:38.9, max:59.1,
@@ -58,11 +58,26 @@ window.onload = function(){
 
 	center = new vec2(260,250);
 
-	planet = {
+	planets[0] = {
 		pos:new vec2(center.x-183,center.y),
 		vel:new vec2(0,planetData[currentPlanet].initV),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
+	tracing[0] = true; trace[0] = [];
+
+	planets[1] = {
+		pos:new vec2(center.x-183,center.y),
+		vel:new vec2(0,planetData[currentPlanet].initV+80),
+		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
+	}
+	tracing[1] = true; trace[1] = [];
+
+	planets[2] = {
+		pos:new vec2(center.x-183,center.y),
+		vel:new vec2(0,planetData[currentPlanet].initV-80),
+		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
+	}
+	tracing[2] = true; trace[2] = [];
 
 	setInterval(render,tick);
 }
@@ -186,16 +201,19 @@ render = function(){
 	gfx.fill(); gfx.stroke();
 
 	// planet
-	gfx.strokeStyle = gfx.fillStyle = 'red';
-	gfx.beginPath(); gfx.arc(planet.pos.x,planet.pos.y,10,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
+	for(var p in planets){
+		gfx.strokeStyle = gfx.fillStyle = 'red';
+		gfx.beginPath(); gfx.arc(planets[p].pos.x,planets[p].pos.y,10,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}
 
-	
-	if(tracing){
-		trace.push({ x:planet.pos.x, y:planet.pos.y });
-		if(trace.length > 20){
-			if(dist(trace[trace.length-1],trace[0])< .2){
-				tracing = false; console.log('stop');
+	for(var p in planets){
+		if(tracing[p]){
+			trace[p].push({ x:planets[p].pos.x, y:planets[p].pos.y });
+			if(trace[p].length > 500){
+				if(dist(trace[p][trace[p].length-1],trace[p][p]) < .2){
+					tracing[p] = false; console.log('stop ' + p);
+				}
 			}
 		}
 	}
@@ -204,10 +222,10 @@ render = function(){
 		// velocity vector
 		gfx.strokeStyle = gfx.fillStyle = 'cyan'; gfx.lineWidth = 4;
 		gfx.save();
-		gfx.translate(planet.pos.x,planet.pos.y);
+		gfx.translate(planets[0].pos.x,planets[0].pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		gfx.lineTo(planet.vel.x/20,planet.vel.y/20);
+		gfx.lineTo(planets[0].vel.x/20,planets[0].vel.y/20);
 		gfx.stroke();
 		gfx.restore();
 	}
@@ -216,32 +234,36 @@ render = function(){
 		// acceleration vector
 		gfx.strokeStyle = gfx.fillStyle = 'magenta'; gfx.lineWidth = 4;
 		gfx.save();
-		gfx.translate(planet.pos.x,planet.pos.y);
+		gfx.translate(planets[0].pos.x,planets[0].pos.y);
 		gfx.beginPath();
 		gfx.moveTo(0,0);
-		var offsetVec = mult(unit(planet.acel),12);
-		gfx.lineTo(offsetVec.x + planet.acel.x*15, offsetVec.y + planet.acel.y*15);
+		var offsetVec = mult(unit(planets[0].acel),12);
+		gfx.lineTo(offsetVec.x + planets[0].acel.x*15, offsetVec.y + planets[0].acel.y*15);
 		gfx.stroke();
 		gfx.restore();
 	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'white';
 	
-	gfx.beginPath();
-	gfx.moveTo(trace[0].x,trace[0].y);
-	for(var t = 1; t < trace.length; t++){
-		 gfx.lineTo(trace[t].x,trace[t].y);
+	for(var p in planets){
+		gfx.beginPath();
+		gfx.moveTo(trace[p][0].x,trace[p][0].y);
+		for(var t = 1; t < trace[p].length; t++){
+			 gfx.lineTo(trace[p][t].x,trace[p][t].y);
+		}
+		gfx.stroke();
 	}
-	gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';  gfx.lineWidth = 1;
 	gfx.font = '20px verdana';
 	gfx.fillText('Time: ' + ('' + parseFloat(time)*10).substr(0,4), 20, 20);
-	gfx.fillText('vel: ' + parseInt(mag(planet.vel)), 20, 45);
+	gfx.fillText('vel: ' + parseInt(mag(planets[0].vel)), 20, 45);
 
-	planet.vel = add(planet.vel, planet.acel);
-	planet.pos = add(planet.pos, mult(planet.vel, tick));
-	planet.acel = mult(unit(sub(center,planet.pos)),50000/Math.pow(mag(sub(center,planet.pos)),2));
+	for(var p in planets){
+	planets[p].vel = add(planets[p].vel, planets[p].acel);
+	planets[p].pos = add(planets[p].pos, mult(planets[p].vel, tick));
+	planets[p].acel = mult(unit(sub(center,planets[p].pos)),50000/Math.pow(mag(sub(center,planets[p].pos)),2));
+	}
 
 	time += tick;
 }
