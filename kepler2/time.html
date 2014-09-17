@@ -12,7 +12,7 @@ var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox; var showaccelbox;
 var minbox; var maxbox; var curbox; var distbox;
 
-var trace = []; var traceLength = 1;
+var trace = []; var tracing = true;
 
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .050, min:38.9, max:59.1,
@@ -92,7 +92,7 @@ menuInit = function(){
 	maxbox.value = planetData[currentPlanet].max + 'km/s';
 
 	planetSelector.onchange = function(){
-		time = 0; trace = [];
+		time = 0; trace = []; tracing = true;
 		switch(parseInt(planetSelector.value)){
 			case 0:
 				currentPlanet = 'mercury';
@@ -191,9 +191,14 @@ render = function(){
 	gfx.fill(); gfx.stroke();
 
 	
-	trace[traceLength] = new vec2(planet.pos.x,planet.pos.y);
-	if(traceLength === 500){ traceLength = 0; }
-	traceLength++;
+	if(tracing){
+		trace.push({ x:planet.pos.x, y:planet.pos.y });
+		if(trace.length > 20){
+			if(dist(trace[trace.length-1],trace[0])< .2){
+				tracing = false; console.log('stop');
+			}
+		}
+	}
 
 	if(showVel){
 		// velocity vector
@@ -221,10 +226,13 @@ render = function(){
 	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'white';
-	for(var t in trace){
-		gfx.beginPath(); gfx.arc(trace[t].x,trace[t].y,1,0,Math.PI*2);
-		gfx.fill(); gfx.stroke();
+	
+	gfx.beginPath();
+	gfx.moveTo(trace[0].x,trace[0].y);
+	for(var t = 1; t < trace.length; t++){
+		 gfx.lineTo(trace[t].x,trace[t].y);
 	}
+	gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';  gfx.lineWidth = 1;
 	gfx.font = '20px verdana';
