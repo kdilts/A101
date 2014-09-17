@@ -4,16 +4,15 @@ intensity
 	increase radius
 	create nicer text in the boxes - especially make bottom row less confusing
 
-retrograde
-	images of actual planet being looked at in outer ring
-
 
 kepler 2
 	draw orbit track by storing data to array instead of using my function
 
 kepler 3 grapher
-	break in axis
-
+	axis break lines
+	make the graph wider
+	move table beneath the graph
+	units need to be squared / cubed
 
 
 Priority---------------
