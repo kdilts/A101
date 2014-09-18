@@ -288,6 +288,12 @@ render = function(){
 			gfx.arc(analysis[a][1],(analysis[a][2]+analysis[a][3])/2,5,0,Math.PI*2);
 			gfx.fill(); gfx.stroke();
 
+			gfx.fillText(('ecc: '+analysis[a][6]).substr(0,8),(analysis[a][1]+analysis[a][0])/2,analysis[a][3]+120);
+
+			gfx.beginPath();
+			gfx.moveTo((analysis[a][1]+analysis[a][0])/2,analysis[a][3]+120);
+			gfx.lineTo((analysis[a][1]+analysis[a][0])/2,analysis[a][3]);
+			gfx.stroke();
 		}
 	}
 
@@ -304,6 +310,10 @@ analyze = function(planetNum){
 	}
 	analysis[planetNum][0] = minX; analysis[planetNum][1] = maxX;
 	analysis[planetNum][2] = minY; analysis[planetNum][3] = maxY;
+
+	analysis[planetNum][4] = maxX - minX; analysis[planetNum][5] = maxY-minY;
+
+	analysis[planetNum][6] = Math.sqrt(1-Math.pow(analysis[planetNum][5]/analysis[planetNum][4],2));
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
