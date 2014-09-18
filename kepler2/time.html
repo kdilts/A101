@@ -5,6 +5,7 @@ var cwidth; var cheight;
 var time = 0; var tick = .001;
 
 var planets = []; var center; var currentPlanet;
+var analysis = [];
 
 var showVel = true; var showAccel = true;
 
@@ -56,6 +57,8 @@ window.onload = function(){
 
 	menuInit();
 
+	analysis[0] = []; analysis[1] = []; analysis[2] = [];
+
 	center = new vec2(260,250);
 
 	planets[0] = {
@@ -67,14 +70,14 @@ window.onload = function(){
 
 	planets[1] = {
 		pos:new vec2(center.x-183,center.y),
-		vel:new vec2(0,planetData[currentPlanet].initV+80),
+		vel:new vec2(0,planetData[currentPlanet].initV/1.5),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 	tracing[1] = true; trace[1] = [];
 
 	planets[2] = {
 		pos:new vec2(center.x-183,center.y),
-		vel:new vec2(0,planetData[currentPlanet].initV-80),
+		vel:new vec2(0,planetData[currentPlanet].initV/1.1),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 	tracing[2] = true; trace[2] = [];
@@ -213,6 +216,7 @@ render = function(){
 			if(trace[p].length > 500){
 				if(dist(trace[p][trace[p].length-1],trace[p][p]) < .2){
 					tracing[p] = false; console.log('stop ' + p);
+					analyze(p);
 				}
 			}
 		}
@@ -265,7 +269,41 @@ render = function(){
 	planets[p].acel = mult(unit(sub(center,planets[p].pos)),50000/Math.pow(mag(sub(center,planets[p].pos)),2));
 	}
 
+	for(var a in analysis){
+		if(analysis[a][0] !== undefined){
+			gfx.fillStyle = gfx.strokeStyle = 'red'
+			gfx.beginPath();
+			gfx.arc((analysis[a][1]+analysis[a][0])/2,analysis[a][2],5,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+			gfx.beginPath();
+			gfx.arc((analysis[a][1]+analysis[a][0])/2,analysis[a][3],5,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+			gfx.beginPath();
+			gfx.arc(analysis[a][0],(analysis[a][2]+analysis[a][3])/2,5,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+			gfx.beginPath();
+			gfx.arc(analysis[a][1],(analysis[a][2]+analysis[a][3])/2,5,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+		}
+	}
+
 	time += tick;
+}
+
+analyze = function(planetNum){
+	var minX = 10000; var maxX = -1; var minY = 10000; var maxY = -1;
+	for(var i in trace[planetNum]){
+		if(trace[planetNum][i].x < minX){ minX = trace[planetNum][i].x; }
+		if(trace[planetNum][i].x > maxX){ maxX = trace[planetNum][i].x; }
+		if(trace[planetNum][i].y < minY){ minY = trace[planetNum][i].y; }
+		if(trace[planetNum][i].y > maxY){ maxY = trace[planetNum][i].y; }
+	}
+	analysis[planetNum][0] = minX; analysis[planetNum][1] = maxX;
+	analysis[planetNum][2] = minY; analysis[planetNum][3] = maxY;
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
