@@ -1,3 +1,19 @@
+retrograde
+	check original retrograde on multiple browsers on windows
+
+	**pictures with permissions
+	increase length of trail
+	planet images next to names on the right
+
+kepler 3 grapher
+	link from question 17 keplers 3rd law page
+
+heliogeo
+	look at model synch
+	maybe make second dot on top
+
+
+
 intensity
 	radius - 1x 2x 3x
 	add square grid
