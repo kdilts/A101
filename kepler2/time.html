@@ -70,14 +70,14 @@ window.onload = function(){
 
 	planets[1] = {
 		pos:new vec2(center.x-183,center.y),
-		vel:new vec2(0,planetData[currentPlanet].initV/1.5),
+		vel:new vec2(0,planetData[currentPlanet].initV/2.9),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 	tracing[1] = true; trace[1] = [];
 
 	planets[2] = {
 		pos:new vec2(center.x-183,center.y),
-		vel:new vec2(0,planetData[currentPlanet].initV/1.1),
+		vel:new vec2(0,planetData[currentPlanet].initV/1.25),
 		acel:new vec2(0,0) // TODO make not zero -- G * mass of sun / radius^2
 	}
 	tracing[2] = true; trace[2] = [];
