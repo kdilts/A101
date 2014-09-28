@@ -110,7 +110,13 @@ drawPanels = function(){
 		gfx.restore();
 
 		// stars
-		gfx.fillStyle = gfx.strokeStyle = 'white';
+		if(i === 0){
+			gfx.fillStyle = gfx.strokeStyle = 'red';
+		}else if(i === 1){
+			gfx.fillStyle = gfx.strokeStyle = 'yellow';
+		}else{
+			gfx.fillStyle = gfx.strokeStyle = 'blue';
+		}
 		gfx.beginPath();
 		gfx.arc(.33*cwidth/2+(i*.33*cwidth),.25*cheight,.23*cheight*starRad[i],0,Math.PI*2);
 		gfx.fill();
@@ -118,6 +124,14 @@ drawPanels = function(){
 
 		gfx.fillStyle = 'yellow';
 		gfx.fillText('Luminosity: ' + lum[i],.1*cwidth+(i*.33*cwidth),.495*cheight);
+
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.beginPath();
+		gfx.arc(1000,18,4,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		gfx.fillStyle = gfx.strokeStyle = 'yellow';
+		gfx.fillText('- Light Probe',1018,25);
 	}
 }
 
