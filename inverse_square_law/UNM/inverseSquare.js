@@ -3,13 +3,13 @@ var mx; var my;
 
 var cwidth; var cheight;
 
-var starRad = [.075,.1,.125];
+var starRad = [.05,.075,.1];
 var lum = ['4.0e+004','4.0e+005','4.0e+006']
 var centers = [];
 
 var graphs = []; var buttons = [];
 
-var noiseThreshold = 8; var noiseRange = 2;
+var noiseThreshold = 8; var noiseRange = 5;
 
 window.onload = function(){
 	canvas = document.getElementById('c1');
@@ -127,18 +127,25 @@ drawPanels = function(){
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.beginPath();
-		gfx.arc(1000,18,4,0,Math.PI*2);
+		gfx.arc(cwidth*.6666-18,18,4,0,Math.PI*2);
 		gfx.fill(); gfx.stroke();
 
 		gfx.fillStyle = gfx.strokeStyle = 'yellow';
-		gfx.fillText('- Light Probe',1018,25);
+		gfx.fillText('- Light Probe',cwidth*.6666,25);
 	}
 }
 
 graph = function(n){
 	this.id = n;
 	this.data = [];
+	this.r1 = []; this.r2 = [];
 	this.mouseIn = false;
+
+	var mod = [ [.05, 4], [.005, .4], [.0005, .04] ];
+	for(var i = 1; i < 300; i++){
+		this.r1[i-1] = mod[n][0]*Math.pow(10,4+n)/i;
+		this.r2[i-1] = mod[n][1]*Math.pow(10,4+n)/(i*i);
+	}
 
 	this.clear = function(){ this.data = []; }
 
@@ -191,9 +198,77 @@ graph = function(n){
 			gfx.stroke();
 		}
 
+		gfx.save();
+		gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
+		gfx.strokeStyle = gfx.fillStyle = 'black';
+		for(var i in this.r1){
+			if(-this.r1[i]*(.44*cheight/30) > -410){
+				gfx.save();
+				gfx.translate(i*(.295*cwidth/300),-this.r1[i]*(.44*cheight/30));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+				gfx.restore();
+			}
+		}
+		gfx.restore();
+
+		gfx.save();
+		gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
+		gfx.strokeStyle = gfx.fillStyle = 'grey';
+		for(var i in this.r2){
+			if(-this.r2[i]*(.44*cheight/30) > -410){
+				gfx.save();
+				gfx.translate(i*(.295*cwidth/300),-this.r2[i]*(.44*cheight/30));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+				gfx.restore();
+			}
+		}
+		gfx.restore();
+
+		for(var i in this.data){
+			gfx.save();
+			//gfx.strokeStyle = gfx.fillStyle = 'red';
+			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
+
+			var d = this.data[i].x;
+			var intens = this.data[i].y;
+
+			if(this.id === 0 && intens > -30 && d > 0 && d < 300){
+				gfx.strokeStyle = gfx.fillStyle = 'red';
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/30));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+			else if(this.id === 1 && intens > -300 && d > 0 && d < 300){
+				gfx.strokeStyle = gfx.fillStyle = 'yellow';
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+			else if(this.id === 2 && intens > -3000 && d > 0 && d < 300){
+				gfx.strokeStyle = gfx.fillStyle = 'blue';
+				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/3000));
+				gfx.beginPath();
+				gfx.arc(0,0,3,0,Math.PI*2);
+				gfx.fill();
+				gfx.stroke();
+			}
+
+			gfx.restore();
+		}
+
 		if(this.mouseIn){
 			gfx.save();
-			gfx.strokeStyle = gfx.fillStyle = 'blue';
+			gfx.strokeStyle = gfx.fillStyle = 'green';
 			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
 
 			var d = dist(centers[n], new vec2(mx,my));
@@ -213,39 +288,6 @@ graph = function(n){
 				gfx.fill();
 				gfx.stroke();
 			}else if(this.id === 2 && intens > -3000 && d > 0 && d < 300){
-				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/3000));
-				gfx.beginPath();
-				gfx.arc(0,0,3,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-			}
-
-			gfx.restore();
-		}
-
-		for(var i in this.data){
-			gfx.save();
-			gfx.strokeStyle = gfx.fillStyle = 'red';
-			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
-
-			var d = this.data[i].x;
-			var intens = this.data[i].y;
-
-			if(this.id === 0 && intens > -30 && d > 0 && d < 300){
-				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/30));
-				gfx.beginPath();
-				gfx.arc(0,0,3,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-			}
-			else if(this.id === 1 && intens > -300 && d > 0 && d < 300){
-				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/300));
-				gfx.beginPath();
-				gfx.arc(0,0,3,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-			}
-			else if(this.id === 2 && intens > -3000 && d > 0 && d < 300){
 				gfx.translate(d*(.295*cwidth/300),intens*(.44*cheight/3000));
 				gfx.beginPath();
 				gfx.arc(0,0,3,0,Math.PI*2);
