@@ -198,36 +198,42 @@ graph = function(n){
 			gfx.stroke();
 		}
 
+		var started = false;
 		gfx.save();
+		gfx.lineWidth = 3;
 		gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
 		gfx.strokeStyle = gfx.fillStyle = 'black';
+		gfx.beginPath();
 		for(var i in this.r1){
-			if(-this.r1[i]*(.44*cheight/30) > -410){
-				gfx.save();
-				gfx.translate(i*(.295*cwidth/300),-this.r1[i]*(.44*cheight/30));
-				gfx.beginPath();
-				gfx.arc(0,0,3,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-				gfx.restore();
+			if(-this.r1[i]*(.44*cheight/30) > -.49*cheight){
+				if(!started){
+					gfx.moveTo(i*(.295*cwidth/300),-this.r1[i]*(.44*cheight/30),3,0,Math.PI*2);
+					started = true;
+				}else{
+					gfx.lineTo(i*(.295*cwidth/300),-this.r1[i]*(.44*cheight/30),3,0,Math.PI*2);
+				}
 			}
 		}
+		gfx.stroke();
 		gfx.restore();
 
+		started = false;
 		gfx.save();
+		gfx.lineWidth = 3;
 		gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
-		gfx.strokeStyle = gfx.fillStyle = 'grey';
+		gfx.strokeStyle = gfx.fillStyle = 'rgb(100,100,100)';
+		gfx.beginPath();
 		for(var i in this.r2){
-			if(-this.r2[i]*(.44*cheight/30) > -410){
-				gfx.save();
-				gfx.translate(i*(.295*cwidth/300),-this.r2[i]*(.44*cheight/30));
-				gfx.beginPath();
-				gfx.arc(0,0,3,0,Math.PI*2);
-				gfx.fill();
-				gfx.stroke();
-				gfx.restore();
+			if(-this.r2[i]*(.44*cheight/30) > -.49*cheight){
+				if(!started){
+					gfx.moveTo(i*(.295*cwidth/300),-this.r2[i]*(.44*cheight/30),3,0,Math.PI*2);
+					started = true;
+				}else{
+					gfx.lineTo(i*(.295*cwidth/300),-this.r2[i]*(.44*cheight/30),3,0,Math.PI*2);
+				}
 			}
 		}
+		gfx.stroke();
 		gfx.restore();
 
 		for(var i in this.data){
@@ -297,6 +303,21 @@ graph = function(n){
 
 			gfx.restore();
 		}
+
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.fillRect(.05*cwidth+(this.id*.33*cwidth),.50125*cheight,50,-70);
+
+		gfx.fillStyle = gfx.strokeStyle = 'rgb(190,190,190)';
+		gfx.fillRect(.192*cwidth+(this.id*.33*cwidth),.51*cheight,210,60);
+		
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.lineWidth = 3;
+		gfx.strokeRect(.192*cwidth+(this.id*.33*cwidth),.51*cheight,210,60);
+
+		gfx.font = '18px verdana';
+		gfx.fillText('- = Lux / Distance',.196*cwidth+(this.id*.33*cwidth),.535*cheight,200,100);
+		gfx.fillStyle = gfx.strokeStyle = 'rgb(100,100,100)';
+		gfx.fillText('- = Lux / Distance^2',.196*cwidth+(this.id*.33*cwidth),.56*cheight,200,100);
 	}
 }
 
