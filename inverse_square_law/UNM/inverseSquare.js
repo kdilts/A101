@@ -12,6 +12,8 @@ var graphs = []; var buttons = [];
 var noiseThreshold = 8; var noiseRange = 5;
 
 window.onload = function(){
+	
+
 	canvas = document.getElementById('c1');
 
 	gfx = canvas.getContext('2d');
@@ -156,6 +158,12 @@ graph = function(n){
 
 		if(intens > -noiseThreshold){ intens += (Math.random()*noiseRange - noiseRange/2 ); }
 		if(intens > 0){ intens = 0; }
+
+		if(Math.random() > .5){
+			intens += .1*Math.random()*intens;
+		}else{
+			intens -= .1*Math.random()*intens;
+		}
 
 		this.data.push({x:d,y:intens});
 	}
