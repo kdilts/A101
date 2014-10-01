@@ -1,0 +1,108 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.fillStyle = 'white';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	drawGraph();
+
+	drawStars();
+
+	drawStats();
+
+}
+
+drawStats = function(){
+	var offsetX = 10; var offsetY = 300; var rowSize = 16;
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.font = '14px verdana';
+	gfx.fillText('Current Values:',offsetX,offsetY);
+	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize);
+	gfx.fillText('Type:',offsetX+20,offsetY+rowSize*2);
+	gfx.fillText('T:',offsetX+20,offsetY+rowSize*3);
+	gfx.fillText('R:',offsetX+20,offsetY+rowSize*4);
+	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*5);
+	gfx.fillText('Type:',offsetX+20,offsetY+rowSize*6);
+	gfx.fillText('T:',offsetX+20,offsetY+rowSize*7);
+	gfx.fillText('R:',offsetX+20,offsetY+rowSize*8);
+
+	gfx.fillText('Angle of Inclination:',offsetX,offsetY+rowSize*10);
+	gfx.fillText('Separation:',offsetX,offsetY+rowSize*11);
+}
+
+drawStars = function(){
+	var centerX = .666*800; var centerY = .17*600;
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.beginPath(); gfx.arc(centerX,centerY,2,0,Math.PI*2); gfx.fill(); gfx.stroke();
+}
+
+drawGraph = function(){
+	var origX = 250; var origY = 550;
+	
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.strokeRect(origX,origY-350,500,350);
+	
+	gfx.font = '16px verdana'
+	gfx.fillText('Theta',origX+225,origY+40);
+	gfx.fillText('L',origX-45,origY-185);
+
+	for(var x = 0; x < 7; x++){ gfx.fillText(''+(60*x), origX+80*x, origY+20); }
+	for(var y = 0; y < 5; y++){ gfx.fillText((''+(3.6+.1*y)).substr(0,3), origX-32, origY-350/4.2*y); }
+
+	for(var x = 1; x < 10; x++){
+		drawLine(origX+x*50,origY,origX+x*50,origY-10);
+		drawLine(origX+x*50,origY-350,origX+x*50,origY-340);
+	}
+	
+	for(var y = 1; y < 7; y++){
+		drawLine(origX,origY-y*50,origX+10,origY-y*50);
+		drawLine(origX+490,origY-y*50,origX+500,origY-y*50);
+	}
+
+}
+
+drawLine = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
