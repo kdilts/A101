@@ -3,6 +3,22 @@
 var canvas; var gfx;
 var cwidth; var cheight;
 
+var pulldown1; var pulldown2;
+var angleSlider; var separationSlider;
+var buttons = [];
+
+var currentStar1 = 'A'; var currentStar2 = 'F';
+var currentAngle = 10; var currentSeparation = '12'
+
+var data = {
+	B:[ '28000 K', '4.9 Solar Radii' ],
+	A:[ '10000 K', '3.0 Solar Radii' ],
+	F:[ '7500 K', '1.5 Solar Radii' ],
+	G:[ '6000 K', '1.1 Solar Radii' ],
+	K:[ '5000 K', '0.9 Solar Radii' ],
+	M:[ '3500 K', '0.8 Solar Radii' ]
+};
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -10,6 +26,31 @@ window.onload = function(){
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	pulldown1 = document.getElementById('pulldown1');
+	pulldown2 = document.getElementById('pulldown2');
+
+	angleSlider = document.getElementById('angleSlider');
+	separationSlider = document.getElementById('separationSlider');
+
+	buttons[0] = document.getElementById('submitButton');
+	buttons[1] = document.getElementById('clearButton');
+	buttons[2] = document.getElementById('pauseButton');
+
+	submitButton.onclick = function(){
+		currentStar1 = pulldown1.value;
+		currentStar2 = pulldown2.value;
+
+		currentAngle = angleSlider.value;
+		currentSeparation = separationSlider.value;
+	}
+
+	pauseButton.onclick = function(){}
+
+	clearButton.onclick = function(){}
+
+	angleSlider.value = 10; separationSlider.value = 12;
+	pulldown1.value = 'A'; pulldown2.value = 'F';
 
 	setInterval(render,1000/60);
 }
@@ -31,21 +72,21 @@ render = function(){
 }
 
 drawStats = function(){
-	var offsetX = 10; var offsetY = 300; var rowSize = 16;
+	var offsetX = 5; var offsetY = 300; var rowSize = 16;
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
 	gfx.fillText('Current Values:',offsetX,offsetY);
 	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize);
-	gfx.fillText('Type:',offsetX+20,offsetY+rowSize*2);
-	gfx.fillText('T:',offsetX+20,offsetY+rowSize*3);
-	gfx.fillText('R:',offsetX+20,offsetY+rowSize*4);
+	gfx.fillText('Type: '+currentStar1,offsetX+20,offsetY+rowSize*2);
+	gfx.fillText('T: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*3);
+	gfx.fillText('R: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*4);
 	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*5);
-	gfx.fillText('Type:',offsetX+20,offsetY+rowSize*6);
-	gfx.fillText('T:',offsetX+20,offsetY+rowSize*7);
-	gfx.fillText('R:',offsetX+20,offsetY+rowSize*8);
+	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*6);
+	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*7);
+	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*8);
 
-	gfx.fillText('Angle of Inclination:',offsetX,offsetY+rowSize*10);
-	gfx.fillText('Separation:',offsetX,offsetY+rowSize*11);
+	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*10);
+	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*11);
 }
 
 drawStars = function(){
@@ -55,7 +96,7 @@ drawStars = function(){
 }
 
 drawGraph = function(){
-	var origX = 250; var origY = 550;
+	var origX = 270; var origY = 550;
 	
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.strokeRect(origX,origY-350,500,350);
@@ -113,7 +154,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<input type = 'range' id = 'angleSlider' min='0' max = '90'></input>
 			<br></br>
 			<b1>Separation: </b1>
-			<input type = 'range' id = 'separationSlider' min='0' max = '25'></input>
+			<input type = 'range' id = 'separationSlider' min='2' max = '25'></input>
 			<br></br>
 			<b1>Star 1: </b1><select id='pulldown1'>
 				<option value = "B">B</option>
