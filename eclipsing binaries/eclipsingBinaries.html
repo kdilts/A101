@@ -9,7 +9,7 @@ var angleSlider; var separationSlider;
 var buttons = [];
 
 var currentStar1 = 'A'; var currentStar2 = 'F';
-var currentTheta = 0;  var step = .01;
+var currentTheta = 0;  var step = -.02;
 
 var currentAngle = 10; var currentSeparation = '12'
 
@@ -75,7 +75,7 @@ render = function(){
 	drawStats();
 
 	currentTheta += step;
-	if(currentTheta >= Math.PI*2){ currentTheta = 0; }
+	if(currentTheta <= 0){ currentTheta = Math.PI*2; }
 
 }
 
@@ -102,7 +102,7 @@ drawStars = function(){
 	
 	if(currentSeparation < (parseFloat(data[currentStar1][1]) + parseFloat(data[currentStar2][1]))){
 
-		currentSeparation = Math.ceil(parseFloat(data[currentStar1][1]) + parseFloat(data[currentStar2][1]));
+		currentSeparation = Math.ceil(parseFloat(data[currentStar1][1]) + parseFloat(data[currentStar2][1])) + .4;
 	}
 
 	// center point
@@ -123,8 +123,8 @@ drawStar1 = function(){
 	gfx.fillStyle = gfx.strokeStyle = data[currentStar1][2];
 	gfx.beginPath();
 	gfx.arc(
-		centerX + solarRad*currentSeparation/2 * Math.sin(currentTheta),
-		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta) * Math.sin(currentAngle),
+		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta),
+		centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta) * Math.sin(currentAngle*Math.PI/180),
 		parseFloat(data[currentStar1][1])*solarRad,
 		0,
 		Math.PI*2
@@ -137,8 +137,8 @@ drawStar2 = function(){
 	gfx.fillStyle = gfx.strokeStyle = data[currentStar2][2];
 	gfx.beginPath();
 		gfx.arc(
-		centerX + solarRad*currentSeparation/2 * Math.sin(currentTheta+Math.PI),
-		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle),
+		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta+Math.PI),
+		centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle*Math.PI/180),
 		parseFloat(data[currentStar2][1])*solarRad,
 		0,
 		Math.PI*2
@@ -171,6 +171,13 @@ drawGraph = function(){
 		drawLine(origX,origY-y*50,origX+10,origY-y*50);
 		drawLine(origX+490,origY-y*50,origX+500,origY-y*50);
 	}
+
+	// graph bead
+	gfx.strokeStyle = gfx.fillStyle = 'black';
+
+	gfx.beginPath();
+	gfx.arc(origX + lerp(Math.PI*2,0,currentTheta,0,500),origY,2,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
 
 }
 
