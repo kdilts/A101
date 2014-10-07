@@ -10,13 +10,15 @@ var buttons = [];
 var currentStar1 = 'A'; var currentStar2 = 'F';
 var currentAngle = 10; var currentSeparation = '12'
 
+var solarRad = 7;
+
 var data = {
-	B:[ '28000 K', '4.9 Solar Radii' ],
-	A:[ '10000 K', '3.0 Solar Radii' ],
-	F:[ '7500 K', '1.5 Solar Radii' ],
-	G:[ '6000 K', '1.1 Solar Radii' ],
-	K:[ '5000 K', '0.9 Solar Radii' ],
-	M:[ '3500 K', '0.8 Solar Radii' ]
+	B:[ '28000 K', '4.9 Solar Radii', 'rgb(111,255,245)' ],
+	A:[ '10000 K', '3.0 Solar Radii', 'rgb(0,200,246)'  ],
+	F:[ '7500 K', '1.5 Solar Radii', 'rgb(39,255,220)'  ],
+	G:[ '6000 K', '1.1 Solar Radii', 'rgb(251,255,80)'  ],
+	K:[ '5000 K', '0.9 Solar Radii', 'rgb(255,126,32)'  ],
+	M:[ '3500 K', '0.8 Solar Radii', 'rgb(255,22,25)'  ]
 };
 
 window.onload = function(){
@@ -75,24 +77,34 @@ drawStats = function(){
 	var offsetX = 5; var offsetY = 300; var rowSize = 16;
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
-	gfx.fillText('Current Values:',offsetX,offsetY);
+	gfx.fillText('Current Values:',offsetX,offsetY-rowSize);
 	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize);
 	gfx.fillText('Type: '+currentStar1,offsetX+20,offsetY+rowSize*2);
 	gfx.fillText('T: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*3);
 	gfx.fillText('R: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*4);
-	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*5);
-	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*6);
-	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*7);
-	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*8);
+	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*6);
+	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*7);
+	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*8);
+	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*9);
 
-	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*10);
-	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*11);
+	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*11);
+	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*12);
 }
 
 drawStars = function(){
 	var centerX = .666*800; var centerY = .17*600;
+	
+	// center point
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.beginPath(); gfx.arc(centerX,centerY,2,0,Math.PI*2); gfx.fill(); gfx.stroke();
+
+	// star 1
+	gfx.fillStyle = gfx.strokeStyle = data[currentStar1][2];
+	gfx.beginPath(); gfx.arc(centerX-100,centerY,parseFloat(data[currentStar1][1])*solarRad,0,Math.PI*2); gfx.fill(); gfx.stroke();
+
+	// star 2
+	gfx.fillStyle = gfx.strokeStyle = data[currentStar2][2];
+	gfx.beginPath(); gfx.arc(centerX+100,centerY,parseFloat(data[currentStar2][1])*solarRad,0,Math.PI*2); gfx.fill(); gfx.stroke();
 }
 
 drawGraph = function(){
