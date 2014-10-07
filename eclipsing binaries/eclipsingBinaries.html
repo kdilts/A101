@@ -2,6 +2,7 @@
 	<script language=javascript>
 var canvas; var gfx;
 var cwidth; var cheight;
+var centerX = .666*800; var centerY = .17*600;
 
 var pulldown1; var pulldown2;
 var angleSlider; var separationSlider;
@@ -10,7 +11,7 @@ var buttons = [];
 var currentStar1 = 'A'; var currentStar2 = 'F';
 var currentTheta = 0;  var step = .01;
 
-var currentAngle = 90; var currentSeparation = '12'
+var currentAngle = 10; var currentSeparation = '12'
 
 var solarRad = 7;
 
@@ -47,6 +48,7 @@ window.onload = function(){
 
 		currentAngle = angleSlider.value;
 		currentSeparation = separationSlider.value;
+		currentTheta = 0;
 	}
 
 	pauseButton.onclick = function(){}
@@ -67,13 +69,13 @@ render = function(){
 
 	gfx.clearRect(0,0,cwidth,cheight);
 
-
 	drawStars();
 
 	drawGraph();
 	drawStats();
 
 	currentTheta += step;
+	if(currentTheta >= Math.PI*2){ currentTheta = 0; }
 
 }
 
@@ -96,7 +98,7 @@ drawStats = function(){
 }
 
 drawStars = function(){
-	var centerX = .666*800; var centerY = .17*600;
+	
 	
 	if(currentSeparation < (parseFloat(data[currentStar1][1]) + parseFloat(data[currentStar2][1]))){
 
@@ -107,24 +109,36 @@ drawStars = function(){
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.beginPath(); gfx.arc(centerX,centerY,2,0,Math.PI*2); gfx.fill(); gfx.stroke();
 
+	if(currentTheta > 3*Math.PI/2 || currentTheta < Math.PI/2){
+		drawStar1();
+		drawStar2();
+	}else{
+		drawStar2();
+		drawStar1();
+	}
+}
+
+drawStar1 = function(){
 	// star 1
 	gfx.fillStyle = gfx.strokeStyle = data[currentStar1][2];
 	gfx.beginPath();
 	gfx.arc(
 		centerX + solarRad*currentSeparation/2 * Math.sin(currentTheta),
-		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta),
+		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta) * Math.sin(currentAngle),
 		parseFloat(data[currentStar1][1])*solarRad,
 		0,
 		Math.PI*2
 	);
 	gfx.fill(); gfx.stroke();
+}
 
+drawStar2 = function(){
 	// star 2
 	gfx.fillStyle = gfx.strokeStyle = data[currentStar2][2];
 	gfx.beginPath();
 		gfx.arc(
 		centerX + solarRad*currentSeparation/2 * Math.sin(currentTheta+Math.PI),
-		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta+Math.PI),
+		centerY + solarRad*currentSeparation/2 * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle),
 		parseFloat(data[currentStar2][1])*solarRad,
 		0,
 		Math.PI*2
