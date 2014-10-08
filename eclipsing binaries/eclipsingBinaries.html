@@ -15,6 +15,11 @@ var currentAngle = 10; var currentSeparation = '12'
 
 var solarRad = 7;
 
+var graphData = []; var graphIndex = 0;
+var frameIntensity = 100;
+
+var intervalId; var playing = true;
+
 var data = {
 	B:[ '28000 K', '4.9 Solar Radii', 'rgb(111,255,245)' ],
 	A:[ '10000 K', '3.0 Solar Radii', 'rgb(0,200,246)'  ],
@@ -24,8 +29,6 @@ var data = {
 	M:[ '3500 K', '0.8 Solar Radii', 'rgb(255,22,25)'  ]
 };
 
-var graphData = []; var graphIndex = 0;
-var frameIntensity = 100;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -52,16 +55,30 @@ window.onload = function(){
 		currentAngle = angleSlider.value;
 		currentSeparation = separationSlider.value;
 		currentTheta = 0;
+		graphData = [];
+		graphIndex = 0;
 	}
 
-	pauseButton.onclick = function(){}
+	pauseButton.onclick = function(){
+		if(playing){
+			playing = false;
+			clearInterval(intervalId);
+		}else{
+			playing = true;
+			intervalId = setInterval(render,1000/60);
+		}
+	}
 
-	clearButton.onclick = function(){}
+	clearButton.onclick = function(){
+		currentTheta = 0;
+		graphData = [];
+		graphIndex = 0;
+	}
 
 	angleSlider.value = currentAngle; separationSlider.value = 12;
 	pulldown1.value = 'A'; pulldown2.value = 'F';
 
-	setInterval(render,1000/60);
+	intervalId = setInterval(render,1000/60);
 }
 
 window.onresize = function(){ render(); }
@@ -80,7 +97,6 @@ render = function(){
 	currentTheta += step;
 	if(currentTheta <= 0){
 		currentTheta = Math.PI*2;
-		console.log(graphIndex);
 		graphIndex = 0;
 		graphData = [];
 	}
@@ -106,7 +122,6 @@ drawStats = function(){
 }
 
 drawStars = function(){
-	
 	
 	if(currentSeparation < (parseFloat(data[currentStar1][1]) + parseFloat(data[currentStar2][1]))){
 
