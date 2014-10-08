@@ -24,6 +24,9 @@ var data = {
 	M:[ '3500 K', '0.8 Solar Radii', 'rgb(255,22,25)'  ]
 };
 
+var graphData = []; var graphIndex = 0;
+var frameIntensity = 100;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -75,7 +78,12 @@ render = function(){
 	drawStats();
 
 	currentTheta += step;
-	if(currentTheta <= 0){ currentTheta = Math.PI*2; }
+	if(currentTheta <= 0){
+		currentTheta = Math.PI*2;
+		console.log(graphIndex);
+		graphIndex = 0;
+		graphData = [];
+	}
 
 }
 
@@ -175,9 +183,33 @@ drawGraph = function(){
 	// graph bead
 	gfx.strokeStyle = gfx.fillStyle = 'black';
 
+	var beadOffsetX = lerp(Math.PI*2,0,currentTheta,0,500);
 	gfx.beginPath();
-	gfx.arc(origX + lerp(Math.PI*2,0,currentTheta,0,500),origY,2,0,Math.PI*2);
+	gfx.arc(origX + beadOffsetX,origY - frameIntensity,2,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
+
+	graphData[graphIndex] = [];
+	graphData[graphIndex][0] = beadOffsetX;
+	graphData[graphIndex][1] = frameIntensity;
+	graphIndex++;
+
+	// plot data
+	if(graphIndex > 0){
+		gfx.save();
+		gfx.lineWidth = 2;
+		gfx.strokeStyle = 'black';
+		gfx.translate(origX, origY);
+
+		gfx.beginPath();
+		gfx.moveTo(0,-graphData[0]);
+
+		for(var i = 1; i < graphData.length; i++){
+			gfx.lineTo(graphData[i][0],-graphData[i][1]);
+		}
+		gfx.stroke();
+
+		gfx.restore();
+	}
 
 }
 
