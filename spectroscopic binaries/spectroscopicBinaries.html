@@ -28,8 +28,8 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	img = new Image();
-	img.src = './spectrum.jpg';
+	//img = new Image();
+	//img.src = './spectrum.jpg';
 
 	center = new vec2(200,500);
 	star1.pos = new vec2(center.x-50, center.y); star1.vel = new vec2(0, 700); star1.accel = new vec2(0,0);
@@ -136,17 +136,14 @@ drawStars = function(){
 	gfx.beginPath(); gfx.arc(center.x, center.y,1,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	copy();
+	//gfx.strokeRect(center.x-100,center.y-100,200,178);
+
+	gfx.drawImage(canvas,center.x-100,center.y-100,200,178,500,440,200,178*.7)
 
 	update();
 
 	gfx.fillText('Priveleged View', center.x-50, center.y+90);
 	gfx.fillText('Earth View', center.x+350, center.y+90);
-}
-
-var copy = function(){
-	var imgData = gfx.getImageData(center.x-200,center.y-200,center.x+200,center.y+200);
-	gfx.putImageData(imgData,10,10);
 }
 
 render = function(){
@@ -167,7 +164,7 @@ render = function(){
 		gfx.fillText(''+sliders[s].value,110,150+s*63);
 	}
 
-	gfx.drawImage(img,230,280,450,80);
+	//gfx.drawImage(img,230,280,450,80);
 
 	drawStars();
 }
