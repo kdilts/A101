@@ -20,6 +20,9 @@ var star2 = { pos:null, vel:null, accel:null };
 
 var trace = []; var tracing = [];
 
+var currentSep; var currentEcc;
+var currentIncl; var currentNode;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -43,7 +46,11 @@ window.onload = function(){
 	buttons[2] = document.getElementById('speedUpButton');
 	buttons[3] = document.getElementById('slowDownButton');
 
-	buttons[0].onclick = function(){}
+	buttons[0].onclick = function(){
+		currentSep = sliders[0].value; currentEcc = sliders[1].value;
+		currentIncl = sliders[2].value; currentNode = sliders[3].value;
+	}
+
 	buttons[1].onclick = function(){}
 	buttons[2].onclick = function(){}
 	buttons[3].onclick = function(){}
@@ -54,12 +61,15 @@ window.onload = function(){
 	sliders[3] = document.getElementById('wSlider');
 
 	sliders[0].value = 1;	sliders[1].value = 0.5;
-	sliders[2].value = 75;	sliders[3].value = 0;
+	sliders[2].value = 0;	sliders[3].value = 0;
 
 	textBoxes[0] = document.getElementById('massBox1');
 	textBoxes[1] = document.getElementById('massBox2');
 
 	textBoxes[0].value = 3; textBoxes[1].value = 1;
+
+	currentSep = sliders[0].value; currentEcc = sliders[1].value;
+	currentIncl = sliders[2].value; currentNode = sliders[3].value;
 
 	intervalId = setInterval(render,1000/60);
 }
@@ -104,6 +114,7 @@ trace = function(){
 		}
 	}
 
+	gfx.lineWidth = 3;
 	gfx.strokeStyle = gfx.fillStyle = 'red';
 	gfx.beginPath();
 	gfx.moveTo(trace[0][0].x,trace[0][0].y);
@@ -138,7 +149,14 @@ drawStars = function(){
 
 	//gfx.strokeRect(center.x-100,center.y-100,200,178);
 
-	gfx.drawImage(canvas,center.x-100,center.y-100,200,178,500,440,200,178*.7)
+	gfx.drawImage(
+		canvas,
+
+		center.x-100, center.y-100,	200, 178,
+
+		500, 400+.5*(178-178*(1-Math.sin(currentIncl*Math.PI/180))), 
+		200, 178*(1-Math.sin(currentIncl*Math.PI/180))
+	);
 
 	update();
 
@@ -159,7 +177,7 @@ render = function(){
 	}
 
 	gfx.font = '14px verdana';
-	gfx.fillText(''+simSpeed,460,25);
+	gfx.fillText(''+simSpeed,445,25);
 	for(var s in sliders){
 		gfx.fillText(''+sliders[s].value,110,150+s*63);
 	}
