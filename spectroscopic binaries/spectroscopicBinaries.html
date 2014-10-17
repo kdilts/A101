@@ -213,6 +213,21 @@ render = function(){
 	//gfx.drawImage(img,230,280,450,80);
 
 	drawStars();
+
+	gfx.lineWidth = 1;
+	gfx.strokeRect(230,300,450,100);
+	
+	var grd = gfx.createLinearGradient(230,450,680,400);
+	grd.addColorStop(0,'rgb(255,0,0)'); // red
+	grd.addColorStop(1/6,'rgb(255,100,0)'); // orange
+	grd.addColorStop(2/6,'rgb(255,255,0)'); // yellow
+	grd.addColorStop(3/6,'rgb(0,255,0)'); // green
+	grd.addColorStop(4/6,'rgb(0,255,255)'); // teal
+	grd.addColorStop(5.5/6,'rgb(0,0,255)'); // blue
+	grd.addColorStop(1,'rgb(120,0,120)'); // violet
+
+	gfx.fillStyle = grd;
+	gfx.fillRect(230,300,450,100);
 }
 
 drawLine = function(x1,y1,x2,y2){
