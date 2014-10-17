@@ -18,7 +18,7 @@ var center = null;
 var star1 = { pos:null, vel:null, accel:null };
 var star2 = { pos:null, vel:null, accel:null };
 
-var trace = []; var tracing = [];
+var trace = []; var tracing = []; var showTrace = true;
 
 var currentSep; var currentEcc;
 var currentIncl; var currentNode;
@@ -30,9 +30,6 @@ window.onload = function(){
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
-
-	//img = new Image();
-	//img.src = './spectrum.jpg';
 
 	center = new vec2(200,500);
 	star1.pos = new vec2(center.x-50, center.y); star1.vel = new vec2(0, 700); star1.accel = new vec2(0,0);
@@ -51,7 +48,19 @@ window.onload = function(){
 		currentIncl = sliders[2].value; currentNode = sliders[3].value;
 	}
 
-	buttons[1].onclick = function(){}
+	buttons[1].onclick = function(){
+		if(showTrace){
+			tracing[0] = false; tracing[1] = false;
+			trace[0] = []; trace[1] = [];
+			buttons[1].value = 'Trail on';
+			showTrace = false;
+		}else{
+			tracing[0] = true; tracing[1] = true;
+			buttons[1].value = 'Trail off';
+			showTrace = true;
+		}
+	}
+
 	buttons[2].onclick = function(){}
 	buttons[3].onclick = function(){}
 
@@ -89,46 +98,41 @@ update = function(){
 trace = function(){
 	if(tracing[0]){
 		trace[0].push({ x:star1.pos.x, y:star1.pos.y });
-		if(trace[0].length > 500){
-			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .2){
+		if(trace[0].length > 50){
+			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .4){
 				tracing[0] = false; console.log('stop ' + 0);
 			}
 		}
 	}
 
-	gfx.strokeStyle = gfx.fillStyle = 'black';
-	gfx.beginPath();
-	gfx.moveTo(trace[0][0].x,trace[0][0].y);
-	for(var t = 1; t < trace[0].length; t++){
-		 gfx.lineTo(trace[0][t].x,trace[0][t].y);
-	}
-	gfx.stroke();
-
 	if(tracing[1]){
 		trace[1].push({ x:star2.pos.x, y:star2.pos.y });
-		if(trace[1].length > 500){
-			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .2){
+		if(trace[1].length > 50){
+			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .4){
 				tracing[1] = false; console.log('stop ' + 1);
 			}
 		}
 	}
 
-	gfx.lineWidth = 3;
-	gfx.strokeStyle = gfx.fillStyle = 'red';
-	gfx.beginPath();
-	gfx.moveTo(trace[0][0].x,trace[0][0].y);
-	for(var t = 1; t < trace[0].length; t++){
-		 gfx.lineTo(trace[0][t].x,trace[0][t].y);
-	}
-	gfx.stroke();
+	if(showTrace){
+		gfx.lineWidth = 3;
+		gfx.strokeStyle = gfx.fillStyle = 'red';
+		gfx.beginPath();
+		gfx.moveTo(trace[0][0].x,trace[0][0].y);
+		for(var t = 1; t < trace[0].length; t++){
+			 gfx.lineTo(trace[0][t].x,trace[0][t].y);
+		}
+		gfx.stroke();
 
-	gfx.strokeStyle = gfx.fillStyle = 'blue';
-	gfx.beginPath();
-	gfx.moveTo(trace[1][0].x,trace[1][0].y);
-	for(var t = 1; t < trace[1].length; t++){
-		 gfx.lineTo(trace[1][t].x,trace[1][t].y);
+		gfx.strokeStyle = gfx.fillStyle = 'blue';
+		gfx.beginPath();
+		gfx.moveTo(trace[1][0].x,trace[1][0].y);
+		for(var t = 1; t < trace[1].length; t++){
+			 gfx.lineTo(trace[1][t].x,trace[1][t].y);
+		}
+		gfx.stroke();
+		gfx.lineWidth = 1;
 	}
-	gfx.stroke();
 }
 
 drawStars = function(){
@@ -215,7 +219,7 @@ render = function(){
 	drawStars();
 
 	gfx.lineWidth = 1;
-	gfx.strokeRect(230,300,450,100);
+	//gfx.strokeRect(230,300,450,100);
 	
 	var grd = gfx.createLinearGradient(230,450,680,400);
 	grd.addColorStop(0,'rgb(255,0,0)'); // red
@@ -227,7 +231,7 @@ render = function(){
 	grd.addColorStop(1,'rgb(120,0,120)'); // violet
 
 	gfx.fillStyle = grd;
-	gfx.fillRect(230,300,450,100);
+	gfx.fillRect(230,280,450,100);
 }
 
 drawLine = function(x1,y1,x2,y2){
