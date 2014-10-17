@@ -61,8 +61,17 @@ window.onload = function(){
 		}
 	}
 
-	buttons[2].onclick = function(){}
-	buttons[3].onclick = function(){}
+	buttons[2].onclick = function(){
+		simSpeed++; if(simSpeed > 9){ simSpeed = 9; }
+		clearInterval(intervalId);
+		intervalId = setInterval(render,1000/60*simSpeed);
+	}
+
+	buttons[3].onclick = function(){
+		simSpeed--; if(simSpeed < 1){ simSpeed = 1; }
+		clearInterval(intervalId);
+		intervalId = setInterval(render,1000/60*simSpeed);
+	}
 
 	sliders[0] = document.getElementById('aSlider');
 	sliders[1] = document.getElementById('eSlider');
