@@ -87,7 +87,7 @@ update = function(){
 }
 
 trace = function(){
-		if(tracing[0]){
+	if(tracing[0]){
 		trace[0].push({ x:star1.pos.x, y:star1.pos.y });
 		if(trace[0].length > 500){
 			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .2){
@@ -103,7 +103,6 @@ trace = function(){
 		 gfx.lineTo(trace[0][t].x,trace[0][t].y);
 	}
 	gfx.stroke();
-
 
 	if(tracing[1]){
 		trace[1].push({ x:star2.pos.x, y:star2.pos.y });
@@ -147,8 +146,37 @@ drawStars = function(){
 	gfx.beginPath(); gfx.arc(center.x, center.y,1,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	//gfx.strokeRect(center.x-100,center.y-100,200,178);
 
+	// draw copy
+	gfx.drawImage(
+		canvas,
+
+		center.x-100, center.y-100,	200, 178,
+
+		300, 300,
+		200, 178
+	);
+
+	// remove and redraw original
+	gfx.clearRect(center.x-100,center.y-100,200,178);
+
+	gfx.save();
+	gfx.translate(center.x, center.y-100+89);
+	gfx.rotate(currentNode*Math.PI/180);
+	gfx.drawImage(
+		canvas,
+
+		300, 300, 200, 178,
+
+		-100,-89,
+		200, 178
+	);
+	gfx.restore();
+
+	// remove copy
+	gfx.clearRect(300,300,200,178);
+
+	// draw earth view
 	gfx.drawImage(
 		canvas,
 
@@ -157,7 +185,7 @@ drawStars = function(){
 		500, 400+.5*(178-178*(1-Math.sin(currentIncl*Math.PI/180))), 
 		200, 178*(1-Math.sin(currentIncl*Math.PI/180))
 	);
-
+	
 	update();
 
 	gfx.fillText('Priveleged View', center.x-50, center.y+90);
