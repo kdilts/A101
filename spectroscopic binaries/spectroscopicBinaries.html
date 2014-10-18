@@ -19,10 +19,11 @@ var star1 = { pos:null, vel:null, accel:null };
 var star2 = { pos:null, vel:null, accel:null };
 
 var trace = []; var tracing = []; var showTrace = true;
+var tracking = []; var track = [];
 
-var currentSep = 1; var currentEcc;
+var currentSep = 1.5; var currentEcc;
 var currentIncl; var currentNode;
-var currentMass1 = 3; var currentMass2 = 1;
+var currentMass1 = 2; var currentMass2 = 1;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -41,8 +42,8 @@ window.onload = function(){
 	star2.vel = new vec2(0, -700);
 	star2.accel = new vec2(0,0);
 
-	tracing[0] = true; trace[0] = [];
-	tracing[1] = true; trace[1] = [];
+	tracing[0] = true; trace[0] = []; tracking[0] = false; track[0] = 0;
+	tracing[1] = true; trace[1] = []; tracking[1] = false; track[1] = 0;
 
 	buttons[0] = document.getElementById('submitButton');
 	buttons[1] = document.getElementById('trailButton');
@@ -64,6 +65,7 @@ window.onload = function(){
 		star2.accel = new vec2(0,0);
 
 		trace[0] = []; trace[1] = [];
+		tracing[0] = true; tracing[1] = true;
 	}
 
 	buttons[1].onclick = function(){
@@ -96,7 +98,7 @@ window.onload = function(){
 	sliders[2] = document.getElementById('iSlider');
 	sliders[3] = document.getElementById('wSlider');
 
-	sliders[0].value = 1;	sliders[1].value = 0.5;
+	sliders[0].value = 1.5;	sliders[1].value = 0.5;
 	sliders[2].value = 0;	sliders[3].value = 0;
 
 	textBoxes[0] = document.getElementById('massBox1');
@@ -113,25 +115,30 @@ window.onload = function(){
 window.onresize = function(){ window.resizeTo(816,668); }
 
 update = function(){
-	star1.vel = add(star1.vel, star1.accel);
-	star1.pos = add(star1.pos, mult(star1.vel, .001));
-	star1.accel = mult(unit(sub(center,star1.pos)),50000/Math.pow(mag(sub(center,star1.pos)),2));
+	if(!tracking[0]){
+		star1.vel = add(star1.vel, star1.accel);
+		star1.pos = add(star1.pos, mult(star1.vel, .001));
+		star1.accel = mult(unit(sub(center,star1.pos)),50000/Math.pow(mag(sub(center,star1.pos)),2));
 
-	star1.accel = mult(star1.accel,parseInt(currentMass1));
+		star1.accel = mult(star1.accel,parseInt(currentMass1));
+	}
 
-	star2.vel = add(star2.vel, star2.accel);
-	star2.pos = add(star2.pos, mult(star2.vel, .001));
-	star2.accel = mult(unit(sub(center,star2.pos)),50000/Math.pow(mag(sub(center,star2.pos)),2));
+	if(!tracking[1]){
+		star2.vel = add(star2.vel, star2.accel);
+		star2.pos = add(star2.pos, mult(star2.vel, .001));
+		star2.accel = mult(unit(sub(center,star2.pos)),50000/Math.pow(mag(sub(center,star2.pos)),2));
 
-	star2.accel = mult(star2.accel,parseInt(currentMass2));
+		star2.accel = mult(star2.accel,parseInt(currentMass2));
+	}
 }
 
 trace = function(){
 	if(tracing[0]){
 		trace[0].push({ x:star1.pos.x, y:star1.pos.y });
 		if(trace[0].length > 50){
-			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .4){
+			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .6){
 				tracing[0] = false; console.log('stop ' + 0);
+				tracking[0] = true;
 			}
 		}
 	}
@@ -139,13 +146,14 @@ trace = function(){
 	if(tracing[1]){
 		trace[1].push({ x:star2.pos.x, y:star2.pos.y });
 		if(trace[1].length > 50){
-			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .4){
+			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .6){
 				tracing[1] = false; console.log('stop ' + 1);
+				tracking[1] = true;
 			}
 		}
 	}
 
-	if(showTrace && trace[0][0]){
+	if(showTrace && trace[0][0] && trace[1][0]){
 		gfx.lineWidth = 3;
 		gfx.strokeStyle = gfx.fillStyle = 'red';
 		gfx.beginPath();
@@ -170,17 +178,30 @@ drawStars = function(){
 	trace();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
-	gfx.beginPath(); gfx.arc(star1.pos.x, star1.pos.y,5,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
+	if(!tracking[0]){
+		gfx.beginPath(); gfx.arc(star1.pos.x, star1.pos.y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}else{
+		gfx.beginPath(); gfx.arc(trace[0][track[0]].x, trace[0][track[0]].y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+		track[0]++;
+		if(track[0] > trace[0].length-1){ track[0] = 0; }
+	}
 
 	gfx.strokeStyle = gfx.fillStyle = 'blue';
-	gfx.beginPath(); gfx.arc(star2.pos.x, star2.pos.y,5,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
+	if(!tracking[1]){
+		gfx.beginPath(); gfx.arc(star2.pos.x, star2.pos.y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}else{
+		gfx.beginPath(); gfx.arc(trace[1][track[1]].x, trace[1][track[1]].y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+		track[1]++;
+		if(track[1] > trace[1].length-1){ track[1] = 0; }
+	}
 
-	gfx.strokeStyle = gfx.fillStyle = 'black';
+	/*gfx.strokeStyle = gfx.fillStyle = 'black';
 	gfx.beginPath(); gfx.arc(center.x, center.y,1,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
+	gfx.fill(); gfx.stroke();*/
 
 	// draw copy
 	gfx.drawImage(
@@ -223,6 +244,7 @@ drawStars = function(){
 	
 	update();
 
+	gfx.strokeStyle = gfx.fillStyle = 'black';
 	gfx.fillText('Priveleged View', center.x-50, center.y+90);
 	gfx.fillText('Earth View', center.x+350, center.y+90);
 }
