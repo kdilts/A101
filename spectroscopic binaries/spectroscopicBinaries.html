@@ -70,12 +70,9 @@ window.onload = function(){
 
 	buttons[1].onclick = function(){
 		if(showTrace){
-			tracing[0] = false; tracing[1] = false;
-			trace[0] = []; trace[1] = [];
 			buttons[1].value = 'Trail on';
 			showTrace = false;
 		}else{
-			tracing[0] = true; tracing[1] = true;
 			buttons[1].value = 'Trail off';
 			showTrace = true;
 		}
