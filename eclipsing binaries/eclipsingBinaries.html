@@ -142,21 +142,21 @@ drawStars = function(){
 
 	/*gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.strokeRect(
-		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta)-parseFloat(data[currentStar2][1])*solarRad*2,
+		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar1][1]))) * Math.sin(currentTheta),
 
-		centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta) * Math.sin(currentAngle*Math.PI/180)-parseFloat(data[currentStar2][1])*solarRad*2,
+		centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta) * Math.sin(currentAngle*Math.PI/180),
 
 		parseFloat(data[currentStar1][1])*solarRad*2,
 		parseFloat(data[currentStar1][1])*solarRad*2
-		);
+	);
 
 	gfx.strokeRect(
-	centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta+Math.PI)-parseFloat(data[currentStar1][1])*solarRad*.5,
+		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta+Math.PI),
+	
+		centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle*Math.PI/180),
 
-	centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle*Math.PI/180)-parseFloat(data[currentStar1][1])*solarRad*.5,
-
-	parseFloat(data[currentStar2][1])*solarRad*2,
-	parseFloat(data[currentStar2][1])*solarRad*2
+		parseFloat(data[currentStar2][1])*solarRad*2,
+		parseFloat(data[currentStar2][1])*solarRad*2
 	);*/
 
 	count();
@@ -164,14 +164,14 @@ drawStars = function(){
 
 count = function(){
 	// count star 1
-	var x = centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta)-parseFloat(data[currentStar2][1])*solarRad*2;
+	var x = centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta);
 	
-	var y = centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta) * Math.sin(currentAngle*Math.PI/180)-parseFloat(data[currentStar2][1])*solarRad*2;
+	var y = centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta) * Math.sin(currentAngle*Math.PI/180);
 	
 	var sz = parseFloat(data[currentStar1][1])*solarRad*2;
 
-	//imgData = gfx.getImageData(x,y,sz,sz);
-	//gfx.putImageData(imgData,300,50);
+	imgData = gfx.getImageData(x,y,sz,sz);
+	gfx.putImageData(imgData,300,50);
 	var imgData = gfx.getImageData(x,y,sz,sz).data;
 
 	var c = data[currentStar1][2].substr(4,data[currentStar1][2].length-5);
@@ -194,14 +194,14 @@ count = function(){
 	gfx.fillText(''+count1,400,100);
 
 	// count star 2
-	x = centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta+Math.PI)-parseFloat(data[currentStar1][1])*solarRad*.5;
+	x = centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta+Math.PI);
 
-	y = centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle*Math.PI/180)-parseFloat(data[currentStar1][1])*solarRad*.5;
+	y = centerY + solarRad*(currentSeparation*(parseFloat(data[currentStar1][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.cos(currentTheta+Math.PI) * Math.sin(currentAngle*Math.PI/180);
 
 	sz = parseFloat(data[currentStar2][1])*solarRad*2;
 
-	//imgData = gfx.getImageData(x,y,sz,sz);
-	//gfx.putImageData(imgData,400,50);
+	imgData = gfx.getImageData(x,y,sz,sz);
+	gfx.putImageData(imgData,400,50);
 	imgData = gfx.getImageData(x,y,sz,sz).data;
 
 	c = data[currentStar2][2].substr(4,data[currentStar2][2].length-5);
