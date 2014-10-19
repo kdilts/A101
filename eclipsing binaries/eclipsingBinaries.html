@@ -170,6 +170,8 @@ count = function(){
 	
 	var sz = parseFloat(data[currentStar1][1])*solarRad*2;
 
+	//imgData = gfx.getImageData(x,y,sz,sz);
+	//gfx.putImageData(imgData,300,50);
 	var imgData = gfx.getImageData(x,y,sz,sz).data;
 
 	var c = data[currentStar1][2].substr(4,data[currentStar1][2].length-5);
@@ -198,15 +200,29 @@ count = function(){
 
 	sz = parseFloat(data[currentStar2][1])*solarRad*2;
 
-	imgData = gfx.getImageData(x,y,sz,sz);
-	//gfx.putImageData(imgData,100,100);
+	//imgData = gfx.getImageData(x,y,sz,sz);
+	//gfx.putImageData(imgData,400,50);
+	imgData = gfx.getImageData(x,y,sz,sz).data;
 
-	var c = data[currentStar1][2].substr(4,data[currentStar1][2].length-5);
-	var r = c.substr(0,c.indexOf(','));
-	var g = c.substr(c.indexOf(',')+1, c.lastIndexOf(',')-(c.indexOf(',')+1));
-	var b = c.substr(c.lastIndexOf(',')+1,c.length);
+	c = data[currentStar2][2].substr(4,data[currentStar2][2].length-5);
+	r = parseInt(c.substr(0,c.indexOf(',')));
+	g = parseInt(c.substr(c.indexOf(',')+1, c.lastIndexOf(',')-(c.indexOf(',')+1)));
+	b = parseInt(c.substr(c.lastIndexOf(',')+1,c.length));
 	//console.log(r,g,b);
 
+	var count2 = 0;
+	for(i = 0, n = imgData.length; i < n; i += 4) {
+
+	    if(imgData[i  ] === r){
+		    if(imgData[i+1] === g){
+			    if(imgData[i+2] === b){
+			    	count2++;
+			    };
+		    };
+	    };
+	}
+
+	gfx.fillText(''+count2,400,130);
 }
 
 drawStar1 = function(){
