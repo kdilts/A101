@@ -222,7 +222,20 @@ count = function(){
 	    };
 	}
 
-	//gfx.fillText(''+count2,400,130);
+	//gfx.fillText(''+count1 + '  ' + count2,400,130);
+
+	var star1area = Math.floor(Math.pow((parseFloat(data[currentStar1][1])*solarRad),2)*Math.PI);
+	var star2area = Math.floor(Math.pow((parseFloat(data[currentStar2][1])*solarRad),2)*Math.PI);
+
+	//gfx.fillText(''+ star1area + '  ' +star2area + '  ' + (star1area + star2area),400,150);
+
+	//gfx.fillText(''+ count1/(star1area + star2area) + '  ' + count2/(star1area + star2area),400,170);
+
+	frameIntensity = lerp(
+		0,1,
+		count1/(star1area + star2area) + count2/(star1area + star2area),
+		0,350
+	);
 }
 
 drawStar1 = function(){
