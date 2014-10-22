@@ -10,7 +10,7 @@ var buttons = [];
 var sliders = [];
 var textBoxes = [];
 
-var simSpeed = 3;
+var simSpeed = 1;
 
 var img;
 
@@ -27,7 +27,7 @@ var tracking = []; var track = [];
 
 var currentSep = 1.5; var currentEcc = .5;
 var currentIncl; var currentNode;
-var currentMass1 = 3; var currentMass2 = 1;
+var currentMass1 = 1.75; var currentMass2 = 1;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -133,7 +133,7 @@ window.onload = function(){
 	textBoxes[0] = document.getElementById('massBox1');
 	textBoxes[1] = document.getElementById('massBox2');
 
-	textBoxes[0].value = 3; textBoxes[1].value = 1;
+	textBoxes[0].value = currentMass1; textBoxes[1].value = currentMass2;
 
 	currentSep = parseFloat(sliders[0].value); currentEcc = parseFloat(sliders[1].value);
 	currentIncl = parseInt(sliders[2].value); currentNode = parseInt(sliders[3].value);
@@ -308,6 +308,24 @@ plotData = function(){
 		if(star1MinVel < star2MinVel){ minV = star1MinVel; }else{ minV = star2MinVel; }
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
+
+		gfx.save();
+		gfx.translate(origX,origY);
+		gfx.beginPath();
+		gfx.moveTo(
+			lerp(0,star1Period,0,0,450),
+			lerp(minV,maxV,trace[0][0].vx,-75,75)
+		);
+
+		for(var p in trace[0]){
+			gfx.lineTo(
+				lerp(0,star1Period,p,0,450),
+				lerp(minV,maxV,trace[0][p].vx,-75,75)
+			);
+		}
+		gfx.stroke();
+		gfx.restore();
+
 		gfx.beginPath();
 		gfx.arc(
 			origX+lerp(0,star1Period,track[0],0,450),
@@ -318,6 +336,24 @@ plotData = function(){
 		gfx.fill(); gfx.stroke();
 
 		gfx.fillStyle = gfx.strokeStyle = 'blue';
+
+		gfx.save();
+		gfx.translate(origX,origY);
+		gfx.beginPath();
+		gfx.moveTo(
+			lerp(0,star2Period,0,0,450),
+			lerp(minV,maxV,trace[1][0].vx,-75,75)
+		);
+
+		for(var p in trace[1]){
+			gfx.lineTo(
+				lerp(0,star2Period,p,0,450),
+				lerp(minV,maxV,trace[1][p].vx,-75,75)
+			);
+		}
+		gfx.stroke();
+		gfx.restore();
+
 		gfx.beginPath();
 		gfx.arc(
 			origX+lerp(0,star2Period,track[1],0,450),
@@ -332,6 +368,7 @@ plotData = function(){
 		gfx.fillText((''+maxV).substr(0,(''+maxV).indexOf('.')), 720,85);
 		gfx.fillText('0', 727,origY-10);
 		gfx.fillText((''+minV).substr(0,(''+minV).indexOf('.')), 720,265);
+
 	}else{
 		gfx.fillStyle = gfx.strokeStyle = 'black';
 		gfx.font = '24px verdana';
@@ -386,7 +423,7 @@ render = function(){
 
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 
-	if(!tracking[0]){
+	/*if(!tracking[0]){
 		gfx.fillText('vrad_1: ' + star1.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
 	}else{
 		gfx.fillText('vrad_1: ' + trace[0][track[0]].vx * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
@@ -399,7 +436,7 @@ render = function(){
 	}
 
 	gfx.fillText('vx_1: ' + star1.vel.x, 150,400);
-	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);
+	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);*/
 }
 
 drawLine = function(x1,y1,x2,y2){
