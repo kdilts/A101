@@ -311,6 +311,13 @@ render = function(){
 
 	gfx.fillStyle = grd;
 	gfx.fillRect(270,280,450,100);
+
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.fillText('vrad_1: ' + star1.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
+	gfx.fillText('vrad_2: ' + star2.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,425);
+
+	gfx.fillText('vx_1: ' + star1.vel.x, 150,400);
+	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);
 }
 
 drawLine = function(x1,y1,x2,y2){
