@@ -15,15 +15,19 @@ var simSpeed = 3;
 var img;
 
 var center = null;
+
 var star1 = { pos:null, vel:null, accel:null };
+var star1MaxVel; var star1MinVel; var star1Period;
+
 var star2 = { pos:null, vel:null, accel:null };
+var star2MaxVel; var star2MinVel; var star2Period;
 
 var trace = []; var tracing = []; var showTrace = true;
 var tracking = []; var track = [];
 
 var currentSep = 1.5; var currentEcc = .5;
 var currentIncl; var currentNode;
-var currentMass1 = 2; var currentMass2 = 1;
+var currentMass1 = 3; var currentMass2 = 1;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -35,11 +39,11 @@ window.onload = function(){
 
 	center = new vec2(200,500);
 	star1.pos = new vec2(center.x-50*currentSep, center.y);
-	star1.vel = new vec2(0, 1000*(1-currentEcc));
+	star1.vel = new vec2(0, 1000*(1-currentEcc)*currentMass1);
 	star1.accel = new vec2(0,0);
 
 	star2.pos = new vec2(center.x+50*currentSep, center.y);
-	star2.vel = new vec2(0, -1000*(1-currentEcc));
+	star2.vel = new vec2(0, -1000*(1-currentEcc)*currentMass2);
 	star2.accel = new vec2(0,0);
 
 	tracing[0] = true; trace[0] = []; tracking[0] = false; track[0] = 0;
@@ -159,21 +163,41 @@ update = function(){
 
 trace = function(){
 	if(tracing[0] && !tracking[0]){
-		trace[0].push({ x:star1.pos.x, y:star1.pos.y });
+		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) });
+
+		if(star1MinVel === undefined || star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) < star1MinVel){
+			star1MinVel = star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		}
+
+		if(star1MaxVel === undefined || star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) > star1MaxVel){
+			star1MaxVel = star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		}
+
 		if(trace[0].length > 50){
 			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .6){
 				tracing[0] = false; console.log('stop ' + 0);
 				tracking[0] = true;
+				star1Period = trace[0].length-1;
 			}
 		}
 	}
 
 	if(tracing[1] && !tracking[1]){
-		trace[1].push({ x:star2.pos.x, y:star2.pos.y });
+		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) });
+
+		if(star2MinVel === undefined || star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) < star2MinVel){
+			star2MinVel = star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		}
+
+		if(star2MaxVel === undefined || star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) > star2MaxVel){
+			star2MaxVel = star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		}
+
 		if(trace[1].length > 50){
 			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .6){
 				tracing[1] = false; console.log('stop ' + 1);
 				tracking[1] = true;
+				star2Period = trace[1].length-1;
 			}
 		}
 	}
@@ -275,18 +299,66 @@ drawStars = function(){
 	gfx.fillText('Earth View', center.x+350, center.y+90);
 }
 
+plotData = function(){
+	var origX = 270; var origY = 175;
+	var maxV; var minV;
+
+	if(tracking[0] && tracking[1]){
+		if(star1MaxVel > star2MaxVel){ maxV = star1MaxVel; }else{ maxV = star2MaxVel; }
+		if(star1MinVel < star2MinVel){ minV = star1MinVel; }else{ minV = star2MinVel; }
+
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.beginPath();
+		gfx.arc(
+			origX+lerp(0,star1Period,track[0],0,450),
+			origY+lerp(minV,maxV,trace[0][track[0]].vx,-75,75),
+
+			3,0,Math.PI*2
+		);
+		gfx.fill(); gfx.stroke();
+
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+		gfx.beginPath();
+		gfx.arc(
+			origX+lerp(0,star2Period,track[1],0,450),
+			origY+lerp(minV,maxV,trace[1][track[1]].vx,-75,75),
+
+			3,0,Math.PI*2
+		);
+		gfx.fill(); gfx.stroke();
+
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.font = '14px verdana';
+		gfx.fillText((''+maxV).substr(0,(''+maxV).indexOf('.')), 720,85);
+		gfx.fillText('0', 727,origY-10);
+		gfx.fillText((''+minV).substr(0,(''+minV).indexOf('.')), 720,265);
+	}else{
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.font = '24px verdana';
+		gfx.save();
+		gfx.translate(450,230);
+		gfx.rotate(-Math.PI/4);
+		gfx.fillText('Calculating...', 0,0);
+		gfx.restore();
+	}
+}
+
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 
 	gfx.clearRect(0,0,cwidth,cheight);
 
+	// grid
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.strokeRect(270,100,450,150);
 	for(var i = 0; i < 10; i++){
 		drawLine(270+i*47.2,175,285+i*47.2,175);
 	}
 
+	plotData();
+
+	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
 	gfx.fillText(''+simSpeed,445,25);
 	for(var s in sliders){
@@ -313,8 +385,18 @@ render = function(){
 	gfx.fillRect(270,280,450,100);
 
 	gfx.fillStyle = gfx.strokeStyle = 'black';
-	gfx.fillText('vrad_1: ' + star1.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
-	gfx.fillText('vrad_2: ' + star2.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,425);
+
+	if(!tracking[0]){
+		gfx.fillText('vrad_1: ' + star1.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
+	}else{
+		gfx.fillText('vrad_1: ' + trace[0][track[0]].vx * Math.cos((90-currentIncl)*Math.PI/180), 375,400);
+	}
+	
+	if(!tracking[1]){
+		gfx.fillText('vrad_2: ' + star2.vel.x * Math.cos((90-currentIncl)*Math.PI/180), 375,425);
+	}else{
+		gfx.fillText('vrad_2: ' + trace[1][track[1]].vx * Math.cos((90-currentIncl)*Math.PI/180), 375,425);
+	}
 
 	gfx.fillText('vx_1: ' + star1.vel.x, 150,400);
 	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);
