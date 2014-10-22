@@ -67,8 +67,8 @@ window.onload = function(){
 		currentEcc = parseFloat(sliders[1].value);
 		currentIncl = parseInt(sliders[2].value);
 		currentNode = parseInt(sliders[3].value);
-		currentMass1 = parseInt(massBox1.value);
-		currentMass2 = parseInt(massBox2.value);
+		currentMass1 = parseFloat(massBox1.value);
+		currentMass2 = parseFloat(massBox2.value);
 
 		star1.pos = new vec2(center.x-50*currentSep, center.y);
 		star1.vel = new vec2(0, 1000*(1-currentEcc)*currentMass1);
@@ -131,8 +131,8 @@ window.onload = function(){
 
 	textBoxes[0].value = 3; textBoxes[1].value = 1;
 
-	currentSep = parseInt(sliders[0].value); currentEcc = sliders[1].value;
-	currentIncl = sliders[2].value; currentNode = sliders[3].value;
+	currentSep = parseFloat(sliders[0].value); currentEcc = parseFloat(sliders[1].value);
+	currentIncl = parseInt(sliders[2].value); currentNode = parseInt(sliders[3].value);
 
 	intervalId = setInterval(render,1000/60*simSpeed);
 }
@@ -145,7 +145,7 @@ update = function(){
 		star1.pos = add(star1.pos, mult(star1.vel, .001));
 		star1.accel = mult(unit(sub(center,star1.pos)),50000/Math.pow(mag(sub(center,star1.pos)),2));
 
-		star1.accel = mult(star1.accel,parseInt(currentMass1));
+		star1.accel = mult(star1.accel,currentMass1);
 	}
 
 	if(!tracking[1]){
@@ -153,7 +153,7 @@ update = function(){
 		star2.pos = add(star2.pos, mult(star2.vel, .001));
 		star2.accel = mult(unit(sub(center,star2.pos)),50000/Math.pow(mag(sub(center,star2.pos)),2));
 
-		star2.accel = mult(star2.accel,parseInt(currentMass2));
+		star2.accel = mult(star2.accel,currentMass2);
 	}
 }
 
@@ -224,9 +224,9 @@ drawStars = function(){
 		if(track[1] > trace[1].length-1){ track[1] = 0; }
 	}
 
-	/*gfx.strokeStyle = gfx.fillStyle = 'black';
+	gfx.strokeStyle = gfx.fillStyle = 'black';
 	gfx.beginPath(); gfx.arc(center.x, center.y,1,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();*/
+	gfx.fill(); gfx.stroke();
 
 	// draw copy
 	gfx.drawImage(
@@ -240,6 +240,7 @@ drawStars = function(){
 
 	// remove and redraw original
 	gfx.clearRect(center.x-100,center.y-100,200,178);
+	gfx.strokeRect(center.x-115,center.y-115,230,230);
 
 	gfx.save();
 	gfx.translate(center.x, center.y-100+89);
