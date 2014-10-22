@@ -1,0 +1,5 @@
+arrow buttons on sliders
+
+sync the orbits
+
+vrad = vx*cos(90-tilt)

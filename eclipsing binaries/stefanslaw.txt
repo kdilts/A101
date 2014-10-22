@@ -1,0 +1,26 @@
+for y axis:
+
+F = sigma * T^4
+
+sigma = 5.67 X 10 ^ -8 W / m^2 K^4
+
+T = surface temperature of the star
+
+--> then multiply F by surface area of the star 4pi r^2
+
+
+
+calculate light output:
+
+ltotal = Tl^4* 4*PI*rl^2 + Ts^4 * 4*pi * rs^2		<--- normalize between 0 and 1
+
+
+------------------------------------------------------------
+
+center mass equation:
+
+xcm = (m1*x1 + m2*x2)/(m1+m2)
+
+or
+
+xcm = m2*x2/(m1+m2)
