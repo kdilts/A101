@@ -51,21 +51,24 @@ window.onload = function(){
 	buttons[3] = document.getElementById('slowDownButton');
 
 	buttons[0].onclick = function(){
-		currentSep = sliders[0].value; currentEcc = parseFloat(sliders[1].value);
-		currentIncl = sliders[2].value; currentNode = sliders[3].value;
+		currentSep = parseFloat(sliders[0].value);
+		currentEcc = parseFloat(sliders[1].value);
+		currentIncl = parseInt(sliders[2].value);
+		currentNode = parseInt(sliders[3].value);
 		currentMass1 = parseInt(massBox1.value);
 		currentMass2 = parseInt(massBox2.value);
 
 		star1.pos = new vec2(center.x-50*currentSep, center.y);
-		star1.vel = new vec2(0, 1000*(1-currentEcc));
+		star1.vel = new vec2(0, 1000*(1-currentEcc)*currentMass1);
 		star1.accel = new vec2(0,0);
 
 		star2.pos = new vec2(center.x+50*currentSep, center.y);
-		star2.vel = new vec2(0, -1000*(1-currentEcc));
+		star2.vel = new vec2(0, -1000*(1-currentEcc)*currentMass2);
 		star2.accel = new vec2(0,0);
 
 		trace[0] = []; trace[1] = [];
 		tracing[0] = true; tracing[1] = true;
+		tracking[0] = false; tracking[1] = false;
 	}
 
 	buttons[1].onclick = function(){
@@ -130,7 +133,7 @@ update = function(){
 }
 
 trace = function(){
-	if(tracing[0]){
+	if(tracing[0] && !tracking[0]){
 		trace[0].push({ x:star1.pos.x, y:star1.pos.y });
 		if(trace[0].length > 50){
 			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .6){
@@ -140,7 +143,7 @@ trace = function(){
 		}
 	}
 
-	if(tracing[1]){
+	if(tracing[1] && !tracking[1]){
 		trace[1].push({ x:star2.pos.x, y:star2.pos.y });
 		if(trace[1].length > 50){
 			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .6){
