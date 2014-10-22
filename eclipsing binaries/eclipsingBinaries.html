@@ -16,7 +16,7 @@ var currentAngle = 10; var currentSeparation = '12'
 var solarRad = 7;
 
 var graphData = []; var graphIndex = 0;
-var frameIntensity = 100;
+var frameIntensity = 0;
 
 var intervalId; var playing = true;
 
@@ -264,19 +264,24 @@ drawGraph = function(){
 	gfx.fillStyle = 'black'
 	gfx.font = '16px verdana'
 	gfx.fillText('Theta',origX+225,origY+40);
-	gfx.fillText('L',origX-45,origY-185);
+
+	gfx.save(); gfx.translate(origX-45,origY-145); gfx.rotate(-Math.PI/2);
+	gfx.fillText('Intensity',0,0);
+	gfx.restore();
 
 	for(var x = 0; x < 7; x++){ gfx.fillText(''+(60*x), origX+80*x, origY+20); }
-	for(var y = 0; y < 5; y++){ gfx.fillText((''+(3.6+.1*y)).substr(0,3), origX-32, origY-350/4.2*y); }
+	for(var y = 0; y < 6; y++){ gfx.fillText((''+(0+.2*y)).substr(0,3), origX-32, origY-350/5.2*y); }
 
+	// vertical ticks
 	for(var x = 1; x < 10; x++){
 		drawLine(origX+x*50,origY,origX+x*50,origY-10);
 		drawLine(origX+x*50,origY-350,origX+x*50,origY-340);
 	}
 	
-	for(var y = 1; y < 7; y++){
-		drawLine(origX,origY-y*50,origX+10,origY-y*50);
-		drawLine(origX+490,origY-y*50,origX+500,origY-y*50);
+	// horizontal ticks
+	for(var y = 1; y < 5; y++){
+		drawLine(origX,origY-y*70,origX+10,origY-y*70);
+		drawLine(origX+490,origY-y*70,origX+500,origY-y*70);
 	}
 
 	// graph bead
