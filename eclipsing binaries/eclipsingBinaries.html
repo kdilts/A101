@@ -184,7 +184,7 @@ count = function(){
 	var imgData = gfx.getImageData(x,y,sz,sz).data;
 
 	var c = data[currentStar1][2].substr(4,data[currentStar1][2].length-5);
-	var r = parseInt(c.substr(0,c.indexOf(',')));
+	var r = parseInt(c.substr(0,c.indexOf(',')))+1;
 	var g = parseInt(c.substr(c.indexOf(',')+1, c.lastIndexOf(',')-(c.indexOf(',')+1)));
 	var b = parseInt(c.substr(c.lastIndexOf(',')+1,c.length));
 
@@ -242,11 +242,8 @@ count = function(){
 
 	//gfx.fillText(''+ count1/(star1area + star2area) + '  ' + count2/(star1area + star2area),400,170);
 
-	console.log((count1*(parseInt(data[currentStar1][0])/parseInt(data[currentStar2][0])))/(star1area + star2area)
-		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area))
-
 	frameIntensity = lerp(
-		0,1,
+		0,1.2,
 		(count1*(parseInt(data[currentStar1][0])/parseInt(data[currentStar2][0])))/(star1area + star2area)
 		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area),
 		0,350
@@ -254,8 +251,13 @@ count = function(){
 }
 
 drawStar1 = function(){
+	var c = data[currentStar1][2].substr(4,data[currentStar1][2].length-5);
+	var r = parseInt(c.substr(0,c.indexOf(',')))+1;
+	var g = parseInt(c.substr(c.indexOf(',')+1, c.lastIndexOf(',')-(c.indexOf(',')+1)));
+	var b = parseInt(c.substr(c.lastIndexOf(',')+1,c.length));
+
 	// star 1
-	gfx.fillStyle = gfx.strokeStyle = data[currentStar1][2];
+	gfx.fillStyle = gfx.strokeStyle = 'rgb('+r+','+g+','+b+')';
 	gfx.beginPath();
 	gfx.arc(
 		centerX + solarRad*(currentSeparation*(parseFloat(data[currentStar2][1]))/(parseFloat(data[currentStar1][1])+parseFloat(data[currentStar2][1]))) * Math.sin(currentTheta),
