@@ -300,6 +300,9 @@ drawGraph = function(){
 	// graph bead
 	gfx.strokeStyle = gfx.fillStyle = 'black';
 
+	gfx.font = '20 px verdana';
+	gfx.fillText('I: ' + frameIntensity, 350,20);
+
 	var beadOffsetX = lerp(Math.PI*2,0,currentTheta,0,500);
 	gfx.beginPath();
 	gfx.arc(origX + beadOffsetX,origY - frameIntensity,2,0,Math.PI*2);
