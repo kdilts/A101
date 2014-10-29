@@ -231,6 +231,8 @@ count = function(){
 	    };
 	}
 
+	//count1 = count1*Math.pow(parseInt(data[currentStar1][0]),4);
+	//count1 = count2*Math.pow(parseInt(data[currentStar2][0]),4);
 	gfx.fillText(''+count1 + '  ' + count2,350,40);
 
 	var star1area = Math.floor(Math.pow((parseFloat(data[currentStar1][1])*solarRad),2)*Math.PI);
@@ -240,9 +242,13 @@ count = function(){
 
 	//gfx.fillText(''+ count1/(star1area + star2area) + '  ' + count2/(star1area + star2area),400,170);
 
+	console.log((count1*(parseInt(data[currentStar1][0])/parseInt(data[currentStar2][0])))/(star1area + star2area)
+		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area))
+
 	frameIntensity = lerp(
 		0,1,
-		count1/(star1area + star2area) + count2/(star1area + star2area),
+		(count1*(parseInt(data[currentStar1][0])/parseInt(data[currentStar2][0])))/(star1area + star2area)
+		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area),
 		0,350
 	);
 }
