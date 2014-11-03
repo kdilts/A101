@@ -63,6 +63,7 @@ window.onload = function(){
 		currentTheta = 0;
 		graphData = [];
 		graphIndex = 0;
+		maxIntensity = -1;
 	}
 
 	pauseButton.onclick = function(){
@@ -107,7 +108,7 @@ render = function(){
 		graphData = [];
 	}
 
-	if(maxIntensity === -1){ maxIntensity = frameIntensity; }
+	if(maxIntensity < frameIntensity){ maxIntensity = frameIntensity; }
 
 }
 
@@ -244,12 +245,9 @@ count = function(){
 
 	//gfx.fillText(''+ count1/(star1area + star2area) + '  ' + count2/(star1area + star2area),400,170);
 
-	frameIntensity = lerp(
-		0,1.2,
+	frameIntensity = 
 		(count1*(parseInt(data[currentStar1][0])/parseInt(data[currentStar2][0])))/(star1area + star2area)
-		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area),
-		0,350
-	);
+		+ (count2*(parseInt(data[currentStar2][0])/parseInt(data[currentStar1][0])))/(star1area + star2area);
 }
 
 drawStar1 = function(){
@@ -325,7 +323,13 @@ drawGraph = function(){
 
 		var beadOffsetX = lerp(Math.PI*2,0,currentTheta,0,500);
 		gfx.beginPath();
-		gfx.arc(origX + beadOffsetX,origY - frameIntensity,2,0,Math.PI*2);
+		gfx.arc(
+			origX + beadOffsetX,
+		
+			origY - lerp(0,maxIntensity,frameIntensity,0,350),
+		
+			2,0,Math.PI*2
+		);
 		gfx.fill(); gfx.stroke();
 
 		graphData[graphIndex] = [];
