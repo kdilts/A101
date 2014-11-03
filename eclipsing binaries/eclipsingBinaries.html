@@ -9,14 +9,14 @@ var angleSlider; var separationSlider;
 var buttons = [];
 
 var currentStar1 = 'A'; var currentStar2 = 'F';
-var currentTheta = 0;  var step = -.02;
+var currentTheta = Math.PI/2;  var step = -.02;
 
 var currentAngle = 10; var currentSeparation = '12'
 
 var solarRad = 7;
 
 var graphData = []; var graphIndex = 0;
-var frameIntensity = 0;
+var frameIntensity = 0; var maxIntensity = -1;
 
 var intervalId; var playing = true;
 
@@ -106,6 +106,8 @@ render = function(){
 		graphIndex = 0;
 		graphData = [];
 	}
+
+	if(maxIntensity === -1){ maxIntensity = frameIntensity; }
 
 }
 
@@ -314,40 +316,48 @@ drawGraph = function(){
 		drawLine(origX+490,origY-y*70,origX+500,origY-y*70);
 	}
 
-	// graph bead
-	gfx.strokeStyle = gfx.fillStyle = 'black';
+	if(maxIntensity !== -1){
+		// graph bead
+		gfx.strokeStyle = gfx.fillStyle = 'black';
 
-	gfx.font = '20 px verdana';
-	gfx.fillText('I: ' + frameIntensity, 350,20);
+		gfx.font = '20 px verdana';
+		gfx.fillText('I: ' + frameIntensity, 350,20);
 
-	var beadOffsetX = lerp(Math.PI*2,0,currentTheta,0,500);
-	gfx.beginPath();
-	gfx.arc(origX + beadOffsetX,origY - frameIntensity,2,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
-	graphData[graphIndex] = [];
-	graphData[graphIndex][0] = beadOffsetX;
-	graphData[graphIndex][1] = frameIntensity;
-	graphIndex++;
-
-	// plot data
-	if(graphIndex > 0){
-		gfx.save();
-		gfx.lineWidth = 2;
-		gfx.strokeStyle = 'black';
-		gfx.translate(origX, origY);
-
+		var beadOffsetX = lerp(Math.PI*2,0,currentTheta,0,500);
 		gfx.beginPath();
-		gfx.moveTo(0,-graphData[0]);
+		gfx.arc(origX + beadOffsetX,origY - frameIntensity,2,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
 
-		for(var i = 1; i < graphData.length; i++){
-			gfx.lineTo(graphData[i][0],-graphData[i][1]);
+		graphData[graphIndex] = [];
+		graphData[graphIndex][0] = beadOffsetX;
+		graphData[graphIndex][1] = frameIntensity;
+		graphIndex++;
+
+		// plot data
+		if(graphIndex > 0){
+			gfx.save();
+			gfx.lineWidth = 2;
+			gfx.strokeStyle = 'black';
+			gfx.translate(origX, origY);
+
+			gfx.beginPath();
+			gfx.moveTo(0,-graphData[0]);
+
+			for(var i = 1; i < graphData.length; i++){
+				gfx.lineTo(graphData[i][0],-graphData[i][1]);
+			}
+			gfx.stroke();
+
+			gfx.restore();
 		}
-		gfx.stroke();
-
+	}else{
+		gfx.save();
+		gfx.translate(origX+200,origY-125);
+		gfx.rotate(-Math.PI/4);
+		gfx.font = '24 px verdana';
+		gfx.fillText('Calculating...',0,0);
 		gfx.restore();
 	}
-
 }
 
 drawLine = function(x1,y1,x2,y2){
