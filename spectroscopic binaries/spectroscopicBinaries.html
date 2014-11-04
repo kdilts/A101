@@ -10,7 +10,7 @@ var buttons = [];
 var sliders = [];
 var textBoxes = [];
 
-var simSpeed = 1;
+var simSpeed = 3;
 
 var img;
 
@@ -126,6 +126,9 @@ window.onload = function(){
 	sliders[1] = document.getElementById('eSlider');
 	sliders[2] = document.getElementById('iSlider');
 	sliders[3] = document.getElementById('wSlider');
+
+	sliders[0].style.width = sliders[1].style.width =
+			sliders[2].style.width = sliders[3].style.width = 105;
 
 	sliders[0].value = 1.5;	sliders[1].value = 0.5;
 	sliders[2].value = 0;	sliders[3].value = 0;
