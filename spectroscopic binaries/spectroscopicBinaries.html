@@ -29,6 +29,9 @@ var currentSep = 1.5; var currentEcc = .5;
 var currentIncl; var currentNode;
 var currentMass1 = 1.75; var currentMass2 = 1;
 
+var star1Shift;
+var star2Shift;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -417,8 +420,8 @@ render = function(){
 	grd.addColorStop(1/6,'rgb(255,100,0)'); // orange
 	grd.addColorStop(2/6,'rgb(255,255,0)'); // yellow
 	grd.addColorStop(3/6,'rgb(0,255,0)'); // green
-	grd.addColorStop(4/6,'rgb(0,255,255)'); // teal
-	grd.addColorStop(5.5/6,'rgb(0,0,255)'); // blue
+	grd.addColorStop(3.8/6,'rgb(0,255,255)'); // teal
+	grd.addColorStop(5.75/6,'rgb(0,0,255)'); // blue
 	grd.addColorStop(1,'rgb(120,0,120)'); // violet
 
 	gfx.fillStyle = grd;
@@ -440,6 +443,44 @@ render = function(){
 
 	gfx.fillText('vx_1: ' + star1.vel.x, 150,400);
 	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);*/
+
+	// doppler shift lines
+	line1x = 360; line2x = 600;
+	drawLine(line1x,265,line1x,275);
+	drawLine(line2x,265,line2x,275);
+
+	lineWidth = 2;
+	// star1 lines
+	drawLine(line1x,265,line1x,385);
+	drawLine(line2x,265,line2x,385);
+
+	// star 2 lines
+	drawLine(line1x,265,line1x,385);
+	drawLine(line2x,265,line2x,385);
+
+	lineWidth = 1;
+
+	if(tracking[0]){
+		// star 1 dots
+		star1Shift = trace[0][track[0]].vx;
+		star2Shift = trace[1][track[1]].vx;
+		console.log(star1Shift, star2Shift);
+
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.beginPath(); gfx.arc(line1x+star1Shift*10,275,3,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		gfx.beginPath(); gfx.arc(line2x+star1Shift*10,275,3,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		// star 2 dots
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+		gfx.beginPath(); gfx.arc(line1x+star2Shift,275,3,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		gfx.beginPath(); gfx.arc(line2x+star2Shift,275,3,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}
 }
 
 drawLine = function(x1,y1,x2,y2){
