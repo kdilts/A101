@@ -13,6 +13,8 @@ var mode = 0; // indicates which page is being displayed.
 var gridSpots = [];
 var mX; var mY;
 
+var wrongCellNum;
+
 window.onload = function(){
 	window.scrollTo(0,0);
 	displayGridPage();
@@ -133,6 +135,8 @@ displayAnswer = function(cellNum, answerNum){
 
 displayWrong = function(cellNum){
 
+	wrongCellNum = cellNum;
+
 	addHeader(1,'Nope, not a known Cepheid... Try Again!','position:absolute; left:150px; top:0px');
 
 	h = document.createElement('B1');
@@ -149,8 +153,12 @@ displayWrong = function(cellNum){
 
 	addImage(path+'anim' + cellNum + '.gif', 200, 200, 'position:absolute; left:360px; top:180px', 1);
 
-	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20px; top:400px',
+	addLink(1,'#', 'changeMode(wrongCellNum); return false;', 'position:absolute; left:20px; top:400px',
+		'Try again', 'color:FF0000');
+
+	addLink(1,'./cepheidHunt.html', 'window.location(this.href); return false;', 'position:absolute; left:20px; top:418px',
 		'Return to the main WF4 8x8 grid', 'color:FF0000');
+
 }
 
 displayEmptyCell = function(){
