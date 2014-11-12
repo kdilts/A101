@@ -32,6 +32,8 @@ var currentMass1 = 1.75; var currentMass2 = 1;
 var star1Shift;
 var star2Shift;
 
+var pixToA = 450/30000;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -258,6 +260,19 @@ drawStars = function(){
 	gfx.beginPath(); gfx.arc(center.x, center.y,1,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
+	if(!tracking[0] && !tracking[1]){
+		drawLine(star1.pos.x,star1.pos.y,star2.pos.x,star2.pos.y);
+	}else if(tracking[0] && tracking[1]){
+		drawLine(trace[0][track[0]].x,trace[0][track[0]].y,
+			trace[1][track[1]].x,trace[1][track[1]].y);
+	}else if(tracking[0] && !tracking[1]){
+		drawLine(trace[0][track[0]].x,trace[0][track[0]].y,
+			star2.pos.x,star2.pos.y);
+	}else if(!tracking[0] && tracking[1]){
+		drawLine(star1.pos.x,star1.pos.y,
+			trace[1][track[1]].x,trace[1][track[1]].y);
+	}
+
 	// draw copy
 	gfx.drawImage(
 		canvas,
@@ -462,9 +477,9 @@ render = function(){
 
 	if(tracking[0]){
 		// star 1 dots
-		star1Shift = trace[0][track[0]].vx;
-		star2Shift = trace[1][track[1]].vx;
-		console.log(star1Shift, star2Shift);
+		star1Shift = trace[0][track[0]].vx*pixToA/10;
+		star2Shift = trace[1][track[1]].vx*pixToA/10;
+		//console.log(star1Shift, star2Shift);
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.beginPath(); gfx.arc(line1x+star1Shift*10,275,3,0,Math.PI*2);
