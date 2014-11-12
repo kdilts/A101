@@ -10,29 +10,30 @@ var buttons = [];
 var sliders = [];
 var textBoxes = [];
 
-var simSpeed = 3;
+var simSpeed = 1;
 
 var img;
 
 var center = null;
 
 var star1 = { pos:null, vel:null, accel:null };
-var star1MaxVel; var star1MinVel; var star1Period;
+var star1MaxVel = 1300.1; var star1MinVel = -1300.1; var star1Period;
 
 var star2 = { pos:null, vel:null, accel:null };
-var star2MaxVel; var star2MinVel; var star2Period;
+var star2MaxVel = 1300.1; var star2MinVel = -1300.1; var star2Period;
 
 var trace = []; var tracing = []; var showTrace = true;
 var tracking = []; var track = [];
 
 var currentSep = 1.5; var currentEcc = .5;
 var currentIncl; var currentNode;
-var currentMass1 = 1.75; var currentMass2 = 1;
+var currentMass1 = 2; var currentMass2 = 1;
 
 var star1Shift;
 var star2Shift;
 
 var pixToA = 450/30000;
+var gravity = 50000;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -155,7 +156,7 @@ update = function(){
 	if(!tracking[0]){
 		star1.vel = add(star1.vel, star1.accel);
 		star1.pos = add(star1.pos, mult(star1.vel, .001));
-		star1.accel = mult(unit(sub(center,star1.pos)),50000/Math.pow(mag(sub(center,star1.pos)),2));
+		star1.accel = mult(unit(sub(center,star1.pos)),gravity/Math.pow(mag(sub(center,star1.pos)),2));
 
 		star1.accel = mult(star1.accel,currentMass1);
 	}
@@ -163,7 +164,7 @@ update = function(){
 	if(!tracking[1]){
 		star2.vel = add(star2.vel, star2.accel);
 		star2.pos = add(star2.pos, mult(star2.vel, .001));
-		star2.accel = mult(unit(sub(center,star2.pos)),50000/Math.pow(mag(sub(center,star2.pos)),2));
+		star2.accel = mult(unit(sub(center,star2.pos)),gravity/Math.pow(mag(sub(center,star2.pos)),2));
 
 		star2.accel = mult(star2.accel,currentMass2);
 	}
@@ -171,19 +172,19 @@ update = function(){
 
 trace = function(){
 	if(tracing[0] && !tracking[0]){
-		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) });
+		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.x* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
-		if(star1MinVel === undefined || star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) < star1MinVel){
-			star1MinVel = star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		if(star1MinVel === undefined || trace[0][trace[0].length-1].vx < star1MinVel){
+				star1MinVel = trace[0][trace[0].length-1].vx;
 		}
 
-		if(star1MaxVel === undefined || star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180) > star1MaxVel){
-			star1MaxVel = star1.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		if(star1MaxVel === undefined || trace[0][trace[0].length-1].vx > star1MaxVel){
+				star1MaxVel = trace[0][trace[0].length-1].vx;
 		}
 
 		if(trace[0].length > 50){
 			if(dist(trace[0][trace[0].length-1],trace[0][0]) < .6){
-				tracing[0] = false; console.log('stop ' + 0);
+				tracing[0] = false; //console.log('stop ' + 0);
 				tracking[0] = true;
 				star1Period = trace[0].length-1;
 			}
@@ -191,19 +192,19 @@ trace = function(){
 	}
 
 	if(tracing[1] && !tracking[1]){
-		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) });
+		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.x* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
-		if(star2MinVel === undefined || star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) < star2MinVel){
-			star2MinVel = star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		if(star2MinVel === undefined || trace[1][trace[1].length-1].vx < star2MinVel){
+			star2MinVel = trace[1][trace[1].length-1].vx;
 		}
 
-		if(star2MaxVel === undefined || star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180) > star2MaxVel){
-			star2MaxVel = star2.vel.x* Math.cos((90-currentIncl)*Math.PI/180);
+		if(star2MaxVel === undefined || trace[1][trace[1].length-1].vx > star2MaxVel){
+			star2MaxVel = trace[1][trace[1].length-1].vx;
 		}
 
 		if(trace[1].length > 50){
 			if(dist(trace[1][trace[1].length-1],trace[1][1]) < .6){
-				tracing[1] = false; console.log('stop ' + 1);
+				tracing[1] = false; //console.log('stop ' + 1);
 				tracking[1] = true;
 				star2Period = trace[1].length-1;
 			}
