@@ -305,15 +305,23 @@ drawStars = function(){
 	gfx.clearRect(300,300,230,230);
 
 	// draw earth view
-	gfx.drawImage(
-		canvas,
+	if(currentIncl !== 90){
+		gfx.drawImage(
+			canvas,
 
-		center.x-100, center.y-100,	230, 230,
+			center.x-100, center.y-100,	230, 230,
 
-		500, 400+.5*(230-230*(1-Math.sin(currentIncl*Math.PI/180))), 
-		230, 230*(1-Math.sin(currentIncl*Math.PI/180))
-	);
-	
+			500, 400+.5*(230-230*(1-Math.sin(currentIncl*Math.PI/180))), 
+			230, 230*(1-Math.sin(currentIncl*Math.PI/180))
+		);
+	}else{
+		gfx.strokeStyle = gfx.fillStyle = 'red';
+		drawLine(500,500,600,500);
+
+		gfx.strokeStyle = gfx.fillStyle = 'blue';
+		drawLine(600,500,700,500);
+	}
+
 	update();
 
 	gfx.strokeStyle = gfx.fillStyle = 'black';
