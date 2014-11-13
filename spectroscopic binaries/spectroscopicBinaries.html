@@ -173,7 +173,7 @@ update = function(){
 
 trace = function(){
 	if(tracing[0] && !tracking[0]){
-		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.y* parseFloat(Math.sin((90-currentIncl)*Math.PI/180).toFixed(15)) });
+		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.y* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
 		if(star1MinVel === undefined || trace[0][trace[0].length-1].vx < star1MinVel){
 				star1MinVel = trace[0][trace[0].length-1].vx;
@@ -193,7 +193,7 @@ trace = function(){
 	}
 
 	if(tracing[1] && !tracking[1]){
-		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.y* parseFloat(Math.sin((90-currentIncl)*Math.PI/180).toFixed(15)) });
+		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.y* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
 		if(star2MinVel === undefined || trace[1][trace[1].length-1].vx < star2MinVel){
 			star2MinVel = trace[1][trace[1].length-1].vx;
@@ -330,7 +330,7 @@ drawStars = function(){
 	gfx.fillText('Earth View', center.x+350, center.y+90);
 }
 
-plotData = function(){
+plotData = function(){ // TODO original shows 2 full orbits on the graph
 	var origX = 270; var origY = 175;
 	var maxV; var minV;
 
@@ -487,15 +487,15 @@ render = function(){
 
 	if(tracking[0]){
 		// star 1 dots
-		star1Shift = trace[0][track[0]].vx*pixToA/10;
-		star2Shift = trace[1][track[1]].vx*pixToA/10;
+		star1Shift = trace[0][track[0]].vx*pixToA;
+		star2Shift = trace[1][track[1]].vx*pixToA;
 		//console.log(star1Shift, star2Shift);
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
-		gfx.beginPath(); gfx.arc(line1x+star1Shift*10,275,3,0,Math.PI*2);
+		gfx.beginPath(); gfx.arc(line1x+star1Shift,275,3,0,Math.PI*2);
 		gfx.fill(); gfx.stroke();
 
-		gfx.beginPath(); gfx.arc(line2x+star1Shift*10,275,3,0,Math.PI*2);
+		gfx.beginPath(); gfx.arc(line2x+star1Shift,275,3,0,Math.PI*2);
 		gfx.fill(); gfx.stroke();
 
 		// star 2 dots
@@ -600,11 +600,24 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<input type='button' id='iDownButton' value='<-'>
 			<input type='button' id='iUpButton' value='->'>
 			</input></input></input>
-			<br></br><br>
+			<br>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp;
+			<b1>km/sec</b1>
+			</br><br>
 			<b1>w: </b1>
 			-90<input type = 'range' id = 'wSlider' min='-90' max = '90' step='15'>90
 			<input type='button' id='wDownButton' value='<-'>
 			<input type='button' id='wUpButton' value='->'>
 			</input></input></input>
+
 		</form>
 </body>
