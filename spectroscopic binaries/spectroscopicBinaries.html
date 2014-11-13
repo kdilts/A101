@@ -173,7 +173,7 @@ update = function(){
 
 trace = function(){
 	if(tracing[0] && !tracking[0]){
-		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.x* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
+		trace[0].push({ x:star1.pos.x, y:star1.pos.y, vx:star1.vel.y* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
 		if(star1MinVel === undefined || trace[0][trace[0].length-1].vx < star1MinVel){
 				star1MinVel = trace[0][trace[0].length-1].vx;
@@ -193,7 +193,7 @@ trace = function(){
 	}
 
 	if(tracing[1] && !tracking[1]){
-		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.x* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
+		trace[1].push({ x:star2.pos.x, y:star2.pos.y, vx:star2.vel.y* parseFloat(Math.cos((90-currentIncl)*Math.PI/180).toFixed(15)) });
 
 		if(star2MinVel === undefined || trace[1][trace[1].length-1].vx < star2MinVel){
 			star2MinVel = trace[1][trace[1].length-1].vx;
