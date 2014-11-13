@@ -25,9 +25,10 @@ var star2MaxVel = 1300.1; var star2MinVel = -1300.1; var star2Period;
 var trace = []; var tracing = []; var showTrace = true;
 var tracking = []; var track = [];
 
-var currentSep = 1.5; var currentEcc = .5;
-var currentIncl; var currentNode;
-var currentMass1 = 2; var currentMass2 = 1;
+var currentSep = 1; var sepValues = [.1,.2,.4,.6,.8,1,2];
+var currentEcc = .5;
+var currentIncl = 75; var currentNode = 0;
+var currentMass1 = 3; var currentMass2 = 1;
 
 var star1Shift;
 var star2Shift;
@@ -122,11 +123,11 @@ window.onload = function(){
 	buttons[6].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)-.1;}
 	buttons[7].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)+.1;}
 
-	buttons[8].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)-1;}
-	buttons[9].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)+1;}
+	buttons[8].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)-15;}
+	buttons[9].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)+15;}
 
-	buttons[10].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)-1;}
-	buttons[11].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)+1;}
+	buttons[10].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)-15;}
+	buttons[11].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)+15;}
 
 	sliders[0] = document.getElementById('aSlider');
 	sliders[1] = document.getElementById('eSlider');
@@ -136,8 +137,8 @@ window.onload = function(){
 	sliders[0].style.width = sliders[1].style.width =
 			sliders[2].style.width = sliders[3].style.width = 105;
 
-	sliders[0].value = 1.5;	sliders[1].value = 0.5;
-	sliders[2].value = 0;	sliders[3].value = 0;
+	sliders[0].value = currentSep;	sliders[1].value = currentEcc;
+	sliders[2].value = currentIncl;	sliders[3].value = currentNode;
 
 	textBoxes[0] = document.getElementById('massBox1');
 	textBoxes[1] = document.getElementById('massBox2');
@@ -571,7 +572,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<b1>km/sec</b1>
 			<br>
 			<b1>a: </b1>
-			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step='.1'>2.0
+			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step = '.1'>2.0
 			<input type='button' id='aDownButton' value='<-'>
 			<input type='button' id='aUpButton' value='->'>
 			</input></input></input>
@@ -595,13 +596,13 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			</input></input></input>
 			<br></br><br>
 			<b1>i: </b1>
-			0<input type = 'range' id = 'iSlider' min='0' max = '90'>90
+			0<input type = 'range' id = 'iSlider' min='0' max = '90' step='15'>90
 			<input type='button' id='iDownButton' value='<-'>
 			<input type='button' id='iUpButton' value='->'>
 			</input></input></input>
 			<br></br><br>
 			<b1>w: </b1>
-			-90<input type = 'range' id = 'wSlider' min='-90' max = '90'>90
+			-90<input type = 'range' id = 'wSlider' min='-90' max = '90' step='15'>90
 			<input type='button' id='wDownButton' value='<-'>
 			<input type='button' id='wUpButton' value='->'>
 			</input></input></input>
