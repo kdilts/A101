@@ -95,6 +95,8 @@ window.onload = function(){
 		tracing[0] = true; tracing[1] = true;
 		tracking[0] = false; tracking[1] = false;
 		track[0] = 0; track[1] = 0;
+
+		star1MaxVel = star1MinVel = star2MaxVel = star1MinVel = 1.1;
 	}
 
 	buttons[1].onclick = function(){
@@ -476,21 +478,22 @@ render = function(){
 	drawLine(line1x,265,line1x,275);
 	drawLine(line2x,265,line2x,275);
 
-	lineWidth = 2;
-	// star1 lines
-	drawLine(line1x,265,line1x,385);
-	drawLine(line2x,265,line2x,385);
-
-	// star 2 lines
-	drawLine(line1x,265,line1x,385);
-	drawLine(line2x,265,line2x,385);
-
-	lineWidth = 1;
-
 	if(tracking[0]){
-		// star 1 dots
 		star1Shift = trace[0][track[0]].vx*pixToA;
 		star2Shift = trace[1][track[1]].vx*pixToA;
+
+		gfx.lineWidth = 2;
+		// star1 lines
+		drawLine(line1x+star1Shift,275,line1x+star1Shift,380);
+		drawLine(line2x+star1Shift,275,line2x+star1Shift,380);
+
+		// star 2 lines
+		drawLine(line1x+star2Shift,275,line1x+star2Shift,380);
+		drawLine(line2x+star2Shift,275,line2x+star2Shift,380);
+
+		gfx.lineWidth = 1;
+
+		// star 1 dots
 		//console.log(star1Shift, star2Shift);
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
