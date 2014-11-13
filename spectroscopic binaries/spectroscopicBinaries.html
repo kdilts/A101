@@ -121,8 +121,55 @@ window.onload = function(){
 		intervalId = setInterval(render,1000/60*simSpeed);
 	}
 
-	buttons[4].onclick = function(){sliders[0].value = parseFloat(sliders[0].value)-.1;}
-	buttons[5].onclick = function(){sliders[0].value = parseFloat(sliders[0].value)+.1;}
+	buttons[4].onclick = function(){
+		switch(parseFloat(sliders[0].value)){
+			case .1:
+				return;
+			case .2:
+				sliders[0].value = parseFloat(sliders[0].value)-.1;
+				return;
+			case .4:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case .6:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case .8:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case 1:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case 2:
+				sliders[0].value = parseFloat(sliders[0].value)-1;
+				return;
+		}
+	}
+
+	buttons[5].onclick = function(){
+		switch(parseFloat(sliders[0].value)){
+			case .1:
+				sliders[0].value = parseFloat(sliders[0].value)+.1;
+				return;
+			case .2:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .4:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .6:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .8:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case 1:
+				sliders[0].value = parseFloat(sliders[0].value)+1;
+				return;
+			case 2:
+				return;
+		}
+	}
 
 	buttons[6].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)-.1;}
 	buttons[7].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)+.1;}
@@ -137,6 +184,13 @@ window.onload = function(){
 	sliders[1] = document.getElementById('eSlider');
 	sliders[2] = document.getElementById('iSlider');
 	sliders[3] = document.getElementById('wSlider');
+
+	sliders[0].onchange = function(){
+		console.log(sliders[0].value, sepValues.indexOf(parseFloat(sliders[0].value)))
+		while(sepValues.indexOf(parseFloat(sliders[0].value)) === -1){
+			sliders[0].value -= .1;
+		}
+	}
 
 	sliders[0].style.width = sliders[1].style.width =
 			sliders[2].style.width = sliders[3].style.width = 105;
