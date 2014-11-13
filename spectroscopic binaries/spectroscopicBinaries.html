@@ -36,6 +36,8 @@ var star2Shift;
 var pixToA = 450/30000;
 var gravity = 50000;
 
+var maxV; var minV;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -332,7 +334,7 @@ drawStars = function(){
 
 plotData = function(){ // TODO original shows 2 full orbits on the graph
 	var origX = 270; var origY = 175;
-	var maxV; var minV;
+	
 
 	if(tracking[0] && tracking[1]){
 		if(star1MaxVel > star2MaxVel){ maxV = star1MaxVel; }else{ maxV = star2MaxVel; }
@@ -421,7 +423,7 @@ render = function(){
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.strokeRect(270,100,450,150);
 	for(var i = 0; i < 10; i++){
-		drawLine(270+i*47.2,175,285+i*47.2,175);
+		drawLine(270+i*47.2,100+lerp(minV,maxV,0,0,150),285+i*47.2,100+lerp(minV,maxV,0,0,150));
 	}
 
 	plotData();
