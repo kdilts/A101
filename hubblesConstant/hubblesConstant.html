@@ -3,8 +3,8 @@
 var canvas; var gfx;
 var cwidth; var cheight;
 
-var origX = 130; var origY = 525;
-var width = 600; var height = 450;
+var origX = 130; var origY = 585;
+var width = 750; var height = 550;
 var cellSize = 15;
 
 var mx; var my;
@@ -56,16 +56,16 @@ window.onload = function(){
 
 	for(var i = 0; i < 12; i++){
 		if(i%2 !== 0){
-			objects.push(new dragableObject(775,50+(Math.floor(i/2))*100,40,40,i));
+			objects.push(new dragableObject(920,50+(Math.floor(i/2))*100,40,40,i));
 		}else{
-			objects.push(new dragableObject(875,50+(Math.floor(i/2))*100,40,40,i));
+			objects.push(new dragableObject(1005,50+(Math.floor(i/2))*100,40,40,i));
 		}
 	}
 
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){ window.resizeTo(1085,750); render(); }
+window.onresize = function(){ window.resizeTo(1085,800); render(); }
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
@@ -76,11 +76,11 @@ render = function(){
 
 	gfx.fillStyle = 'red';
 	gfx.font = '20px verdana';
-	gfx.fillText('Hubble\'s Law', 300,45);
+	gfx.fillText('Hubble\'s Law', 300,25);
 
 	gfx.fillStyle = 'green';
 	gfx.font = '20px verdana';
-	gfx.fillText('Distance (Mpc)', 300,580);
+	gfx.fillText('Distance (Mpc)', 370,635);
 
 	gfx.save();
 	gfx.translate(50,400);
@@ -89,13 +89,13 @@ render = function(){
 	gfx.restore();
 
 	gfx.strokeStyle = 'yellow';
-	gfx.strokeRect(130,75,600,450);
+	gfx.strokeRect(130,35,width,height);
 
 	gfx.strokeStyle = 'red';
 
 	for(var i = 1; i*cellSize < width; i++){
 		gfx.beginPath(); gfx.moveTo(origX+i*cellSize,origY);
-		gfx.lineTo(origX+i*cellSize,origY-450); gfx.stroke();
+		gfx.lineTo(origX+i*cellSize,origY-550); gfx.stroke();
 	}
 
 	for(var i = 1; i*cellSize < height; i++){
@@ -106,13 +106,13 @@ render = function(){
 	gfx.strokeStyle = gfx.fillStyle = 'white';
 	gfx.font = '12px verdana';
 	for(var i = 0; i < 13; i++){
-		gfx.fillText(''+i*90, origX+i*46.5, origY+20);
+		gfx.fillText(''+i*90, origX+i*60, origY+15);
 	}
 
 	gfx.save();
 	gfx.translate(origX-48, origY-54);
 	for(var i = 1; i <= 6; i++){
-		gfx.fillText(i+'0,000', 0,-(i-1)*66);
+		gfx.fillText(i+'0,000', 0,-(i-1)*92);
 	}
 	gfx.restore();
 
@@ -120,8 +120,8 @@ render = function(){
 
 	gfx.fillStyle = gfx.strokeStyle = 'yellow';
 	gfx.font = '22px verdana bold';
-	gfx.fillText('Drag each cluster into the appropriate place on the graph.', 20,625);
-	gfx.fillText('Note: Some clusters will not have sufficient information to be plotted until you calculate the distance later in the lab.', 20,650);
+	gfx.fillText('Drag each cluster into the appropriate place on the graph.', 20,680);
+	gfx.fillText('Note: Some clusters will not have sufficient information to be plotted until you calculate the distance later in the lab.', 20,715);
 	
 	for(var o in objects){ objects[o].draw(); }
 
@@ -139,7 +139,7 @@ dragableObject = function(x,y,sx,sy,id){
 		if(drag === this.id){
 			this.x = mx; this.y = my;
 			gfx.font = '20px verdana';
-			gfx.fillText(strings[id], 20, 600)
+			gfx.fillText(strings[id], 20, 640)
 		}
 
 		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
@@ -147,14 +147,14 @@ dragableObject = function(x,y,sx,sy,id){
 				if(!mousedown){
 					//gfx.fillText('hover',20,40);
 					gfx.font = '20px verdana';
-					gfx.fillText(strings[id], 20, 600)
+					gfx.fillText(strings[id], 20, 640)
 				}
 				else if(drag === -1){
 					//gfx.fillText('drag',20,40);
 					this.x = mx; this.y = my;
 					drag = id;
 					gfx.font = '20px verdana';
-					gfx.fillText(strings[id], 20, 600)
+					gfx.fillText(strings[id], 20, 640)
 				}
 			}
 		}
