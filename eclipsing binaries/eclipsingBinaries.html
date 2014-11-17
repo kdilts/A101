@@ -127,8 +127,8 @@ drawStats = function(){
 	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*8);
 	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*9);
 
-	gfx.fillText(''+angleSlider.value, 132,65);
-	gfx.fillText(''+separationSlider.value, 142,148);
+	gfx.fillText(''+angleSlider.value, 56,80);
+	gfx.fillText(''+separationSlider.value, 88,165);
 
 	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*11);
 	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*12);
@@ -395,22 +395,19 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<input type='button' id='pauseButton' value='Pause'>
 			<br></br><br>
 			<b1>Angle: </b1>
-			0<input type = 'range' id = 'angleSlider' min='0' max = '90'>90
-			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type = 'button' id = 'aDownButton' value = '<--'>
 			<input type = 'button' id = 'aUpButton' value = '-->'>
+			<br>
+			0<input type = 'range' id = 'angleSlider' min='0' max = '90'>90
 			</input>
 			<br></br><br>
 			<b1>Separation: </b1>
-			2<input type = 'range' id = 'separationSlider' min='2' max = '25'>25
-			<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type = 'button' id = 'sDownButton' value = '<--'>
 			<input type = 'button' id = 'sUpButton' value = '-->'>
-			</input>
+			</input><br>
+			2<input type = 'range' id = 'separationSlider' min='2' max = '25'>25
 			<br></br><br>
 			<b1>Star 1: </b1><select id='pulldown1'>
 				<option value = "B">B</option>
