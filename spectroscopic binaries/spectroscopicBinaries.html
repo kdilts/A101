@@ -488,7 +488,7 @@ render = function(){
 	gfx.font = '14px verdana';
 	gfx.fillText(''+simSpeed,445,25);
 	for(var s in sliders){
-		gfx.fillText(''+sliders[s].value,110,150+s*63);
+		gfx.fillText(''+sliders[s].value,40,120+s*83);
 	}
 
 	//gfx.drawImage(img,230,280,450,80);
@@ -631,10 +631,11 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<b1>km/sec</b1>
 			<br>
 			<b1>a: </b1>
-			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step = '.1'>2.0
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<input type='button' id='aDownButton' value='<-'>
-			<input type='button' id='aUpButton' value='->'>
+			<input type='button' id='aUpButton' value='->'><br>
 			</input></input></input>
+			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step = '.1'>2.0
 			<br></br>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -649,16 +650,18 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<b1>km/sec</b1>
 			<br>
 			<b1>e: </b1>
-			0.0<input type = 'range' id = 'eSlider' min='0' max = '.9' step='.1'>0.9
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<input type='button' id='eDownButton' value='<-'>
 			<input type='button' id='eUpButton' value='->'>
-			</input></input></input>
+			</input></input></input><br>
+			0.0<input type = 'range' id = 'eSlider' min='0' max = '.9' step='.1'>0.9
 			<br></br><br>
 			<b1>i: </b1>
-			0<input type = 'range' id = 'iSlider' min='0' max = '90' step='15'>90
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<input type='button' id='iDownButton' value='<-'>
 			<input type='button' id='iUpButton' value='->'>
-			</input></input></input>
+			</input></input></input><br>
+			0<input type = 'range' id = 'iSlider' min='0' max = '90' step='15'>90
 			<br>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -673,10 +676,11 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<b1>km/sec</b1>
 			</br><br>
 			<b1>w: </b1>
-			-90<input type = 'range' id = 'wSlider' min='-90' max = '90' step='15'>90
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<input type='button' id='wDownButton' value='<-'>
 			<input type='button' id='wUpButton' value='->'>
-			</input></input></input>
+			</input></input></input><br>
+			-90<input type = 'range' id = 'wSlider' min='-90' max = '90' step='15'>90
 
 		</form>
 </body>
