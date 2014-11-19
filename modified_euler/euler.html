@@ -16,6 +16,10 @@ var sunRad = 1; var sunMass = 1;
 
 var planets = [];
 
+var mx; var my;
+
+var initMass = .3; var initVelMod = 20;
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
@@ -27,11 +31,24 @@ window.onload = function(){
 	setInterval(render,1000/intervalDiv);
 }
 
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!e.x){ mx = e.clientX; my = e.clientY; }
+}
+
 window.onmousedown = function(e){
-	var mx = e.x; var my = e.y;
+	mx = e.x; my = e.y;
 	if(!e.x){ mx = e.clientX; my = e.clientY; }
 
 	planets.push(new planet(mx,my));
+}
+
+window.onkeydown = function(e){
+	console.log(e.which);
+	if(e.which === 32){ planets = []; }
+
+	if(e.which === 38){ initVelMod++; }
+	if(e.which === 40){ initVelMod--; }
 }
 
 window.onresize = function(){ render(); }
@@ -52,14 +69,25 @@ render = function(){
 	drawStar(cwidth/2,cheight/2);
 
 	for(var p in planets){ planets[p].draw(); }
+
+	new planet(mx,my).draw();
+	drawLine(mx,my,mx,my+initMass*initVelMod*5)
+
+	setColor('white');
+	drawLine(mx,my,cwidth/2,cheight/2);
+	gfx.fillText(''+(mag(sub(new vec2(mx,my), new vec2(cwidth/2,cheight/2)))/pixPerAu).toFixed(2) + ' Au',mx+20,my);
+
+	setColor('red');
+	gfx.fillText('New planet mass: ' + initMass,cwidth/2,15);
+	gfx.fillText('New planet velocity: (0,' + initMass*initVelMod + ')', cwidth/2,30)
 }
 
 planet = function(x,y){
-	this.mass = .3;
+	this.mass = initMass;
 	this.rad = this.mass*solarRadPerAu*pixPerAu*2;
 
 	this.pos = new vec2(x,y);
-	this.vel = new vec2(0,this.mass*20);
+	this.vel = new vec2(0,this.mass*initVelMod);
 	this.accel = new vec2(0,0);
 
 	this.draw = function(){
