@@ -6,7 +6,7 @@ var cwidth; var cheight;
 var pixPerAu = 100;
 var kmPerAu = 149597871;
 var pixPerKm = pixPerAu/kmPerAu;
-var solarRadPerAu = .465; // this is actually ten times the true value
+var solarRadPerAu = .0465*5; // the true value is .00465
 
 var time = 0; var tick = 0;
 
@@ -18,9 +18,9 @@ var planets = [];
 
 var mx; var my;
 
-var initMass = .1; var initVelMod = 60;
+var initMass = .1; var initVel = 3;
 
-var showPreview = true;
+var showPreview = true; var previewItr = 500;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -37,14 +37,14 @@ window.onmousemove = function(e){
 	mx = e.x; my = e.y;
 	if(!e.x){ mx = e.clientX; my = e.clientY; }
 
-	my = cheight/2;
+	//my = cheight/2;
 }
 
 window.onmousedown = function(e){
 	mx = e.x; my = e.y;
 	if(!e.x){ mx = e.clientX; my = e.clientY; }
 
-	my = cheight/2;
+	//my = cheight/2;
 
 	//planets.pop();
 	planets.push(new planet(mx,my));
@@ -54,13 +54,16 @@ window.onkeydown = function(e){
 	console.log(e.which);
 	if(e.which === 32){ planets = []; }
 
-	if(e.which === 40){ initVelMod++; }
-	if(e.which === 38){ initVelMod--; }
+	if(e.which === 40){ initVel++; }
+	if(e.which === 38){ initVel--; }
 
 	if(e.which === 39){ initMass+=.01; }
 	if(e.which === 37){ initMass-=.01; if(initMass <= 0){ initMass = .01; } }
 
-	if(e.which ===80){ if(showPreview){ showPreview = false; }else{ showPreview = true; } }
+	if(e.which === 80){ if(showPreview){ showPreview = false; }else{ showPreview = true; } }
+
+	if(e.which === 73){ previewItr -= 10; }
+	if(e.which === 79){ previewItr += 10; }
 }
 
 window.onresize = function(){ render(); }
@@ -86,7 +89,7 @@ render = function(){
 
 	setColor('red');
 	gfx.fillText('New planet mass: ' + initMass.toFixed(2),cwidth/2,15);
-	gfx.fillText('New planet velocity: (0,' + (initMass*initVelMod).toFixed(2) + ')', cwidth/2,30)
+	gfx.fillText('New planet velocity: (0,' + initVel.toFixed(2) + ')', cwidth/2,30)
 }
 
 drawMouse = function(){
@@ -95,7 +98,7 @@ drawMouse = function(){
 	new planet(mx,my).draw();
 
 	gfx.lineWidth = 3;
-	drawLine(mx,my,mx,my+initMass*initVelMod*5)
+	drawLine(mx,my,mx,my+initMass*initVel*5)
 	gfx.lineWidth = 1;
 
 	setColor('white');
@@ -110,7 +113,7 @@ drawMouse = function(){
 
 preview = function(){
 	var p = new planet(mx,my);
-	for(var i = 0; i < 200; i++){
+	for(var i = 0; i < previewItr; i++){
 		p.prev();
 	}
 	p.stat();
@@ -146,7 +149,7 @@ planet = function(x,y){
 	this.rad = this.mass*solarRadPerAu*pixPerAu*2;
 
 	this.pos = new vec2(x,y);
-	this.vel = new vec2(0,this.mass*initVelMod);
+	this.vel = new vec2(0,initVel);
 	this.accel = new vec2(0,0);
 
 	this.minX = this.maxX = this.minY = this.maxY = null;
@@ -158,6 +161,10 @@ planet = function(x,y){
 		gfx.arc(this.pos.x,this.pos.y,this.rad,0,Math.PI*2);
 		gfx.fill();
 		gfx.stroke();
+
+		setColor('yellow');
+		gfx.font = '14px verdana';
+		gfx.fillText(''+this.mass.toFixed(2),this.pos.x,this.pos.y);
 
 		this.update();
 	}
@@ -209,7 +216,12 @@ planet = function(x,y){
 		this.pos = add(this.pos, this.vel);
 		this.accel = sub(new vec2(cwidth/2,cheight/2), this.pos);
 
-		this.accel = mult(this.accel, this.mass/intervalDiv);
+		// (G*(m1*m2/r^2))/m2
+		var G = 1000; var m1 = sunMass; var m2 = this.mass;
+		var r = mag(this.accel);
+
+		this.accel = unit(this.accel);
+		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
 	}
 }
 
