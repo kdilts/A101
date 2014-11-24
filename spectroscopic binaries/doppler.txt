@@ -1,0 +1,5 @@
+lambda_0 = lambda_s * (1-(vr/c))
+
+pixel to angstrom ratio:
+
+130/3000 OR pixel length of spectrum / 30000

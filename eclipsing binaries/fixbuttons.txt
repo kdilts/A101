@@ -1,0 +1,9 @@
+move the slider and buttons down so the actual value lines up with the lable.
+
+ex:
+
+
+Angle: 24
+
+0 ----|------- 90
+    <-  ->

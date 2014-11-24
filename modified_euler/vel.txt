@@ -1,0 +1,25 @@
+0 = .5 * m2 * v^2 - (G * m1 * m2)/rmin^2
+
+^^-- solve for v, m2's should cancel
+everything must be SI units
+mass in kg
+radius m
+gravity m^3/s^2*kg or newtons*m^2/kg^2
+
+
+google: "orbital motion of a planet math"
+
+
+wiki: eliptical orbit
+mu = GM standard gravitational parameter 
+
+
+v = sqrt(mu * (2/r - 1/a))
+
+------------------------
+
+current accel is wrong
+
+accel should be: (G*(m1*m2/r^2)) / m2
+
+m2 is mass of planet

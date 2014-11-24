@@ -205,11 +205,7 @@ planet = function(x,y){
 	}
 
 	this.update = function(){
-		this.vel = add(this.vel, this.accel);
-		this.pos = add(this.pos, this.vel);
-		this.accel = sub(new vec2(cwidth/2,cheight/2), this.pos);
 
-		this.accel = mult(this.accel, this.mass/intervalDiv);
 	}
 }
 
