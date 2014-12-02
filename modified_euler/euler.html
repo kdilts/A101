@@ -8,6 +8,8 @@ var kmPerAu = 149597871;
 var pixPerKm = pixPerAu/kmPerAu;
 var solarRadPerAu = .0465*5; // the true value is .00465
 
+var G = 1000;
+
 var time = 0; var tick = 0;
 
 var intervalDiv = 60;
@@ -51,7 +53,7 @@ window.onmousedown = function(e){
 }
 
 window.onkeydown = function(e){
-	console.log(e.which);
+	//console.log(e.which);
 	if(e.which === 32){ planets = []; }
 
 	if(e.which === 40){ initVel+= .1; }
@@ -157,7 +159,7 @@ planet = function(x,y,a,t){
 
 	this.initTheta; this.curTheta; this.orbits = 0; this.countLock = true;
 
-	this.initTime = t; this.period;
+	this.initTime = t; this.simPeriod; this.calcPeriod;
 
 	this.draw = function(){
 		setColor('red');
@@ -171,7 +173,9 @@ planet = function(x,y,a,t){
 		if(this.curTheta){
 			gfx.fillText('Theta: '+this.curTheta,this.pos.x,this.pos.y);
 			gfx.fillText('Orbit count: '+this.orbits,this.pos.x,this.pos.y+20);
-			gfx.fillText('Period: '+this.period,this.pos.x,this.pos.y+40);
+			gfx.fillText('Sim Period: '+this.simPeriod,this.pos.x,this.pos.y+40);
+			gfx.fillText('semiMajor: '+this.semiMajor,this.pos.x,this.pos.y+60);
+			gfx.fillText('Calc Period: '+this.calcPeriod,this.pos.x,this.pos.y+80);
 		}
 
 		var v1 = sub(new vec2(this.pos.x,this.pos.y),new vec2(cwidth/2,cheight/2));
@@ -194,8 +198,25 @@ planet = function(x,y,a,t){
 			if(Math.abs(this.curTheta-this.initTheta) < 8 && !this.countLock){
 				this.countLock = true;
 				this.orbits++;
-				if(!this.period){ this.period = time - this.initTime; }
+				if(!this.simPeriod){ this.simPeriod = time - this.initTime; }
 			}
+
+			if(!this.minX || this.pos.x < this.minX){ this.minX = this.pos.x; }
+			if(!this.maxX || this.pos.x > this.maxX){ this.maxX = this.pos.x; }
+			if(!this.minY || this.pos.y < this.minY){ this.minY = this.pos.y; }
+			if(!this.maxY || this.pos.y > this.maxY){ this.maxY = this.pos.y; }
+
+			var tempX = this.maxX - this.minX;
+			var tempY = this.maxY - this.minY;
+
+			if(tempX > tempY){ this.semiMajor = ((tempX/2)/pixPerAu).toFixed(2); this.semiMinor = ((tempY/2)/pixPerAu).toFixed(2); }
+			else{ this.semiMajor = ((tempY/2)/pixPerAu).toFixed(2); this.semiMinor = ((tempX/2)/pixPerAu).toFixed(2); }
+
+			// T = 2*PI*sqrt(semimajor^3/mu)
+			// mu = G*mass of sun
+			var mu = G * sunMass;
+			this.calcPeriod = 2*Math.PI*Math.sqrt(Math.pow(this.semiMajor,3)/mu);
+			this.calcPeriod = this.calcPeriod.toFixed(2);
 		}
 
 		this.update();
@@ -249,7 +270,7 @@ planet = function(x,y,a,t){
 		this.accel = sub(new vec2(cwidth/2,cheight/2), this.pos);
 
 		// (G*(m1*m2/r^2))/m2
-		var G = 1000; var m1 = sunMass; var m2 = this.mass;
+		var m1 = sunMass; var m2 = this.mass;
 		var r = mag(this.accel);
 
 		this.accel = unit(this.accel);
