@@ -151,6 +151,7 @@ planet = function(x,y){
 	this.pos = new vec2(x,y);
 	this.vel = new vec2(0,initVel);
 	this.accel = new vec2(0,0);
+	this.theta;
 
 	this.minX = this.maxX = this.minY = this.maxY = null;
 	this.semiMajor = this.semiMinor = null;
@@ -165,6 +166,13 @@ planet = function(x,y){
 		setColor('yellow');
 		gfx.font = '14px verdana';
 		gfx.fillText(''+this.mass.toFixed(2),this.pos.x,this.pos.y);
+
+		drawLine(this.pos.x,this.pos.y,cwidth/2,cheight/2);
+		drawLine(this.pos.x,cheight/2,cwidth/2,cheight/2);
+		var v1 = sub(new vec2(this.pos.x,this.pos.y),new vec2(cwidth/2,cheight/2));
+		var v2 = sub(new vec2(this.pos.x,cheight/2),new vec2(cwidth/2,cheight/2));
+
+		console.log( dot(v1,v2) / (mag(v1),mag(v2)) );
 
 		this.update();
 	}
