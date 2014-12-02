@@ -47,7 +47,7 @@ window.onmousedown = function(e){
 	my = cheight/2;
 
 	//planets.pop();
-	planets.push(new planet(mx,my,true));
+	planets.push(new planet(mx,my,true,time));
 }
 
 window.onkeydown = function(e){
@@ -144,7 +144,7 @@ drawScale = function(x,y){
 	gfx.fillText('1 Au = ' + pixPerAu + ' pixels = ' + kmPerAu + ' Km', x, y-10);
 }
 
-planet = function(x,y,a){
+planet = function(x,y,a,t){
 	this.mass = initMass;
 	this.rad = this.mass*solarRadPerAu*pixPerAu*2;
 
@@ -155,10 +155,9 @@ planet = function(x,y,a){
 	this.minX = this.maxX = this.minY = this.maxY = null;
 	this.semiMajor = this.semiMinor = null;
 
-	this.initTheta;
-	this.curTheta;
-	this.orbits = 0;
-	this.countLock = true;
+	this.initTheta; this.curTheta; this.orbits = 0; this.countLock = true;
+
+	this.initTime = t; this.period;
 
 	this.draw = function(){
 		setColor('red');
@@ -170,12 +169,11 @@ planet = function(x,y,a){
 		setColor('yellow');
 		gfx.font = '14px verdana';
 		if(this.curTheta){
-			gfx.fillText(''+this.curTheta,this.pos.x,this.pos.y);
-			gfx.fillText(''+this.orbits,this.pos.x,this.pos.y+20);
+			gfx.fillText('Theta: '+this.curTheta,this.pos.x,this.pos.y);
+			gfx.fillText('Orbit count: '+this.orbits,this.pos.x,this.pos.y+20);
+			gfx.fillText('Period: '+this.period,this.pos.x,this.pos.y+40);
 		}
 
-		//drawLine(this.pos.x,this.pos.y,cwidth/2,cheight/2);
-		//drawLine(cwidth/2,cheight/2,cwidth/2+100,cheight/2);
 		var v1 = sub(new vec2(this.pos.x,this.pos.y),new vec2(cwidth/2,cheight/2));
 		var v2 = sub(new vec2(cwidth/2,cheight/2),new vec2(cwidth/2-100,cheight/2));
 		var dotP = dot(v1,v2);
@@ -186,18 +184,17 @@ planet = function(x,y,a){
 
 		if(a){
 			if(this.pos.y <= cheight/2){
-				//console.log(ang.toFixed(0) );
 				if(!this.initTheta){ this.initTheta = ang.toFixed(0); }
 				this.curTheta = ang.toFixed(0);
 			}else{
-				//console.log( (360-ang).toFixed(0) );
 				if(!this.initTheta){ this.initTheta = (360-ang).toFixed(0); }
 				this.curTheta = (360-ang).toFixed(0);
 			}
 			if(Math.abs(this.curTheta-this.initTheta) > 10){ this.countLock = false; }
-			if(Math.abs(this.curTheta-this.initTheta) < 4 && !this.countLock){
+			if(Math.abs(this.curTheta-this.initTheta) < 8 && !this.countLock){
 				this.countLock = true;
 				this.orbits++;
+				if(!this.period){ this.period = time - this.initTime; }
 			}
 		}
 
