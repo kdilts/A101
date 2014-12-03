@@ -214,6 +214,12 @@ render = function(){
 	
 	orbiter.draw();
 
+	gfx.strokeStyle = 'red';
+	gfx.beginPath();
+	gfx.moveTo(0,cheight*.42);
+	gfx.lineTo(cwidth,cheight*.42);
+	gfx.stroke();
+
 }
 
 orbiter = {
@@ -304,6 +310,19 @@ orbiter = {
 	}
 }
 
+countPix = function(){
+
+	var imgData = gfx.getImageData(0,0,cwidth,Math.ceil(cheight*.42));
+	var cyan = 0; var magenta = 0;
+
+	for(var p = 0; p < imgData.data.length; p += 4){
+		if(imgData.data[p] === 0 && imgData.data[p+1] === 255 && imgData.data[p+2] === 255){ cyan++; } // cyan
+		else if(imgData.data[p] === 255 && imgData.data[p+1] === 0 && imgData.data[p+2] === 255){ magenta++; } // magenta
+	}
+
+	console.log(cyan,magenta);
+}
+
 var angle;
 drawSectors = function(){
 		angle = lerp(0,100,slider.value,.0001,Math.PI/2);
@@ -334,7 +353,7 @@ drawSectors = function(){
 		gfx.fill();
 		gfx.stroke();
 
-		console.log('cyan area: ' + ellipticalArchArea(-angle,angle,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
+		//console.log('cyan area: ' + ellipticalArchArea(-angle,angle,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
 
 		gfx.beginPath();
 		for(var i = 0; i > -angle; i -= .01){
@@ -357,7 +376,8 @@ drawSectors = function(){
 		gfx.fill();
 		gfx.stroke();
 
-		console.log('magenta area: ' + ellipticalArchArea(-angle+Math.PI,angle+Math.PI,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
+		countPix();
+		//console.log('magenta area: ' + ellipticalArchArea(-angle+Math.PI,angle+Math.PI,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
 
 		gfx.beginPath();
 		for(var i = 0; i > -angle; i -= .01){
