@@ -9,6 +9,7 @@ var slowmobox; var showsectorsbox; var slider; var showvelbox; var showposbox;
 var minbox; var maxbox; var curbox; var distbox;
 
 var playing = true; var slow = false;
+var showvel = false; var showpos = false;
 
 var pixToAu = 200; var scaleFactor = 1;
 
@@ -89,46 +90,62 @@ window.onload = function(){
 		}
 	}
 
+	showvelbox.onchange = function(){
+		if(showvelbox.checked){
+			showvel = true;
+		}else{
+			showvel = false;
+		}
+	}
+
+	showposbox.onchange = function(){
+		if(showposbox.checked){
+			showpos = true;
+		}else{
+			showpos = false;
+		}
+	}
+
 	planetSelector.onchange = function(){
 		switch(parseInt(planetSelector.value)){
 			case 0:
-				currentPlanet = 'mercury'; scaleFactor = 1;
+				currentPlanet = 'mercury'; setScale(planetData['mercury'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 1:
-				currentPlanet = 'venus'; scaleFactor = 1;
+				currentPlanet = 'venus'; setScale(planetData['venus'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 2:
-				currentPlanet = 'earth'; scaleFactor = 1;
+				currentPlanet = 'earth'; setScale(planetData['earth'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 3:
-				currentPlanet = 'mars'; scaleFactor = 1;
+				currentPlanet = 'mars'; setScale(planetData['mars'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 4:
-				currentPlanet = 'jupiter'; scaleFactor = 10;
+				currentPlanet = 'jupiter'; setScale(planetData['jupiter'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 5:
-				currentPlanet = 'saturn'; scaleFactor = 10;
+				currentPlanet = 'saturn'; setScale(planetData['saturn'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 6:
-				currentPlanet = 'uranus'; scaleFactor = 10;
+				currentPlanet = 'uranus'; setScale(planetData['uranus'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 7:
-				currentPlanet = 'neptune'; scaleFactor = 10;
+				currentPlanet = 'neptune'; setScale(planetData['neptune'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 8:
-				currentPlanet = 'pluto'; scaleFactor = 10;
+				currentPlanet = 'pluto'; setScale(planetData['pluto'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 9:
-				currentPlanet = 'halley'; scaleFactor = 10;
+				currentPlanet = 'halley'; setScale(planetData['halley'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
 				break;
 			case 10:
@@ -151,6 +168,8 @@ window.onload = function(){
 
 	pos = new vec2(center.x+200, center.y);
 	vel = new vec2(0,-2); accel = new vec2(0,0);
+
+	setScale(planetData['mercury'].semimajor);
 
 	interval = setInterval(render,1000/60);
 }
@@ -187,6 +206,13 @@ render = function(){
 	setColor('blue');
 	fillCircle(pos.x,pos.y,3);
 	update();
+
+	// draw vectors
+	setColor('red');
+	if(showpos){ drawLine(center.x,center.y,pos.x,pos.y); }
+	gfx.lineWidth = 3;
+	if(showvel){ drawLine(pos.x,pos.y,pos.x+vel.x*20,pos.y+vel.y*20); }
+	gfx.lineWidth = 1;
 }
 
 update = function(){
@@ -199,6 +225,8 @@ update = function(){
 
 		accel = unit(accel);
 		accel = mult(accel, G/(r*r));
+
+		distbox.value = getScaleDist().toFixed(2) + ' AU';
 }
 
 setScale = function(semiMajor){
