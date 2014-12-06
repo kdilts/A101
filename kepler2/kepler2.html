@@ -18,6 +18,8 @@ var center;
 var pos; var vel; var accel; var currentTheta;
 var G = 1000;
 
+var init = true;
+
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
 	venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
@@ -111,42 +113,52 @@ window.onload = function(){
 			case 0:
 				currentPlanet = 'mercury'; setScale(planetData['mercury'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['mercury'].ecc);
 				break;
 			case 1:
 				currentPlanet = 'venus'; setScale(planetData['venus'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['venus'].ecc);
 				break;
 			case 2:
 				currentPlanet = 'earth'; setScale(planetData['earth'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['earth'].ecc);
 				break;
 			case 3:
 				currentPlanet = 'mars'; setScale(planetData['mars'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['mars'].ecc);
 				break;
 			case 4:
 				currentPlanet = 'jupiter'; setScale(planetData['jupiter'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['jupiter'].ecc);
 				break;
 			case 5:
 				currentPlanet = 'saturn'; setScale(planetData['saturn'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['saturn'].ecc);
 				break;
 			case 6:
 				currentPlanet = 'uranus'; setScale(planetData['uranus'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['uranus'].ecc);
 				break;
 			case 7:
 				currentPlanet = 'neptune'; setScale(planetData['neptune'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['neptune'].ecc);
 				break;
 			case 8:
 				currentPlanet = 'pluto'; setScale(planetData['pluto'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['pluto'].ecc);
 				break;
 			case 9:
 				currentPlanet = 'halley'; setScale(planetData['halley'].semimajor);
 				semimajorbox.disabled = true; eccbox.disabled = true;
+				predict(planetData['halley'].ecc);
 				break;
 			case 10:
 				currentPlanet = 'custom';
@@ -167,11 +179,12 @@ window.onload = function(){
 	center = new vec2(cwidth/2, cheight/2);
 
 	pos = new vec2(center.x+200, center.y);
-	vel = new vec2(0,-2); accel = new vec2(0,0);
+	vel = new vec2(0,-1); accel = new vec2(0,0);
 
 	setScale(planetData['mercury'].semimajor);
 
 	interval = setInterval(render,1000/60);
+
 }
 
 window.onresize = function(){
@@ -184,6 +197,7 @@ window.onresize = function(){
 }
 
 render = function(){
+	if(init){ predict(planetData['mercury'].semimajor); init = false; }
 
 	setColor('black');
 	gfx.fillRect(0,0,cwidth,cheight);
@@ -202,8 +216,11 @@ render = function(){
 	gfx.font = '16px verdana';
 	gfx.fillText('' + scaleFactor + ' AU', center.x-20, 50);
 
+	// orbit preview
+	project();
+
 	// draw planet
-	setColor('blue');
+	setColor('red');
 	fillCircle(pos.x,pos.y,3);
 	update();
 
@@ -213,6 +230,7 @@ render = function(){
 	gfx.lineWidth = 3;
 	if(showvel){ drawLine(pos.x,pos.y,pos.x+vel.x*20,pos.y+vel.y*20); }
 	gfx.lineWidth = 1;
+
 }
 
 update = function(){
@@ -253,10 +271,66 @@ update = function(){
 		}
 
 		// update distance box
-		distbox.value = getScaleDist().toFixed(1) + ' AU';
+		distbox.value = getScaleDist().toFixed(3) + ' AU';
 
 		setColor('yellow');
 		gfx.fillText('Theta: ' + currentTheta, 100,100);
+}
+
+predict = function(ecc){
+	var pEcc = 2; var initV = .65; var step = .00125;
+	while(Math.abs(pEcc - ecc) > .001 && initV < 2.3){
+		pos.x = center.x+200;
+		pos.y = center.y;
+
+		vel.x = 0; vel.y = 0-initV;
+
+		accel.x = 0; accel.y = 0;
+
+		var axis = project();
+		var pMajor; var pMinor;
+		if(axis[0] > axis[1]){
+			pMajor = parseFloat(axis[0]); pMinor = parseFloat(axis[1]);
+		} else{
+			pMajor = parseFloat(axis[1]); pMinor = parseFloat(axis[0]);
+		}
+		pEcc = Math.sqrt( 1 - ( (pMinor*pMinor) / (pMajor*pMajor) ) );
+		console.log(initV + ' >> ' + pEcc);
+		initV += step;
+	}
+	return initV-step;
+}
+
+project = function(){
+	var p = new vec2(pos.x,pos.y);
+	var v = new vec2(vel.x,vel.y);
+	var a = new vec2(accel.x,accel.y);
+
+	var maxX = -1; var maxY = -1;
+
+	setColor('white');
+	gfx.beginPath();
+	gfx.moveTo(pos.x,pos.y);
+
+	for(var i = 0; i < 625; i++){
+		v = add(v, a);
+		p = add(p, v);
+		a = sub(center, p);
+
+		var r = mag(a);
+
+		a = unit(a);
+		a = mult(a, G/(r*r));
+
+		if(p.x > maxX){ maxX = p.x; }
+		if(p.y > maxY){ maxY = p.y; }
+
+		gfx.lineTo(p.x,p.y);
+	}
+
+	gfx.stroke();
+
+	return([maxX-center.x, maxY-center.y]);
 }
 
 setScale = function(semiMajor){
