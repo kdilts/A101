@@ -15,7 +15,7 @@ var pixToAu = 200; var scaleFactor = 1;
 
 var center;
 
-var pos; var vel; var accel;
+var pos; var vel; var accel; var currentTheta;
 var G = 1000;
 
 var planetData = {
@@ -220,13 +220,43 @@ update = function(){
 		pos = add(pos, vel);
 		accel = sub(center, pos);
 
-		// (G*(m1*m2/r^2))/m2
 		var r = mag(accel);
 
 		accel = unit(accel);
 		accel = mult(accel, G/(r*r));
 
-		distbox.value = getScaleDist().toFixed(2) + ' AU';
+		// calculate theta for the planet and update current velocity
+		var v1 = sub(new vec2(pos.x,pos.y),center);
+		var v2 = sub(center,new vec2(center.x-100,center.y));
+		var dotP = dot(v1,v2);
+		var mags = mag(v1)*mag(v2);
+		var cosT = dotP / mags;
+		var theta = Math.acos(cosT);
+		var ang = theta*180/Math.PI;
+
+		if(pos.y <= center.y){
+			currentTheta = ang.toFixed(0);
+			var temp = lerp(
+				0,180,
+				parseFloat(currentTheta),
+				parseFloat(minbox.value),parseFloat(maxbox.value)
+			).toFixed(1) + ' km/s';
+			if(!isNaN(parseFloat(temp))){ curvel.value = temp; }
+		}else{
+			currentTheta = (360-ang).toFixed(0);
+			var temp = lerp(
+				181,360,
+				currentTheta,
+				parseFloat(maxbox.value),parseFloat(minbox.value)
+			).toFixed(1) + ' km/s';
+			if(!isNaN(parseFloat(temp))){ curvel.value = temp; }
+		}
+
+		// update distance box
+		distbox.value = getScaleDist().toFixed(1) + ' AU';
+
+		setColor('yellow');
+		gfx.fillText('Theta: ' + currentTheta, 100,100);
 }
 
 setScale = function(semiMajor){
