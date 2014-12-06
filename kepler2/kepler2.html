@@ -8,13 +8,14 @@ var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
 var slowmobox; var showsectorsbox; var slider; var showvelbox; var showposbox;
 var minbox; var maxbox; var curbox; var distbox;
 
-var interval; var playing = true; var currentPlanet = 'mercury';
+var playing = true; var slow = false;
 
-var orbitEcc = .17; var orbitSemiMajor = 175; var slow = false;
+var pixToAu = 200; var scaleFactor = 1;
 
-var timer1 = 0.5; var timer2 = 0.5; var timerMax = 0.5;
+var center;
 
-var sunMass = 1;
+var pos; var vel; var accel;
+var G = 1000;
 
 var planetData = {
 	mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
@@ -37,7 +38,6 @@ window.onload = function(){
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
 
 	gfx = canvas.getContext('2d');
-	orbiter.init();
 	
 	planetSelector =  document.getElementById('planetSelect');
 	semimajorbox = document.getElementById('semimajor');
@@ -62,11 +62,11 @@ window.onload = function(){
 
 	semimajorbox.onchange = function(){
 		if(isNaN(parseFloat(semimajorbox.value))){ semimajorbox.value = ''; return; }
-		updateOrbit();
+		semimajorbox.value = parseFloat(semimajorbox.value);
 	}
 	eccbox.onchange = function(){
 		if(isNaN(parseFloat(eccbox.value))){ eccbox.value = ''; return; }
-		updateOrbit();
+		eccbox.value = parseFloat(eccbox.value);
 	}
 
 	playpausebutton.onclick = function(){
@@ -79,10 +79,7 @@ window.onload = function(){
 		}
 	}
 
-	slider.onchange = function(){
-		timerMax = lerp(0,100,slider.value,0,.5);
-		timer1 = timer2 = timerMax;
-	}
+	slider.onchange = function(){}
 
 	slowmobox.onchange = function(){
 		if(slowmobox.checked){
@@ -95,63 +92,52 @@ window.onload = function(){
 	planetSelector.onchange = function(){
 		switch(parseInt(planetSelector.value)){
 			case 0:
-				currentPlanet = 'mercury';
+				currentPlanet = 'mercury'; scaleFactor = 1;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 1;
 				break;
 			case 1:
-				currentPlanet = 'venus';
+				currentPlanet = 'venus'; scaleFactor = 1;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 2;
 				break;
 			case 2:
-				currentPlanet = 'earth';
+				currentPlanet = 'earth'; scaleFactor = 1;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 4;
 				break;
 			case 3:
-				currentPlanet = 'mars';
+				currentPlanet = 'mars'; scaleFactor = 1;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 6;
 				break;
 			case 4:
-				currentPlanet = 'jupiter';
+				currentPlanet = 'jupiter'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 8;
 				break;
 			case 5:
-				currentPlanet = 'saturn';
+				currentPlanet = 'saturn'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 10;
 				break;
 			case 6:
-				currentPlanet = 'uranus';
+				currentPlanet = 'uranus'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 10;
 				break;
 			case 7:
-				currentPlanet = 'neptune';
+				currentPlanet = 'neptune'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 15;
 				break;
 			case 8:
-				currentPlanet = 'pluto';
+				currentPlanet = 'pluto'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 45;
 				break;
 			case 9:
-				currentPlanet = 'halley';
+				currentPlanet = 'halley'; scaleFactor = 10;
 				semimajorbox.disabled = true; eccbox.disabled = true;
-				sunMass = 65;
 				break;
 			case 10:
 				currentPlanet = 'custom';
 				semimajorbox.value = '';
 				eccbox.value = '';
-				minbox.value = ''; // TODO
-				maxbox.value = ''; // TODO
+				minbox.value = '';
+				maxbox.value = '';
 				semimajorbox.disabled = false; eccbox.disabled = false;
-				sunMass = 1;
 				return;
 			break;
 		}
@@ -159,267 +145,60 @@ window.onload = function(){
 				eccbox.value = ''+planetData[currentPlanet].ecc;
 				minbox.value = ''+planetData[currentPlanet].min + ' km/s';
 				maxbox.value = ''+planetData[currentPlanet].max + ' km/s';
-				//orbitSemiMajor = planetData[currentPlanet].semimajor;
-				orbitEcc = planetData[currentPlanet].ecc;
 	}
+
+	center = new vec2(cwidth/2, cheight/2);
+
+	pos = new vec2(center.x+200, center.y);
+	vel = new vec2(0,-2); accel = new vec2(0,0);
 
 	interval = setInterval(render,1000/60);
 }
 
 window.onresize = function(){
+	window.resizeTo(1024,768);
+
 	cwidth = canvas.width = window.innerWidth*.6;
 	cheight = canvas.height = window.innerHeight;
+
+	center = new vec2(cwidth/2, cheight/2);
 }
-
-window.onmousemove = function(){}
-
-window.onmousedown = function(){}
 
 render = function(){
 
-	gfx.fillStyle='black';
+	setColor('black');
 	gfx.fillRect(0,0,cwidth,cheight);
 
-	drawSectors();
+	// draw sun
+	setColor('yellow');
+	fillCircle(center.x,center.y,5);
 
-	gfx.fillStyle = gfx.strokeStyle = 'white';
-	ellipse2(cwidth/2-200,250,cwidth/2+200,250,orbitEcc,orbitSemiMajor);
+	// draw scale
+	setColor('white');
+	var leftSide = (cwidth-pixToAu)/2;
+	var rightSide = (cwidth+pixToAu)/2;
+	drawLine(leftSide,25,rightSide,25);
+	drawLine(leftSide,15,leftSide,35);
+	drawLine(rightSide,15,rightSide,35);
+	gfx.font = '16px verdana';
+	gfx.fillText('' + scaleFactor + ' AU', center.x-20, 50);
 
-	gfx.fillStyle = gfx.strokeStyle = 'yellow';
-	gfx.beginPath();
-	gfx.arc(cwidth/2+100,250,20,0,Math.PI*2);
-	gfx.fill();
-	gfx.stroke();
-
-	gfx.fillStyle = gfx.strokeStyle = 'green';
-	gfx.lineWidth = 3;
-	gfx.beginPath();
-	gfx.moveTo(cwidth/2-175,60);
-	gfx.lineTo(cwidth/2-175,40);
-	gfx.moveTo(cwidth/2,60);
-	gfx.lineTo(cwidth/2,40);
-	gfx.moveTo(cwidth/2-175,50);
-	gfx.lineTo(cwidth/2,50);
-	gfx.fill();
-	gfx.stroke();
-	gfx.lineWidth = 1;
-	gfx.font = '17px verdana';
-	if(currentPlanet !== 'custom'){
-		gfx.fillText(planetData[currentPlanet].semimajor + ' AU',cwidth/2-125,45);
-	}else{
-		if(semimajorbox.value.indexOf('U') !== -1 && !isNaN(parseFloat(semimajorbox.value))){
-			gfx.fillText(semimajorbox.value,cwidth/2-125,45);
-		}
-	}
-	
-	orbiter.draw();
-
-	gfx.strokeStyle = 'red';
-	gfx.beginPath();
-	gfx.moveTo(0,cheight*.42);
-	gfx.lineTo(cwidth,cheight*.42);
-	gfx.stroke();
-
+	// draw planet
+	setColor('blue');
+	fillCircle(pos.x,pos.y,3);
+	update();
 }
 
-orbiter = {
-	pos:null,
-	offset:null,
-	rot:Math.PI,
-	mem:[],
-	idx:0,
-	vel:null,
-	draw:function(){
-		gfx.fillStyle = gfx.strokeStyle = 'red';
-		gfx.beginPath();
-		gfx.arc(orbiter.pos.x,orbiter.pos.y,10,0,Math.PI*2);
-		gfx.fill();
-		gfx.stroke();
+update = function(){
+		vel = add(vel, accel);
+		pos = add(pos, vel);
+		accel = sub(center, pos);
 
-		if(showposbox.checked){
-			gfx.save();
-			gfx.strokeStyle = 'red'; gfx.lineWidth = 4;
-			gfx.translate(cwidth/2+100,250);
-			gfx.beginPath();
-			gfx.moveTo(0,0);
-			gfx.lineTo(orbiter.pos.x-(cwidth/2+100),orbiter.pos.y-250);
-			gfx.stroke();
-			gfx.restore();
-		}
+		// (G*(m1*m2/r^2))/m2
+		var r = mag(accel);
 
-		if(showvelbox.checked){
-			orbiter.mem[orbiter.idx] = orbiter.pos;
-			orbiter.idx++;
-			if(orbiter.idx > 5){ orbiter.idx = 0; }
-			
-			var i = orbiter.idx-3;
-			if(i < 0){ i += 5; }
-			if(orbiter.mem[i]){
-				orbiter.vel = sub(orbiter.pos,add(orbiter.offset,orbiter.mem[i]));
-				orbiter.vel = mult(unit(orbiter.vel),55+30);
-			}
-
-			if(orbiter.vel){
-				gfx.save();
-				gfx.strokeStyle='blue';
-				gfx.lineWidth=4;
-				gfx.beginPath();
-				gfx.moveTo(orbiter.pos.x,orbiter.pos.y);
-				gfx.lineTo(orbiter.pos.x+orbiter.vel.x,orbiter.pos.y+orbiter.vel.y);
-				gfx.stroke();
-				orbiter.vel = null;
-				gfx.restore();
-			}
-		}
-
-		orbiter.update();
-	},
-	update:function(){
-		// calculate distance
-		var d = mag(sub(orbiter.pos,new vec2(cwidth/2+100,250)));
-		
-		// update position
-		orbiter.offset.x = cwidth/2;
-
-		orbiter.pos.x = 1.0*orbitSemiMajor*Math.cos(orbiter.rot);
-		orbiter.pos.y = (1-orbitEcc)*orbitSemiMajor*Math.sin(orbiter.rot)*(-1);
-		orbiter.pos = add(orbiter.pos,orbiter.offset);
-
-		if(slow){
-			var g = mag(new vec2(orbiter.pos.x-(cwidth/2-100),orbiter.pos.y-250));
-			orbiter.rot += Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/3000;
-		}else{
-			var g = mag(new vec2(orbiter.pos.x-(cwidth/2-100),orbiter.pos.y-250));
-			orbiter.rot += Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/1000;
-		}
-
-		if(orbiter.rot > Math.PI*2){ orbiter.rot = orbiter.rot % Math.PI*2 }
-
-		var scale = parseFloat(semimajorbox.value)/200;
-
-		distbox.value = (''+(d*scale)).substr(0,8) + ' AU';
-
-		var v = Math.sqrt(2*(sunMass*g/planetData[currentPlanet].semimajor))/1000;
-		v = lerp(.02,.04,v,parseFloat(minvel.value),parseFloat(maxvel.value));
-
-		curvel.value = (''+ v).substr(0,8) + ' km/s'; // TODO
-	},
-	init:function(){
-		orbiter.pos = new vec2(325,250);
-		orbiter.offset = new vec2(500,250);
-	}
-}
-
-countPix = function(){
-
-	var imgData = gfx.getImageData(0,0,cwidth,Math.ceil(cheight*.42));
-	var cyan = 0; var magenta = 0;
-
-	for(var p = 0; p < imgData.data.length; p += 4){
-		if(imgData.data[p] === 0 && imgData.data[p+1] === 255 && imgData.data[p+2] === 255){ cyan++; } // cyan
-		else if(imgData.data[p] === 255 && imgData.data[p+1] === 0 && imgData.data[p+2] === 255){ magenta++; } // magenta
-	}
-
-	console.log(cyan,magenta);
-}
-
-var angle;
-drawSectors = function(){
-		angle = lerp(0,100,slider.value,.0001,Math.PI/2);
-
-		//console.clear();
-		/*if(orbiter.rot > Math.PI*2-angle || orbiter.rot < angle){
-			console.log('cyan');
-		}
-
-		if(orbiter.rot > -angle+Math.PI && orbiter.rot < angle+Math.PI){
-			console.log('magenta');
-		}*/
-
-		if(showsectorsbox.checked){
-		gfx.save();
-		gfx.translate(cwidth/2,250);
-		gfx.lineWidth = 2;
-		gfx.fillStyle = 'cyan'
-		gfx.strokeStyle = 'white';
-
-		gfx.beginPath();
-		for(var i = 0; i < angle; i += .01){
-			var x = 1.0*orbitSemiMajor*Math.cos(i);
-			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i)*(-1);
-			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
-		}
-		gfx.lineTo(100,0);
-		gfx.fill();
-		gfx.stroke();
-
-		//console.log('cyan area: ' + ellipticalArchArea(-angle,angle,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
-
-		gfx.beginPath();
-		for(var i = 0; i > -angle; i -= .01){
-			var x = 1.0*orbitSemiMajor*Math.cos(i);
-			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i)*(-1);
-			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
-		}
-		gfx.lineTo(100,0);
-		gfx.fill();
-		gfx.stroke();
-
-		gfx.fillStyle = 'magenta'
-		gfx.beginPath();
-		for(var i = 0; i < angle; i += .01){
-			var x = 1.0*orbitSemiMajor*Math.cos(i+Math.PI);
-			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i+Math.PI)*(-1);
-			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
-		}
-		gfx.lineTo(100,0);
-		gfx.fill();
-		gfx.stroke();
-
-		countPix();
-		//console.log('magenta area: ' + ellipticalArchArea(-angle+Math.PI,angle+Math.PI,planetData[currentPlanet].semimajor,planetData[currentPlanet].ecc));
-
-		gfx.beginPath();
-		for(var i = 0; i > -angle; i -= .01){
-			var x = 1.0*orbitSemiMajor*Math.cos(i+Math.PI);
-			var y = (1-orbitEcc)*orbitSemiMajor*Math.sin(i+Math.PI)*(-1);
-			if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); }
-		}
-		gfx.lineTo(100,0);
-		gfx.fill();
-		gfx.stroke();
-
-		gfx.restore();
-	}
-
-	gfx.strokeStyle = gfx.fillStyle = 'magenta';
-	gfx.fillRect(cwidth/2-300,450,200,100);
-
-	gfx.strokeStyle = gfx.fillStyle = 'cyan';
-	gfx.fillRect(cwidth/2+100,450,200,100);
-
-	gfx.strokeStyle = gfx.fillStyle = 'black';
-	gfx.fillRect(cwidth/2-280,470,160,60);
-	gfx.fillRect(cwidth/2+120,470,160,60);
-
-	gfx.strokeStyle = gfx.fillStyle = 'red';
-
-	var pad = '';
-	while((''+timer1+pad).length < 8){ pad += '0'; }
-	gfx.fillText(timer1 + pad + ' T',cwidth/2-250,505);
-
-	pad = '';
-	while((''+timer2+pad).length < 8){ pad += '0'; }
-	gfx.fillText(timer2 + pad + ' T',cwidth/2+150,505);
-}
-
-updateOrbit = function(){
-	orbitEcc = eccbox.value;
-	if(eccbox.value < 0){ eccbox.value = 0; orbitEcc = 0; }
-	if(eccbox.value > 1){ eccbox.value = 1; orbitEcc = 1; }
-	minbox.value = (''+aphelioVel()).substr(0,8) + ' km/s';
-	maxbox.value = (''+perihelioVel()).substr(0,8) + ' km/s';
-	if(semimajorbox.value.length > 0 && semimajorbox.value.indexOf('U') === -1){ semimajorbox.value += ' AU'; }
+		accel = unit(accel);
+		accel = mult(accel, G/(r*r));
 }
 
 // equation from: http://people.bridgewater.edu/~rbowman/ISAW/KeplerCalc.html
@@ -456,19 +235,26 @@ perihelioVel = function(){
 	return temp;
 }
 
-// formulas from: http://keisan.casio.com/exec/system/1343722709
-ellipticalArchArea = function(theta0,theta1,a,e){
-	var b = a*Math.sqrt(1-(e*e));
+setColor = function(c){ gfx.fillStyle = gfx.strokeStyle = c; }
 
-	var F = function(theta){
-		return ((a*b)/2)*(theta-Math.atan(	((b-a)*Math.sin(2*theta)) /	(b+a+(b-a)*Math.cos(2*theta)) ));
-	}
-	
-	var R = function(theta){
-		return Math.sqrt((a*a*b*b)/(b*b*Math.cos(theta)*Math.cos(theta) + a*a*Math.sin(theta)*Math.sin(theta)));
-	}
+drawLine = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
 
-	return F(theta1)-F(theta0)-((R(theta0)*R(theta1))/2)*Math.sin(theta1-theta0);
+drawCircle = function(x,y,r){
+	gfx.beginPath();
+	gfx.arc(x,y,r,0,Math.PI*2);
+	gfx.stroke();	
+}
+
+fillCircle = function(x,y,r){
+	gfx.beginPath();
+	gfx.arc(x,y,r,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();	
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
@@ -485,27 +271,6 @@ mag = function(v){ return dist(0,0,v.x,v.y); }
 mult = function(v,s){ return new vec2(v.x*s,v.y*s); }
 unit = function(v){ return new vec2(v.x/mag(v),v.y/mag(v)); }
 
-ellipse2 = function(x1,y1,x2,y2,e,semimajor){
-	var center = new vec2((x1+x2)/2,(y1+y2)/2);
-
-	var up = new vec2(0,-1);
-	var f = sub(new vec2(x1,y1), new vec2(x2,y2));
-	var rot = Math.acos(dot(f,up)/(mag(f)*mag(up)));
-	rot -= Math.PI/2;
-	if(!rot){ rot = Math.PI/2; }
-
-	gfx.save();
-	gfx.translate(center.x,center.y);
-	gfx.rotate(rot);
-	gfx.beginPath();
-	for(var i = 0; i < Math.PI*2; i += .01){
-		var x = 1.0*semimajor*Math.cos(i);
-		var y = (1-e)*semimajor*Math.sin(i)*(-1);
-		if(i === 0){ gfx.moveTo(x,y); }else{ gfx.lineTo(x,y); } 
-	}
-	gfx.stroke();
-	gfx.restore();
-}
 	</script>
 </head>
 <body bgcolor='grey'>
