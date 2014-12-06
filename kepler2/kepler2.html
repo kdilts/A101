@@ -201,6 +201,15 @@ update = function(){
 		accel = mult(accel, G/(r*r));
 }
 
+setScale = function(semiMajor){
+	if(semiMajor >= 5){ scaleFactor = 10; }else{ scaleFactor = 1; }
+	pixToAu = 200/(semiMajor/scaleFactor);
+}
+
+getScaleDist = function(){
+	return dist(center.x,center.y,pos.x,pos.y)/(pixToAu/scaleFactor);
+}
+
 // equation from: http://people.bridgewater.edu/~rbowman/ISAW/KeplerCalc.html
 aphelioVel = function(){
 	var semi; var ecc;
