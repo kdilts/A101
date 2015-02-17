@@ -214,6 +214,8 @@ planet = function(x,y,a,t){
 
 			// T = 2*PI*sqrt(semimajor^3/mu)
 			// mu = G*mass of sun
+
+			//m1 + m2 = a^3/a^2
 			var mu = G * sunMass;
 			this.calcPeriod = 2*Math.PI*Math.sqrt(Math.pow(this.semiMajor,3)/mu);
 			this.calcPeriod = this.calcPeriod.toFixed(2);
