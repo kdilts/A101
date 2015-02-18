@@ -1,0 +1,104 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var planet; var theta = 0; var spd = -.01;
+var time = 0;
+
+var inInterval;
+var lastState;
+var timing = false;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	lastState = inInterval;
+	if(theta <= 0 && theta >= -Math.PI/4){ inInterval = true; } else { inInterval = false; }
+	if(theta <= -Math.PI/4*7){ inInterval = true; }
+
+	if(lastState == false && inInterval == true){ timing = true; time = 0; }
+	if(lastState == true && inInterval == false){ timing = false; }
+
+	if(timing){ time += 1000/60; }
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	setColor('white');
+	gfx.beginPath();
+	gfx.arc(cwidth/2,cheight/2,300,0,Math.PI*2);
+	gfx.stroke();
+
+	setColor('blue');
+	gfx.beginPath();
+	gfx.arc(cwidth/2+Math.cos(Math.PI/4)*300,cheight/2+Math.sin(Math.PI/4)*300,6,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(cwidth/2+Math.cos(-Math.PI/4)*300,cheight/2+Math.sin(-Math.PI/4)*300,6,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.moveTo(cwidth/2,cheight/2);
+	gfx.lineTo(cwidth/2+Math.cos(-Math.PI/4)*300,cheight/2+Math.sin(-Math.PI/4)*300);
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.moveTo(cwidth/2,cheight/2);
+	gfx.lineTo(cwidth/2+Math.cos(Math.PI/4)*300,cheight/2+Math.sin(Math.PI/4)*300);
+	gfx.stroke();
+
+	gfx.font = '24px verdana';
+	gfx.fillText('' + time.toFixed(3), cwidth/2-100, cheight/2);
+	gfx.fillText('' + inInterval, cwidth/2-100, cheight/2+28);
+	gfx.fillText('' + theta.toFixed(3), cwidth/2-100, cheight/2+28*2);
+	gfx.fillText('' + timing, cwidth/2-100, cheight/2+28*3);
+
+	setColor('red');
+	gfx.beginPath();
+	gfx.arc(cwidth/2+Math.cos(theta)*300,cheight/2+Math.sin(theta)*300,6,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	theta += spd;
+	if(theta < -Math.PI*2){ theta = 0; }
+}
+
+setColor = function(c){ gfx.fillStyle = gfx.strokeStyle = c; }
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
