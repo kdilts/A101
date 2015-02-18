@@ -60,10 +60,10 @@
 
 			scene.add(new THREE.Line(geometry,material));
 
-			camera.position.set(1,2,5);
+			camera.position.set(.25,.25,.25);
 			camera.lookAt(new THREE.Vector3(0,0,0));
 
-			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
+			var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
 
 			window.onmousedown = function(){ }
 
