@@ -1,0 +1,75 @@
+<html>
+	<head></head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+
+			var dist = 5; var height = 2; var spd = .0175; var theta = spd*45;
+
+			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
+			document.body.appendChild(renderer.domElement);
+
+			var rotate = function(){
+				camera.position.set(Math.cos(theta)*dist,height,Math.sin(theta)*dist);
+				camera.lookAt(new THREE.Vector3(0,0,0));
+				camera.position.setLength(dist);
+			}
+
+			rotate();
+
+			var axisHelper = new THREE.AxisHelper(15);
+			scene.add(axisHelper);
+
+			window.onmousedown = function(){ }
+
+			window.onkeydown = function(e){
+
+				if(e.which === 65){ // a (zoom in)
+					return;
+				}
+
+				if(e.which === 90){ // z (zoom out)
+					return;
+				}				
+
+				if(e.which === 38){ // up
+					height++;
+					rotate();
+					return;
+				}
+
+				if(e.which === 40){ // down
+					height--;
+					rotate();
+					return;
+				}
+
+				if(e.which === 37){ // left
+					theta += spd;
+					if(theta > Math.PI*2){ theta = 0; console.log('l'); }
+					rotate();
+					return;
+				}
+
+				if(e.which === 39){ // right
+					theta -= spd;
+					if(theta < 0){ theta = Math.PI*2; console.log('r'); }
+					rotate();
+					return;
+				}
+			}
+
+
+
+			var render = function(){
+				requestAnimationFrame(render);
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+	</body>
+</html>
