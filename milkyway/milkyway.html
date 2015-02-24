@@ -1,6 +1,9 @@
 <html>
 	<head></head>
 	<body bgcolor = "grey">
+		<script src="js/three.min.js"></script>
+		<script src="js/Quaternion.js"></script>
+		<script src="js/OrbitControls.js"></script>
 		<form style = "position:absolute; left:1024; top:5">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<b1>Objects</b1><br><hr>
@@ -41,7 +44,7 @@
 			<input type="button" value="+" id="zoomIn"></input>
 			<input type="button" value="-" id="zoomOut"></input><br>
 		</form>
-		<script src="js/three.min.js"></script>
+		
 		<script>
 	    	document.documentElement.style.overflow = 'hidden';  // firefox, chrome
 		  	document.body.scroll = "no"; // ie only
@@ -51,6 +54,8 @@
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, sceneWidth/sceneHeight, 0.1, 1000);
 			var renderer = new THREE.WebGLRenderer();
+			var controls = new THREE.OrbitControls(camera);
+			controls.target.z = 0;
 
 			var dist = 5; var height = 2; var spd = .0175; var theta = spd*45;
 
