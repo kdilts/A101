@@ -389,8 +389,7 @@ drawStars = function(){
 }
 
 plotData = function(){ // TODO original shows 2 full orbits on the graph
-	var origX = 270; var origY = 175;
-	
+	var origX = 350; var origY = 175;
 
 	if(tracking[0] && tracking[1]){
 		if(star1MaxVel > star2MaxVel){ maxV = star1MaxVel; }else{ maxV = star2MaxVel; }
@@ -454,15 +453,15 @@ plotData = function(){ // TODO original shows 2 full orbits on the graph
 
 		gfx.fillStyle = gfx.strokeStyle = 'black';
 		gfx.font = '14px verdana';
-		gfx.fillText((''+maxV).substr(0,(''+maxV).indexOf('.')), 720,85);
-		gfx.fillText('0', 727,origY-10);
-		gfx.fillText((''+minV).substr(0,(''+minV).indexOf('.')), 720,265);
+		gfx.fillText((''+maxV).substr(0,(''+maxV).indexOf('.')), 810,105);
+		gfx.fillText('0', 810,origY-10);
+		gfx.fillText((''+minV).substr(0,(''+minV).indexOf('.')), 810,245);
 
 	}else{
 		gfx.fillStyle = gfx.strokeStyle = 'black';
 		gfx.font = '24px verdana';
 		gfx.save();
-		gfx.translate(450,230);
+		gfx.translate(520,230);
 		gfx.rotate(-Math.PI/4);
 		gfx.fillText('Calculating...', 0,0);
 		gfx.restore();
@@ -477,16 +476,16 @@ render = function(){
 
 	// grid
 	gfx.fillStyle = gfx.strokeStyle = 'black';
-	gfx.strokeRect(270,100,450,150);
+	gfx.strokeRect(350,100,450,150);
 	for(var i = 0; i < 10; i++){
-		drawLine(270+i*47.2,100+lerp(minV,maxV,0,0,150),285+i*47.2,100+lerp(minV,maxV,0,0,150));
+		drawLine(350+i*47.2,100+lerp(minV,maxV,0,0,150),365+i*47.2,100+lerp(minV,maxV,0,0,150));
 	}
 
 	plotData();
 
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
-	gfx.fillText(''+simSpeed,445,25);
+	gfx.fillText(''+simSpeed,608,25);
 	for(var s in sliders){
 		gfx.fillText(''+sliders[s].value,40,120+s*83);
 	}
@@ -498,7 +497,7 @@ render = function(){
 	gfx.lineWidth = 1;
 	//gfx.strokeRect(230,300,450,100);
 	
-	var grd = gfx.createLinearGradient(270,450,680,400);
+	var grd = gfx.createLinearGradient(350,450,680,400);
 	grd.addColorStop(0,'rgb(255,0,0)'); // red
 	grd.addColorStop(1/6,'rgb(255,100,0)'); // orange
 	grd.addColorStop(2/6,'rgb(255,255,0)'); // yellow
@@ -508,7 +507,7 @@ render = function(){
 	grd.addColorStop(1,'rgb(120,0,120)'); // violet
 
 	gfx.fillStyle = grd;
-	gfx.fillRect(270,280,450,100);
+	gfx.fillRect(350,280,450,100);
 
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 
@@ -528,7 +527,7 @@ render = function(){
 	gfx.fillText('vx_2: ' + star2.vel.x, 150,425);*/
 
 	// doppler shift lines
-	line1x = 360; line2x = 600;
+	line1x = 440; line2x = 680;
 	drawLine(line1x,265,line1x,275);
 	drawLine(line2x,265,line2x,275);
 
@@ -599,6 +598,10 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>Simulation Speed: </b1>
 			<input type='button' id='slowDownButton' value='<-'>
 			&nbsp; &nbsp;
@@ -610,6 +613,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>M2: </b1>
 			<input type = 'textBox' id = 'massBox2' size='2'></input>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>Radial Velocity</b1>
@@ -627,7 +632,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			&nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>km/sec</b1>
 			<br>
 			<b1>a: </b1><br>
@@ -644,7 +650,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			&nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>km/sec</b1>
 			<br><br>
 			<b1>e: </b1>
@@ -662,7 +669,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			&nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			<b1>km/sec</b1>
 			<br></br>
 			<b1>i: </b1>
