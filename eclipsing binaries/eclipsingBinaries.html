@@ -117,15 +117,15 @@ drawStats = function(){
 	var offsetX = 5; var offsetY = 300; var rowSize = 16;
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
-	gfx.fillText('Current Values:',offsetX,offsetY-rowSize);
-	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize);
-	gfx.fillText('Type: '+currentStar1,offsetX+20,offsetY+rowSize*2);
-	gfx.fillText('T: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*3);
-	gfx.fillText('R: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*4);
-	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*6);
-	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*7);
-	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*8);
-	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*9);
+	gfx.fillText('Current Values:',offsetX,offsetY);
+	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize*2);
+	gfx.fillText('Type: '+currentStar1,offsetX+20,offsetY+rowSize*3);
+	gfx.fillText('T: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*4);
+	gfx.fillText('R: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*5);
+	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*7);
+	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*8);
+	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*9);
+	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*10);
 
 	gfx.fillText(''+angleSlider.value, 56,80);
 	gfx.fillText(''+separationSlider.value, 88,165);
@@ -395,20 +395,26 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<input type='button' id='pauseButton' value='Pause'>
 			<br></br><br>
 			<b1>Angle: </b1>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type = 'button' id = 'aDownButton' value = '<--'>
-			<input type = 'button' id = 'aUpButton' value = '-->'>
 			<br>
 			0<input type = 'range' id = 'angleSlider' min='0' max = '90'>90
 			</input>
+			<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type = 'button' id = 'aDownButton' value = '<--'>
+			<input type = 'button' id = 'aUpButton' value = '-->'>
 			<br></br><br>
 			<b1>Separation: </b1>
+			</input><br>
+			2<input type = 'range' id = 'separationSlider' min='2' max = '25'>25
+			<br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<input type = 'button' id = 'sDownButton' value = '<--'>
 			<input type = 'button' id = 'sUpButton' value = '-->'>
-			</input><br>
-			2<input type = 'range' id = 'separationSlider' min='2' max = '25'>25
-			<br></br><br>
+			<br></br>
 			<b1>Star 1: </b1><select id='pulldown1'>
 				<option value = "B">B</option>
 				<option value = "A">A</option>
