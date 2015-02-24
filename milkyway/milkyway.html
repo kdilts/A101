@@ -1,0 +1,79 @@
+<html>
+	<head></head>
+	<body bgcolor = "grey">
+		<script src="js/three.min.js"></script>
+		<script>
+	    	document.documentElement.style.overflow = 'hidden';  // firefox, chrome
+		  	document.body.scroll = "no"; // ie only
+
+			var sceneWidth = 1024*.975; var sceneHeight = 768*.95;
+
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, sceneWidth/sceneHeight, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+
+			var dist = 5; var height = 2; var spd = .0175; var theta = spd*45;
+
+			renderer.setSize(sceneWidth, sceneHeight);
+			document.body.appendChild(renderer.domElement);
+
+			var rotate = function(){
+				camera.position.set(Math.cos(theta)*dist,height,Math.sin(theta)*dist);
+				camera.lookAt(new THREE.Vector3(0,0,0));
+				camera.position.setLength(dist);
+			}
+
+			rotate();
+
+			var axisHelper = new THREE.AxisHelper(15);
+			scene.add(axisHelper);
+
+			var render = function(){
+				requestAnimationFrame(render);
+				renderer.render(scene, camera);
+			};
+
+			render();
+		</script>
+		<form style = "position:absolute; left:1024; top:5">
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<b1>Objects</b1><br><hr>
+			<input type="checkbox" name="p1" checked>Population 1</input><br>
+			<input type="checkbox" name="p2" checked>Population 2</input><hr>
+			<input type="checkbox" name="oc" checked>Open Star Clusters</input><br>
+			<input type="checkbox" name="gc" checked>Globular Star Clusters</input><br>
+			<input type="checkbox" name="neb" checked>Gaseous Nebulae</input><hr>
+			<input type="checkbox" name="sun" checked>Sun</input><br><hr>
+			<b1>Rotate</b1>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;
+			<b1>Move</b1><br>
+			&nbsp;&nbsp;&nbsp;
+			<input type="button" value="^" id="rotateUp"></input>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" value="^" id="moveUp"></input><br>
+			<input type="button" value="<-" id="rotateLeft"></input>
+			<input type="button" value="->" id="rotateRight"></input>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;
+			<input type="button" value="<-" id="moveLeft"></input>
+			<input type="button" value="->" id="moveRight"></input><br>
+			&nbsp;&nbsp;&nbsp;
+			<input type="button" value="v" id="rotateDown"></input>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" value="v" id="moveDown"></input><br><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<b1>Zoom</b1><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type="button" value="+" id="zoomIn"></input>
+			<input type="button" value="-" id="zoomOut"></input><br>
+		</form>
+	</body>
+</html>
