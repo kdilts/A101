@@ -2,10 +2,14 @@
 	<head></head>
 	<body>
 		<script src="js/three.min.js"></script>
+		<script src="js/Quaternion.js"></script>
+		<script src="js/OrbitControls.js"></script>
 		<script>
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
 			var renderer = new THREE.WebGLRenderer();
+			var controls = new THREE.OrbitControls(camera);
+			controls.target.z = 0;
 
 			var dist = 5; var height = 2; var spd = .0175; var theta = spd*45;
 
@@ -25,7 +29,7 @@
 
 			window.onmousedown = function(){ }
 
-			window.onkeydown = function(e){
+			/*window.onkeydown = function(e){
 
 				if(e.which === 65){ // a (zoom in)
 					return;
@@ -60,9 +64,7 @@
 					rotate();
 					return;
 				}
-			}
-
-
+			}*/
 
 			var render = function(){
 				requestAnimationFrame(render);
