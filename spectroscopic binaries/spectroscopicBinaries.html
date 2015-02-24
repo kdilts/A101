@@ -46,7 +46,7 @@ window.onload = function(){
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
 
-	center = new vec2(200,500);
+	center = new vec2(300,600);
 	star1.pos = new vec2(center.x-50*currentSep, center.y);
 	star1.vel = new vec2(0, 1000*(1-currentEcc)*currentMass1);
 	star1.accel = new vec2(0,0);
@@ -339,13 +339,12 @@ drawStars = function(){
 
 		center.x-100, center.y-100,	200, 178,
 
-		300, 300,
+		500, 500,
 		200, 178
 	);
 
-	// remove and redraw original
+	//remove and redraw original
 	gfx.clearRect(center.x-115,center.y-115,230,230);
-	
 
 	gfx.save();
 	gfx.translate(center.x, center.y-100+115);
@@ -353,7 +352,7 @@ drawStars = function(){
 	gfx.drawImage(
 		canvas,
 
-		300, 300, 230, 230,
+		500, 500, 230, 230,
 
 		-115,-115,
 		230, 230
@@ -361,7 +360,7 @@ drawStars = function(){
 	gfx.restore();
 
 	// remove copy
-	gfx.clearRect(300,300,230,230);
+	gfx.clearRect(500,500,230,230);
 
 	// draw earth view
 	if(currentIncl !== 90){
@@ -370,7 +369,7 @@ drawStars = function(){
 
 			center.x-100, center.y-100,	230, 230,
 
-			500, 400+.5*(230-230*(1-Math.sin(currentIncl*Math.PI/180))), 
+			700, 500+.5*(230-230*(1-Math.sin(currentIncl*Math.PI/180))), 
 			230, 230*(1-Math.sin(currentIncl*Math.PI/180))
 		);
 	}else{
@@ -384,8 +383,8 @@ drawStars = function(){
 	update();
 
 	gfx.strokeStyle = gfx.fillStyle = 'black';
-	gfx.fillText('Priveleged View', center.x-50, center.y+90);
-	gfx.fillText('Earth View', center.x+350, center.y+90);
+	gfx.fillText('Priveleged View', 200, 750);
+	gfx.fillText('Earth View', 700, 750);
 }
 
 plotData = function(){ // TODO original shows 2 full orbits on the graph
@@ -641,8 +640,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step = '.1'>2.0
 			<br>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<input type='button' id='aUpButton' value='->'>
 			<input type='button' id='aDownButton' value='<-'>
+			<input type='button' id='aUpButton' value='->'>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
