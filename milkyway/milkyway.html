@@ -103,9 +103,9 @@
 			// perseus arm
 			for(var x = 0; x < Math.PI*3/2; x += .05){
 				addStar(
-					-Math.exp(x/1.5)*Math.cos(x)-1,//+Math.random()*2-1,
-					0,//Math.random()*.2-.1,
-					Math.exp(x/1.5)*Math.sin(x),//+Math.random()*2-1,
+					-Math.exp(x/1.5)*Math.cos(x)-1+Math.random()-.5,
+					Math.random()*.2-.1,
+					Math.exp(x/1.5)*Math.sin(x)+Math.random()-.5,
 					.35/8,
 					0xff0000
 				);				
@@ -114,9 +114,9 @@
 			// centarus arm
 			for(var x = 0; x < Math.PI*3/2; x += .05){
 				addStar(
-					Math.exp(x/1.5)*Math.cos(x)+1,//+Math.random()*2-1,
-					0,//Math.random()*.2-.1,
-					-Math.exp(x/1.5)*Math.sin(x),//+Math.random()*2-1,
+					Math.exp(x/1.5)*Math.cos(x)+1+Math.random()-.5,
+					Math.random()*.2-.1,
+					-Math.exp(x/1.5)*Math.sin(x)+Math.random()-.5,
 					.35/8,
 					0x0000ff
 				);				
@@ -145,27 +145,15 @@
 
 			p1.addEventListener('click', function(){
 				if(p1.checked){
-					for(var i = 2; i < 52; i++){
-						scene.children[i].visible = true;
-					}
 				}
 				else{
-					for(var i = 2; i < 52; i++){
-						scene.children[i].visible = false;
-					}
 				}
 			});
 
 			p2.addEventListener('click', function(){
 				if(p2.checked){
-					for(var i = 52; i < 102; i++){
-						scene.children[i].visible = true;
-					}
 				}
 				else{
-					for(var i = 52; i < 102; i++){
-						scene.children[i].visible = false;
-					}
 				}
 			});
 
@@ -175,15 +163,65 @@
 			var rotateLeft = document.getElementById('rotateLeft');
 			var rotateRight = document.getElementById('rotateRight');
 
+			rotateUp.addEventListener('click', function(){
+				controls.rotateUp(Math.PI/9);
+				controls.update();
+			});
+
+			rotateDown.addEventListener('click', function(){
+				controls.rotateUp(-Math.PI/9);
+				controls.update();
+			});
+
+			rotateLeft.addEventListener('click', function(){
+				controls.rotateLeft(Math.PI/9);
+				controls.update();
+			});
+
+			rotateRight.addEventListener('click', function(){
+				controls.rotateLeft(-Math.PI/9);
+				controls.update();
+			});
+
 			// move buttons
 			var moveUp = document.getElementById('moveUp');
 			var moveDown = document.getElementById('moveDown');
 			var moveLeft = document.getElementById('moveLeft');
 			var moveRight = document.getElementById('moveRight');
 
+			moveUp.addEventListener('click', function(){
+				controls.panUp(1);
+				controls.update();
+			});
+
+			moveDown.addEventListener('click', function(){
+				controls.panUp(-1);
+				controls.update();
+			});
+
+			moveLeft.addEventListener('click', function(){
+				controls.panLeft(1);
+				controls.update();
+			});
+
+			moveRight.addEventListener('click', function(){
+				controls.panLeft(-1);
+				controls.update();
+			});
+
 			// zoom buttons
 			var zoomIn = document.getElementById('zoomIn');
 			var zoomOut = document.getElementById('zoomOut');
+
+			zoomIn.addEventListener('click', function(){
+				controls.dollyIn(1.1);
+				controls.update();
+			});
+
+			zoomOut.addEventListener('click', function(){
+				controls.dollyOut(1.1);
+				controls.update();
+			});
 
 			var buttons = [
 				rotateUp, rotateDown, rotateLeft, rotateRight,
