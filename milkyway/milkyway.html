@@ -97,7 +97,7 @@
 					var tempCoords = cylindricalToXYZ(r,t+twist,0);
 					addStar(
 						tempCoords[0]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
-						tempCoords[1]+(Math.random()*.1-.05),
+						tempCoords[1]+(Math.random()*.05-.025),
 						tempCoords[2]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
 						.35/16,
 						0xffffff
@@ -114,7 +114,7 @@
 					var tempCoords = cylindricalToXYZ(r,t+twist,0);
 					addStar(
 						tempCoords[0]+Math.random()*.3-.15,
-						tempCoords[1]+Math.random()*.1-.05,
+						tempCoords[1]+Math.random()*.05-.025,
 						tempCoords[2]+Math.random()*.3-.15,
 						.35/16,
 						0xffffff
@@ -124,6 +124,44 @@
 				twist += Math.PI/160;
 				twistCount+=.075;
 			}		
+
+			// population 2 stars
+			var pop2Start = pop1End; var pop2End = pop2Start;
+			for(var i = 0; i < 200; i++){
+				var intMax = 1.5; var intMin = intMax/2;
+				addStar(
+					Math.random()*intMax-intMin,
+					Math.random()*.5-.25,
+					Math.random()*intMax-intMin,
+					.35/16,
+					0xffff00
+				);
+				pop2End++;
+			}
+
+			for(var i = 0; i < 150; i++){
+				var intMax = 4; var intMin = intMax/2;
+				addStar(
+					Math.random()*intMax-intMin,
+					Math.random()*.25-.125,
+					Math.random()*intMax-intMin,
+					.35/16,
+					0xffff00
+				);
+				pop2End++;
+			}
+
+			for(var i = 0; i < 100; i++){
+				var intMax = 8; var intMin = intMax/2;
+				addStar(
+					Math.random()*intMax-intMin,
+					Math.random()*.25-.125,
+					Math.random()*intMax-intMin,
+					.35/16,
+					0xffff00
+				);
+				pop2End++;
+			}
 
 			var render = function(){
 				requestAnimationFrame(render);
@@ -160,8 +198,14 @@
 
 			p2.addEventListener('click', function(){
 				if(p2.checked){
+					for(var i = pop2Start; i < pop2End; i++){
+						scene.children[i].visible = true;
+					}
 				}
 				else{
+					for(var i = pop2Start; i < pop2End; i++){
+						scene.children[i].visible = false;
+					}
 				}
 			});
 
