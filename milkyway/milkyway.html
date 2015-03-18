@@ -90,26 +90,19 @@
 			addStar(0,0,0,.35/16,0xffff00);
 
 			// population 1 -- mesh 2 -
-			for(var t = Math.PI; t < Math.PI*2; t += .05){
-				var tempCoords = cylindricalToXYZ(.5+t/1.5,t,0);
-				addStar(
-					tempCoords[0]+2.6,
-					tempCoords[1],
-					tempCoords[2],
-					.35/8,
-					0xff0000
-				);
-			}
-
-			for(var t = Math.PI; t < Math.PI*2; t += .05){
-				var tempCoords = cylindricalToXYZ(-.5-t/1.5,t,0);
-				addStar(
-					tempCoords[0]-2.6,
-					tempCoords[1],
-					tempCoords[2],
-					.35/8,
-					0x00ff00
-				);
+			var twist = 0;
+			for(var r = 0; r < 6; r+=.1){
+				for(var t = 0; t < Math.PI*2; t += Math.PI*2/5){
+					var tempCoords = cylindricalToXYZ(r,t+twist,0);
+					addStar(
+						tempCoords[0],
+						tempCoords[1],
+						tempCoords[2],
+						.35/8,
+						0xff0000
+					);
+				}
+				twist += Math.PI/80;
 			}
 
 			var render = function(){
