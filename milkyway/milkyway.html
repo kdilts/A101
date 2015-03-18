@@ -87,25 +87,28 @@
 			}
 
 			// sun -- mesh 1
-			addStar(0,0,0,.35/16,0xffff00); // TODO move to not the center of the galaxy
+			addStar(2,0,-3.25,.35/8,0xffff00);
 
-			// population 1 -- mesh 2 -
+			// population 1
 			var pop1Start = 2; var pop1End = 2;
-			var twist = 0;
+			var twist = 0; var twistCount = 0;
 			for(var r = 0; r < 6; r+=.05){
 				for(var t = 0; t < Math.PI*2; t += Math.PI*2/5){
 					var tempCoords = cylindricalToXYZ(r,t+twist,0);
 					addStar(
-						tempCoords[0]+(Math.random()*.8-.4),
-						tempCoords[1]+(Math.random()*.2-.1),
-						tempCoords[2]+(Math.random()*.8-.4),
+						tempCoords[0]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
+						tempCoords[1]+(Math.random()*.1-.05),
+						tempCoords[2]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
 						.35/16,
 						0xffffff
 					);
 					pop1End++;
 				}
 				twist += Math.PI/160;
+				twistCount+=.075;
 			}
+
+
 
 			var render = function(){
 				requestAnimationFrame(render);
