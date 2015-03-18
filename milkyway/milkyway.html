@@ -75,7 +75,7 @@
 			//axisHelper.visible = false;
 
 			var addStar = function(x,y,z,r,c){
-				var geometry = new THREE.SphereGeometry(r,10,10);
+				var geometry = new THREE.SphereGeometry(r,5,5);
 				var material = new THREE.MeshBasicMaterial({color: c});
 				var star = new THREE.Mesh(geometry, material);
 				star.position.x = x; star.position.y = y; star.position.z = z;
@@ -87,22 +87,24 @@
 			}
 
 			// sun -- mesh 1
-			addStar(0,0,0,.35/16,0xffff00);
+			addStar(0,0,0,.35/16,0xffff00); // TODO move to not the center of the galaxy
 
 			// population 1 -- mesh 2 -
+			var pop1Start = 2; var pop1End = 2;
 			var twist = 0;
-			for(var r = 0; r < 6; r+=.1){
+			for(var r = 0; r < 6; r+=.05){
 				for(var t = 0; t < Math.PI*2; t += Math.PI*2/5){
 					var tempCoords = cylindricalToXYZ(r,t+twist,0);
 					addStar(
-						tempCoords[0],
-						tempCoords[1],
-						tempCoords[2],
-						.35/8,
-						0xff0000
+						tempCoords[0]+(Math.random()*.8-.4),
+						tempCoords[1]+(Math.random()*.2-.1),
+						tempCoords[2]+(Math.random()*.8-.4),
+						.35/16,
+						0xffffff
 					);
+					pop1End++;
 				}
-				twist += Math.PI/80;
+				twist += Math.PI/160;
 			}
 
 			var render = function(){
@@ -127,8 +129,14 @@
 
 			p1.addEventListener('click', function(){
 				if(p1.checked){
+					for(var i = pop1Start; i < pop1End; i++){
+						scene.children[i].visible = true;
+					}
 				}
 				else{
+					for(var i = pop1Start; i < pop1End; i++){
+						scene.children[i].visible = false;
+					}
 				}
 			});
 
