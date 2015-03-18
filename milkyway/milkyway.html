@@ -108,7 +108,22 @@
 				twistCount+=.075;
 			}
 
-
+			twist = 0; twistCount = 0;
+			for(var r = 0; r < 3; r+=.05){
+				for(var t = 0; t < Math.PI*2; t += Math.PI*2/5){
+					var tempCoords = cylindricalToXYZ(r,t+twist,0);
+					addStar(
+						tempCoords[0]+Math.random()*.3-.15,
+						tempCoords[1]+Math.random()*.1-.05,
+						tempCoords[2]+Math.random()*.3-.15,
+						.35/16,
+						0xffffff
+					);
+					pop1End++;
+				}
+				twist += Math.PI/160;
+				twistCount+=.075;
+			}		
 
 			var render = function(){
 				requestAnimationFrame(render);
