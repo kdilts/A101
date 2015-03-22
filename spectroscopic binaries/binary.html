@@ -1,0 +1,124 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+var center;
+var s1; var s2;
+var initV = .2;
+var G = 20;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	center = new vec2(cwidth/2,cheight/2);
+
+	s1 = new star1(1,cwidth/2-100);
+	s2 = new star2(1,cwidth/2+100);
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){ render(); }
+
+star1 = function(m,posX){
+	this.mass = m;
+	this.vel = new vec2(0,initV);
+	this.pos = new vec2(posX,cheight/2);
+	this.accel = new vec2(0,0);
+
+	this.update = function(){
+		this.vel = add(this.vel, this.accel);
+		this.pos = add(this.pos, this.vel);
+		this.accel = sub(s2.pos, this.pos);
+
+	// (G*(m1*m2/r^2))/m2
+	
+		var m1 = this.mass; var m2 = s2.mass;
+
+		var r = mag(this.accel);
+
+		this.accel = unit(this.accel);
+		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
+	}
+}
+
+star2 = function(m,posX){
+	this.mass = m;
+	this.vel = new vec2(0,-initV);
+	this.pos = new vec2(posX,cheight/2);
+	this.accel = new vec2(0,0);
+
+	this.update = function(){
+		this.vel = add(this.vel, this.accel);
+		this.pos = add(this.pos, this.vel);
+		this.accel = sub(s1.pos, this.pos);
+
+	// (G*(m1*m2/r^2))/m2
+	
+		var m1 = this.mass; var m2 = s1.mass;
+
+		var r = mag(this.accel);
+
+		this.accel = unit(this.accel);
+		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
+	}
+}
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	gfx.font = "22px verdana";
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.fillStyle = 'white';
+	gfx.beginPath();
+	gfx.arc(center.x,center.y,4,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	gfx.strokeStyle = 'white';
+	gfx.beginPath();
+	gfx.moveTo(s1.pos.x,s1.pos.y);
+	gfx.lineTo(s2.pos.x,s2.pos.y);
+	gfx.stroke();
+
+	gfx.strokeStyle = gfx.fillStyle = 'red';
+	gfx.fillText('Star 1 vel: ' + s1.vel.x + ' ' + s1.vel.y, 20,100);
+	gfx.beginPath();
+	gfx.arc(s1.pos.x,s1.pos.y,s1.mass*4,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	gfx.strokeStyle = gfx.fillStyle = 'blue';
+	gfx.fillText('Star 2 vel: ' + s2.vel.x + ' ' + s2.vel.y, 20,130);
+	gfx.beginPath();
+	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*4,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	s1.update(); s2.update();
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
