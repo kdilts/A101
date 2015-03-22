@@ -272,7 +272,12 @@ planet = function(x,y,a,t){
 		this.accel = sub(new vec2(cwidth/2,cheight/2), this.pos);
 
 		// (G*(m1*m2/r^2))/m2
+		
+		// TODO get rid of sunmass
+		// TODO r is star to star
+		// TODO masses should both be of the stars
 		var m1 = sunMass; var m2 = this.mass;
+
 		var r = mag(this.accel);
 
 		this.accel = unit(this.accel);

@@ -114,7 +114,7 @@ render = function(){
 }
 
 drawStats = function(){
-	var offsetX = 5; var offsetY = 300; var rowSize = 16;
+	var offsetX = 5; var offsetY = 300; var rowSize = 22;
 	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
 	gfx.fillText('Current Values:',offsetX,offsetY);
@@ -130,8 +130,8 @@ drawStats = function(){
 	gfx.fillText(''+angleSlider.value, 56,80);
 	gfx.fillText(''+separationSlider.value, 88,165);
 
-	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*11);
-	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*12);
+	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*12);
+	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*13);
 }
 
 drawStars = function(){
@@ -399,9 +399,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			0<input type = 'range' id = 'angleSlider' min='0' max = '90'>90
 			</input>
 			<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 			<input type = 'button' id = 'aDownButton' value = '<--'>
 			<input type = 'button' id = 'aUpButton' value = '-->'>
 			<br></br><br>
@@ -409,9 +407,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			</input><br>
 			2<input type = 'range' id = 'separationSlider' min='2' max = '25'>25
 			<br>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+
 			<input type = 'button' id = 'sDownButton' value = '<--'>
 			<input type = 'button' id = 'sUpButton' value = '-->'>
 			<br></br>
