@@ -28,7 +28,7 @@ var tracking = []; var track = [];
 var currentSep = 1; var sepValues = [.1,.2,.4,.6,.8,1,2];
 var currentEcc = .5;
 var currentIncl = 75; var currentNode = 0;
-var currentMass1 = 3; var currentMass2 = 1;
+var currentMass1 = 1; var currentMass2 = 1;
 
 var star1Shift;
 var star2Shift;
@@ -215,7 +215,7 @@ update = function(){
 	if(!tracking[0]){
 		star1.vel = add(star1.vel, star1.accel);
 		star1.pos = add(star1.pos, mult(star1.vel, .001));
-		star1.accel = mult(unit(sub(center,star1.pos)),gravity/Math.pow(mag(sub(center,star1.pos)),2));
+		star1.accel = mult(unit(sub(star2.pos,star1.pos)),gravity/Math.pow(mag(sub(star2.pos,star1.pos)),2));
 
 		star1.accel = mult(star1.accel,currentMass1);
 	}
@@ -223,7 +223,7 @@ update = function(){
 	if(!tracking[1]){
 		star2.vel = add(star2.vel, star2.accel);
 		star2.pos = add(star2.pos, mult(star2.vel, .001));
-		star2.accel = mult(unit(sub(center,star2.pos)),gravity/Math.pow(mag(sub(center,star2.pos)),2));
+		star2.accel = mult(unit(sub(star1.pos,star2.pos)),gravity/Math.pow(mag(sub(star1.pos,star2.pos)),2));
 
 		star2.accel = mult(star2.accel,currentMass2);
 	}
