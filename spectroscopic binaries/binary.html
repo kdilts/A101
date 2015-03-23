@@ -9,10 +9,13 @@ var center;
 var s1; var s2;
 var initV1 = .2; var initV2 = -.2;
 var G = 20;
-var play = false;
+var play = false; var trace = true;
+var tick = 0;
 
 var playButton; var resetButton;
 var gBox; var m1Box; var m2Box; var d1Box; var d2Box;
+
+var redTrace = []; var yellowTrace = []; var blueTrace = [];
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -27,9 +30,9 @@ window.onload = function(){
 	s1 = new star1(1,cwidth/2-100);
 	s2 = new star2(1,cwidth/2+100);
 
-
 	playButton = document.getElementById('playButton');
 	resetButton = document.getElementById('resetButton');
+	traceButton = document.getElementById('traceButton');
 
 	gBox = document.getElementById('gBox');
 	v1Box = document.getElementById('v1Box'); v2Box = document.getElementById('v2Box'); 
@@ -41,10 +44,12 @@ window.onload = function(){
 	v1Box.value = initV1; v2Box.value = initV2;
 
 	gBox.onchange = function(){ G = gBox.value; }
-	m1Box.onchange = function(){ s1.mass = m1Box.value; }
-	m2Box.onchange = function(){ s2.mass = m2Box.value; }
-	v1Box.onchange = function(){ initV1 = v1Box.value; }
-	v2Box.onchange = function(){ initV2 = v2Box.value; }
+	m1Box.onchange = function(){ s1.mass = parseFloat(m1Box.value); }
+	m2Box.onchange = function(){ s2.mass = parseFloat(m2Box.value); }
+	d1Box.onchange = function(){ s1.initX = parseFloat(d1Box.value)+cwidth/2; }
+	d2Box.onchange = function(){ s2.initX = parseFloat(d2Box.value)+cwidth/2; }
+	v1Box.onchange = function(){ initV1 = parseFloat(v1Box.value); }
+	v2Box.onchange = function(){ initV2 = parseFloat(v2Box.value); }
 
 	playButton.onclick = function(){
 		if(play){ play = false; playButton.value = 'start'; }
@@ -54,15 +59,28 @@ window.onload = function(){
 	resetButton.onclick = function(){
 		play = false; playButton.value = "start";
 
-		s1.pos = new vec2(cwidth/2 + parseFloat(d1Box.value), cheight/2);
+		redTrace = []; blueTrace = []; yellowTrace = [];
+
+		s1.pos = new vec2(s1.initX, cheight/2);
 		s1.vel = new vec2(0,initV1);
 		s1.accel = new vec2(0,0);
 		
-		s2.pos = new vec2(cwidth/2 + parseFloat(d2Box.value), cheight/2);
+		s2.pos = new vec2(s2.initX, cheight/2);
 		s2.vel = new vec2(0,initV2);
 		s2.accel = new vec2(0,0);
 
 		render();
+	}
+
+	traceButton.onclick = function(){
+		if(trace){
+			trace = false;
+			traceButton.value = 'show trace';
+			redTrace = []; blueTrace = []; yellowTrace = [];
+		}else{
+			trace = true;
+			traceButton.value = 'hide trace';
+		}
 	}
 
 	setInterval(render,1000/60);
@@ -123,13 +141,14 @@ render = function(){
 
 	gfx.strokeStyle = gfx.fillStyle = 'white';
 	gfx.beginPath();
-	gfx.arc(center.x,center.y,4,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
-	gfx.beginPath();
 	gfx.moveTo(s1.pos.x,s1.pos.y);
 	gfx.lineTo(s2.pos.x,s2.pos.y);
 	gfx.stroke();
+
+	gfx.strokeStyle = gfx.fillStyle = 'yellow';
+	gfx.beginPath();
+	gfx.arc((s1.pos.x+s2.pos.x)/2,(s1.pos.y+s2.pos.y)/2,2,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
 	gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
@@ -143,12 +162,38 @@ render = function(){
 	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*4,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
+	if(trace){
+		for(var i in redTrace){
+			gfx.strokeStyle = gfx.fillStyle = 'red';
+			gfx.beginPath();
+			gfx.arc(redTrace[i].x,redTrace[i].y,2,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+			gfx.strokeStyle = gfx.fillStyle = 'blue';
+			gfx.beginPath();
+			gfx.arc(blueTrace[i].x,blueTrace[i].y,2,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+
+			gfx.strokeStyle = gfx.fillStyle = 'yellow';
+			gfx.beginPath();
+			gfx.arc(yellowTrace[i].x,yellowTrace[i].y,2,0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+		}
+
+		if(tick === 0){
+			redTrace.push(s1.pos);
+			blueTrace.push(s2.pos);
+			yellowTrace.push(mult(add(s1.pos,s2.pos),0.5));
+		}
+	}
 
 	if(play){
 		s1.update(); s2.update();
 		gBox.value = G; m1Box.value = s1.mass; m2Box.value = s2.mass;
 		d1Box.value = s1.initX-cwidth/2; d2Box.value = s2.initX-cwidth/2;
 		v1Box.value = initV1; v2Box.value = initV2;
+		tick++;
+		if(tick == 25){ tick = 0; }
 	}
 }
 
@@ -172,7 +217,9 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 <body bgcolor="black">
 	<form>
 		<input type="button" value="start" id="playButton">&nbsp;&nbsp;&nbsp;
-		<input type="button" value="reset" id="resetButton"><br><br>
+		<input type="button" value="reset" id="resetButton">&nbsp;&nbsp;&nbsp;
+		<input type="button" value="hide trace" id="traceButton">
+		<br><br>
 		<b1>G: </b1><input type="text" size="2" id="gBox"><br><br>
 		<b1>initV 1: </b1><input type="text" size="2" id="v1Box">&nbsp;&nbsp;&nbsp;
 		<b1>initV 2: </b1><input type="text" size="2" id="v2Box"><br><br>
