@@ -1,15 +1,22 @@
 <head>
+	<style>
+		body{color:white; font-size: 18px;}
+	</style>
 	<script language=javascript>
 var canvas; var gfx;
 var cwidth; var cheight;
 var center;
 var s1; var s2;
-var initV = .2;
+var initV1 = .2; var initV2 = -.2;
 var G = 20;
+var play = false;
+
+var playButton; var resetButton;
+var gBox; var m1Box; var m2Box; var d1Box; var d2Box;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
-	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
@@ -20,14 +27,52 @@ window.onload = function(){
 	s1 = new star1(1,cwidth/2-100);
 	s2 = new star2(1,cwidth/2+100);
 
+
+	playButton = document.getElementById('playButton');
+	resetButton = document.getElementById('resetButton');
+
+	gBox = document.getElementById('gBox');
+	v1Box = document.getElementById('v1Box'); v2Box = document.getElementById('v2Box'); 
+	m1Box = document.getElementById('m1Box'); m2Box = document.getElementById('m2Box');
+	d1Box = document.getElementById('d1Box'); d2Box = document.getElementById('d2Box');
+
+	gBox.value = G; m1Box.value = s1.mass; m2Box.value = s2.mass;
+	d1Box.value = s1.initX-cwidth/2; d2Box.value = s2.initX-cwidth/2;
+	v1Box.value = initV1; v2Box.value = initV2;
+
+	gBox.onchange = function(){ G = gBox.value; }
+	m1Box.onchange = function(){ s1.mass = m1Box.value; }
+	m2Box.onchange = function(){ s2.mass = m2Box.value; }
+	v1Box.onchange = function(){ initV1 = v1Box.value; }
+	v2Box.onchange = function(){ initV2 = v2Box.value; }
+
+	playButton.onclick = function(){
+		if(play){ play = false; playButton.value = 'start'; }
+		else{ play = true; playButton.value = 'stop'; }
+	}
+
+	resetButton.onclick = function(){
+		play = false; playButton.value = "start";
+
+		s1.pos = new vec2(cwidth/2 + parseFloat(d1Box.value), cheight/2);
+		s1.vel = new vec2(0,initV1);
+		s1.accel = new vec2(0,0);
+		
+		s2.pos = new vec2(cwidth/2 + parseFloat(d2Box.value), cheight/2);
+		s2.vel = new vec2(0,initV2);
+		s2.accel = new vec2(0,0);
+
+		render();
+	}
+
 	setInterval(render,1000/60);
 }
 
 window.onresize = function(){ render(); }
 
 star1 = function(m,posX){
-	this.mass = m;
-	this.vel = new vec2(0,initV);
+	this.mass = m; this.initX = posX;
+	this.vel = new vec2(0,initV1);
 	this.pos = new vec2(posX,cheight/2);
 	this.accel = new vec2(0,0);
 
@@ -48,8 +93,8 @@ star1 = function(m,posX){
 }
 
 star2 = function(m,posX){
-	this.mass = m;
-	this.vel = new vec2(0,-initV);
+	this.mass = m; this.initX = posX;
+	this.vel = new vec2(0,initV2);
 	this.pos = new vec2(posX,cheight/2);
 	this.accel = new vec2(0,0);
 
@@ -74,33 +119,37 @@ render = function(){
 	cheight = canvas.height = window.innerHeight;
 	gfx.font = "22px verdana";
 
-	gfx.fillStyle = 'black';
-	gfx.fillRect(0,0,cwidth,cheight);
+	gfx.clearRect(0,0,cwidth,cheight);
 
-	gfx.fillStyle = 'white';
+	gfx.strokeStyle = gfx.fillStyle = 'white';
 	gfx.beginPath();
 	gfx.arc(center.x,center.y,4,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	gfx.strokeStyle = 'white';
 	gfx.beginPath();
 	gfx.moveTo(s1.pos.x,s1.pos.y);
 	gfx.lineTo(s2.pos.x,s2.pos.y);
 	gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
-	gfx.fillText('Star 1 vel: ' + s1.vel.x + ' ' + s1.vel.y, 20,100);
+	gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
 	gfx.beginPath();
 	gfx.arc(s1.pos.x,s1.pos.y,s1.mass*4,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'blue';
-	gfx.fillText('Star 2 vel: ' + s2.vel.x + ' ' + s2.vel.y, 20,130);
+	gfx.fillText('Star 2 vel: ' + s2.vel.x.toFixed(4) + ' , ' + s2.vel.y.toFixed(4), 20,280);
 	gfx.beginPath();
 	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*4,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
-	s1.update(); s2.update();
+
+	if(play){
+		s1.update(); s2.update();
+		gBox.value = G; m1Box.value = s1.mass; m2Box.value = s2.mass;
+		d1Box.value = s1.initX-cwidth/2; d2Box.value = s2.initX-cwidth/2;
+		v1Box.value = initV1; v2Box.value = initV2;
+	}
 }
 
 lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
@@ -120,5 +169,16 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 
 	</script>
 </head>
-<body bgcolor="grey">
+<body bgcolor="black">
+	<form>
+		<input type="button" value="start" id="playButton">&nbsp;&nbsp;&nbsp;
+		<input type="button" value="reset" id="resetButton"><br><br>
+		<b1>G: </b1><input type="text" size="2" id="gBox"><br><br>
+		<b1>initV 1: </b1><input type="text" size="2" id="v1Box">&nbsp;&nbsp;&nbsp;
+		<b1>initV 2: </b1><input type="text" size="2" id="v2Box"><br><br>
+		<b1>Mass 1: </b1><input type="text" size="2" id="m1Box">&nbsp;&nbsp;&nbsp;
+		<b1>Mass 2: </b1><input type="text" size="2" id="m2Box"><br><br>
+		<b1>Dist 1: </b1><input type="text" size="2" id="d1Box">&nbsp;&nbsp;&nbsp;
+		<b1>Dist 2: </b1><input type="text" size="2" id="d2Box"><br><br>
+	</form>
 </body>
