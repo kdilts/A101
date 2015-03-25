@@ -9,13 +9,15 @@ var center;
 var s1; var s2;
 var initV1 = .2; var initV2 = -.2;
 var G = 20;
-var play = false; var trace = true;
+var play = false; var trace = true; var showVecs = true;
 var tick = 0;
 
-var playButton; var resetButton;
+var playButton; var resetButton; var vecButton;
 var gBox; var m1Box; var m2Box; var d1Box; var d2Box;
 
 var redTrace = []; var yellowTrace = []; var blueTrace = [];
+
+var yellowPos;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -33,6 +35,7 @@ window.onload = function(){
 	playButton = document.getElementById('playButton');
 	resetButton = document.getElementById('resetButton');
 	traceButton = document.getElementById('traceButton');
+	vecButton = document.getElementById('vecButton');
 
 	gBox = document.getElementById('gBox');
 	v1Box = document.getElementById('v1Box'); v2Box = document.getElementById('v2Box'); 
@@ -80,6 +83,16 @@ window.onload = function(){
 		}else{
 			trace = true;
 			traceButton.value = 'hide trace';
+		}
+	}
+
+	vecButton.onclick = function(){
+		if(showVecs){
+			vecButton.value = "hide vectors";
+			showVecs = false;
+		}else{
+			vecButton.value = "show vectors";
+			showVecs = true;
 		}
 	}
 
@@ -146,8 +159,20 @@ render = function(){
 	gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';
+	var p = sub(s2.pos,s1.pos);
+	var d = mag(p);
+	p = unit(p);
+	if(s1.mass < s2.mass){
+		p = mult(p,d/2*(s1.mass/s2.mass));
+	}else{
+		p = mult(p,d/2*(s2.mass/s1.mass));
+	}
+	p = add(p,s1.pos);
+	yellowPos = p;
+
 	gfx.beginPath();
-	gfx.arc((s1.pos.x+s2.pos.x)/2,(s1.pos.y+s2.pos.y)/2,2,0,Math.PI*2);
+	//gfx.arc((s1.pos.x+s2.pos.x)/2,(s1.pos.y+s2.pos.y)/2,2,0,Math.PI*2);
+	gfx.arc(p.x,p.y,2,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
@@ -161,6 +186,36 @@ render = function(){
 	gfx.beginPath();
 	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*4,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
+
+	if(showVecs){
+		gfx.lineWidth = 3;
+
+		gfx.strokeStyle = gfx.fillStyle = 'red';
+		gfx.save();
+		gfx.translate(s1.pos.x, s1.pos.y); 
+		
+		gfx.beginPath(); gfx.moveTo(0,0);
+		gfx.lineTo(s1.vel.x*200,s1.vel.y*200); gfx.stroke();
+
+		gfx.beginPath(); gfx.moveTo(0,0);
+		gfx.lineTo(s1.accel.x*50000,s1.accel.y*50000); gfx.stroke();
+
+		gfx.restore();
+
+		gfx.strokeStyle = gfx.fillStyle = 'blue';
+		gfx.save();
+		gfx.translate(s2.pos.x, s2.pos.y); 
+		
+		gfx.beginPath(); gfx.moveTo(0,0);
+		gfx.lineTo(s2.vel.x*200,s2.vel.y*200); gfx.stroke();
+
+		gfx.beginPath(); gfx.moveTo(0,0);
+		gfx.lineTo(s2.accel.x*50000,s2.accel.y*50000); gfx.stroke();
+
+		gfx.restore();
+
+		gfx.lineWidth = 3;
+	}
 
 	if(trace){
 		for(var i in redTrace){
@@ -180,10 +235,10 @@ render = function(){
 			gfx.fill(); gfx.stroke();
 		}
 
-		if(tick === 0){
+		if(tick === 0 && play){
 			redTrace.push(s1.pos);
 			blueTrace.push(s2.pos);
-			yellowTrace.push(mult(add(s1.pos,s2.pos),0.5));
+			yellowTrace.push(yellowPos);
 		}
 	}
 
@@ -218,7 +273,8 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 	<form>
 		<input type="button" value="start" id="playButton">&nbsp;&nbsp;&nbsp;
 		<input type="button" value="reset" id="resetButton">&nbsp;&nbsp;&nbsp;
-		<input type="button" value="hide trace" id="traceButton">
+		<input type="button" value="hide trace" id="traceButton">&nbsp;&nbsp;&nbsp;
+		<input type="button" value="hide vectors" id="vecButton">
 		<br><br>
 		<b1>G: </b1><input type="text" size="2" id="gBox"><br><br>
 		<b1>initV 1: </b1><input type="text" size="2" id="v1Box">&nbsp;&nbsp;&nbsp;
