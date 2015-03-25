@@ -29,6 +29,11 @@ var data = {
 	M:[ '3500 K', '0.8 Solar Radii', 'rgb(253,22,25)'  ]
 };
 
+var aDownButton; var aUpButton;
+var sDownButton; var sUpButton;
+var submitButton;
+var clearButton;
+var pauseButton;
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -47,6 +52,16 @@ window.onload = function(){
 	buttons[0] = document.getElementById('submitButton');
 	buttons[1] = document.getElementById('clearButton');
 	buttons[2] = document.getElementById('pauseButton');
+
+	aDownButton = document.getElementById('aDownButton');
+	aUpButton = document.getElementById('aUpButton');
+
+	sDownButton = document.getElementById('sDownButton');
+	sUpButton = document.getElementById('sUpButton');
+
+	submitButton = document.getElementById('submitButton');
+	pauseButton = document.getElementById('pauseButton');
+	clearButton = document.getElementById('clearButton');
 
 	aDownButton.onclick = function(){ angleSlider.value--; }
 	aUpButton.onclick = function(){ angleSlider.value++; }
@@ -110,7 +125,6 @@ render = function(){
 	}
 
 	if(maxIntensity < frameIntensity){ maxIntensity = frameIntensity; }
-
 }
 
 drawStats = function(){
