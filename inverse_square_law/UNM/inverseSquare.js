@@ -169,9 +169,15 @@ graph = function(n){
 	}
 
 	this.draw = function(){
-		gfx.fillStyle = 'black'; gfx.strokeStyle = 'black';
+		gfx.fillStyle = gfx.strokeStyle = 'black';
 		gfx.font = '20px verdana';
-		gfx.fillText('Distance', .06*cwidth+(n*.33*cwidth), .985*cheight);
+		gfx.fillText('Distance', .04*cwidth+(n*.33*cwidth), .985*cheight);
+		gfx.fillStyle = gfx.strokeStyle = 'grey';
+		gfx.fillText('Distance', .15*cwidth+(n*.33*cwidth), .985*cheight);
+		gfx.font = '14px verdana';
+		gfx.fillText('2', .205*cwidth+(n*.33*cwidth), .975*cheight);
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.font = '20px verdana';
 
 		gfx.save();
 		gfx.translate(.02*cwidth+(n*.33*cwidth), .85*cheight);
@@ -325,7 +331,10 @@ graph = function(n){
 		gfx.font = '18px verdana';
 		gfx.fillText('- = Lux / Distance',.196*cwidth+(this.id*.33*cwidth),.535*cheight,200,100);
 		gfx.fillStyle = gfx.strokeStyle = 'rgb(100,100,100)';
-		gfx.fillText('- = Lux / Distance^2',.196*cwidth+(this.id*.33*cwidth),.56*cheight,200,100);
+		gfx.fillText('- = Lux / Distance',.196*cwidth+(this.id*.33*cwidth),.56*cheight,200,100);
+		gfx.font = '12px verdana';
+		gfx.fillText('2',.301*cwidth+(this.id*.33*cwidth),.553*cheight,200,100);
+		gfx.font = '18px verdana';
 	}
 }
 
