@@ -36,6 +36,38 @@ var submitButton;
 var clearButton;
 var pauseButton;
 
+var IE = false;
+
+/////// http://stackoverflow.com/questions/19999388/jquery-check-if-user-is-using-ie
+
+function detectIE() {
+    var ua = window.navigator.userAgent;
+
+    var msie = ua.indexOf('MSIE ');
+    if (msie > 0) {
+        // IE 10 or older => return version number
+        return parseInt(ua.substring(msie + 5, ua.indexOf('.', msie)), 10);
+    }
+
+    var trident = ua.indexOf('Trident/');
+    if (trident > 0) {
+        // IE 11 => return version number
+        var rv = ua.indexOf('rv:');
+        return parseInt(ua.substring(rv + 3, ua.indexOf('.', rv)), 10);
+    }
+
+    var edge = ua.indexOf('Edge/');
+    if (edge > 0) {
+       // IE 12 => return version number
+       return parseInt(ua.substring(edge + 5, ua.indexOf('.', edge)), 10);
+    }
+
+    // other browser
+    return false;
+}
+
+///////
+
 window.onload = function(){
 	canvas = document.createElement('canvas');
 	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
@@ -43,6 +75,8 @@ window.onload = function(){
 	cheight = canvas.height = window.innerHeight;
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	if(detectIE() !== false){ IE = true; }
 
 	pulldown1 = document.getElementById('pulldown1');
 	pulldown2 = document.getElementById('pulldown2');
@@ -64,11 +98,11 @@ window.onload = function(){
 	pauseButton = document.getElementById('pauseButton');
 	clearButton = document.getElementById('clearButton');
 
-	aDownButton.onclick = function(){ angleSlider.value--; }
-	aUpButton.onclick = function(){ angleSlider.value++; }
+	aDownButton.onclick = function(){ angleSlider.value--; render(); }
+	aUpButton.onclick = function(){ angleSlider.value++; render(); }
 
-	sDownButton.onclick = function(){ separationSlider.value--; }
-	sUpButton.onclick = function(){ separationSlider.value++; }
+	sDownButton.onclick = function(){ separationSlider.value--; render(); }
+	sUpButton.onclick = function(){ separationSlider.value++; render(); }
 
 	submitButton.onclick = function(){
 		currentStar1 = pulldown1.value;
@@ -85,9 +119,11 @@ window.onload = function(){
 	pauseButton.onclick = function(){
 		if(playing){
 			playing = false;
+			pauseButton.value = "Play";
 			clearInterval(intervalId);
 		}else{
 			playing = true;
+			pauseButton.value = "Pause";
 			intervalId = setInterval(render,1000/60);
 		}
 	}
@@ -118,11 +154,13 @@ render = function(){
 	drawGraph();
 	drawStats();
 
-	currentTheta += step;
-	if(currentTheta <= 0){
-		currentTheta = Math.PI*2;
-		graphIndex = 0;
-		graphData = [];
+	if(playing){
+		currentTheta += step;
+		if(currentTheta <= 0){
+			currentTheta = Math.PI*2;
+			graphIndex = 0;
+			graphData = [];
+		}
 	}
 
 	if(maxIntensity < frameIntensity){ maxIntensity = frameIntensity; }
@@ -135,17 +173,22 @@ drawStats = function(){
 	gfx.fillText('Current Values:',offsetX,offsetY);
 	gfx.fillText('Star 1:',offsetX+10,offsetY+rowSize*2);
 	gfx.fillText('Type: '+currentStar1,offsetX+20,offsetY+rowSize*3);
-	gfx.fillText('T: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*4);
-	gfx.fillText('R: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*5);
+	gfx.fillText('Temp: '+data[currentStar1][0],offsetX+20,offsetY+rowSize*4);
+	gfx.fillText('Radius: '+data[currentStar1][1],offsetX+20,offsetY+rowSize*5);
 	gfx.fillText('Star 2:',offsetX+10,offsetY+rowSize*7);
 	gfx.fillText('Type: '+currentStar2,offsetX+20,offsetY+rowSize*8);
-	gfx.fillText('T: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*9);
-	gfx.fillText('R: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*10);
+	gfx.fillText('Temp: '+data[currentStar2][0],offsetX+20,offsetY+rowSize*9);
+	gfx.fillText('Radius: '+data[currentStar2][1],offsetX+20,offsetY+rowSize*10);
 
-	gfx.fillText(''+angleSlider.value, 65,60);
-	gfx.fillText(''+separationSlider.value, 95,125);
+	if(!IE){
+		gfx.fillText(''+angleSlider.value + "\xB0", 65,60);
+		gfx.fillText(''+separationSlider.value + " Solar Radii", 95,125);
+	}else{
+		gfx.fillText(''+angleSlider.value + "\xB0", 65,64);
+		gfx.fillText(''+separationSlider.value + " Solar Radii", 95,160);
+	}
 
-	gfx.fillText('Angle of Inclination: ' + currentAngle + ' degrees',offsetX,offsetY+rowSize*12);
+	gfx.fillText('Angle of Inclination: ' + currentAngle + '\xB0',offsetX,offsetY+rowSize*12);
 	gfx.fillText('Separation: ' + currentSeparation + ' Solar Radii',offsetX,offsetY+rowSize*13);
 }
 
@@ -315,7 +358,7 @@ drawGraph = function(){
 	gfx.fillText('Intensity',0,0);
 	gfx.restore();
 
-	for(var x = 0; x < 7; x++){ gfx.fillText(''+(60*x), origX+80*x, origY+20); }
+	for(var x = 0; x < 7; x++){ gfx.fillText(''+(60*x)+"\xB0", origX+80*x, origY+20); }
 	for(var y = 0; y < 6; y++){ gfx.fillText((''+(0+.2*y)).substr(0,3), origX-32, origY-350/5.2*y); }
 
 	// vertical ticks
@@ -412,7 +455,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 			<b1>Angle = </b1>
 			<br>
 			<input type = 'button' id = 'aDownButton' value = '<--'>
-			0<input type = 'range' id = 'angleSlider' min='0' max = '90' style='width:150px'>90			
+			0&deg;<input type = 'range' id = 'angleSlider' min='0' max = '90' style='width:150px'>90&deg;			
 			<input type = 'button' id = 'aUpButton' value = '-->'>
 			<br><br>
 			<b1>Separation = </b1>
