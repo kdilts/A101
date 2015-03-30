@@ -7,17 +7,20 @@ var canvas; var gfx;
 var cwidth; var cheight;
 var center;
 var s1; var s2;
-var initV1 = .2; var initV2 = -.2;
-var G = 20;
+var initV1; var initV2; var period; var ecc;
+var G = 6.67384 * Math.pow(10,-11);
 var play = false; var trace = true; var showVecs = true;
 var tick = 0;
 
 var playButton; var resetButton; var vecButton;
-var gBox; var m1Box; var m2Box; var d1Box; var d2Box;
+var gBox; var m1Box; var m2Box; var sepBox; var eccBox; var pBox;
 
 var redTrace = []; var yellowTrace = []; var blueTrace = [];
 
 var yellowPos;
+
+var solarRad = 10; var kmPerRad = 695500;
+var sunMass = 1.989 * Math.pow(10,30); 
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -29,9 +32,6 @@ window.onload = function(){
 
 	center = new vec2(cwidth/2,cheight/2);
 
-	s1 = new star1(1,cwidth/2-100);
-	s2 = new star2(1,cwidth/2+100);
-
 	playButton = document.getElementById('playButton');
 	resetButton = document.getElementById('resetButton');
 	traceButton = document.getElementById('traceButton');
@@ -40,19 +40,37 @@ window.onload = function(){
 	gBox = document.getElementById('gBox');
 	v1Box = document.getElementById('v1Box'); v2Box = document.getElementById('v2Box'); 
 	m1Box = document.getElementById('m1Box'); m2Box = document.getElementById('m2Box');
-	d1Box = document.getElementById('d1Box'); d2Box = document.getElementById('d2Box');
+	sepBox = document.getElementById('sepBox');
+	pBox = document.getElementById('pBox');
+	eccBox = document.getElementById('eccBox');
 
-	gBox.value = G; m1Box.value = s1.mass; m2Box.value = s2.mass;
-	d1Box.value = s1.initX-cwidth/2; d2Box.value = s2.initX-cwidth/2;
-	v1Box.value = initV1; v2Box.value = initV2;
+	gBox.value = G; sepBox.value = 6; ecc = eccBox.value = .7;
+
+	s1 = new star1(1,cwidth/2 - (sepBox.value*solarRad) );
+	s2 = new star2(1,cwidth/2 + (sepBox.value*solarRad) );
+
+	m1Box.value = s1.mass; m2Box.value = s2.mass;
 
 	gBox.onchange = function(){ G = gBox.value; }
 	m1Box.onchange = function(){ s1.mass = parseFloat(m1Box.value); }
 	m2Box.onchange = function(){ s2.mass = parseFloat(m2Box.value); }
-	d1Box.onchange = function(){ s1.initX = parseFloat(d1Box.value)+cwidth/2; }
-	d2Box.onchange = function(){ s2.initX = parseFloat(d2Box.value)+cwidth/2; }
+	sepBox.onchange = function(){ s1.initX = parseFloat(sepBox.value)+cwidth/2; }
 	v1Box.onchange = function(){ initV1 = parseFloat(v1Box.value); }
 	v2Box.onchange = function(){ initV2 = parseFloat(v2Box.value); }
+	eccBox.onchange = function(){ ecc = parseFloat(eccBox.value); }
+
+	calculatePeriod = function(a, m1, m2){ return Math.sqrt( (a*a*a)/(m1+m2) );	}
+
+	calculateInitV = function(p,a,e){ return (2*Math.PI*a*(1+e)) / (p*Math.sqrt(1-e*e)); }
+
+	pBox.value = period = calculatePeriod(sepBox.value*kmPerRad, s1.mass*sunMass, s2.mass*sunMass);
+
+	v1Box.value = initV1 = calculateInitV(period, sepBox.value*kmPerRad, ecc);
+	v2Box.value = initV2 = -initV1;
+
+	initV1 = initV1/100000000000000;
+	initV2 = initV2/100000000000000;
+	G = G * 100000000000;
 
 	playButton.onclick = function(){
 		if(play){ play = false; playButton.value = 'start'; }
@@ -62,13 +80,22 @@ window.onload = function(){
 	resetButton.onclick = function(){
 		play = false; playButton.value = "start";
 
+	pBox.value = period = calculatePeriod(sepBox.value*kmPerRad, s1.mass*sunMass, s2.mass*sunMass);
+
+	v1Box.value = initV1 = calculateInitV(period, sepBox.value*kmPerRad, ecc);
+	v2Box.value = initV2 = -initV1;
+
+	initV1 = initV1/100000000000000;
+	initV2 = initV2/100000000000000;
+	//G = G * 100000000000;
+
 		redTrace = []; blueTrace = []; yellowTrace = [];
 
-		s1.pos = new vec2(s1.initX, cheight/2);
+		s1.pos = new vec2(cwidth/2-(sepBox.value*solarRad), cheight/2);
 		s1.vel = new vec2(0,initV1);
 		s1.accel = new vec2(0,0);
 		
-		s2.pos = new vec2(s2.initX, cheight/2);
+		s2.pos = new vec2(cwidth/2+(sepBox.value*solarRad), cheight/2);
 		s2.vel = new vec2(0,initV2);
 		s2.accel = new vec2(0,0);
 
@@ -108,8 +135,6 @@ star1 = function(m,posX){
 	this.accel = new vec2(0,0);
 
 	this.update = function(){
-		this.vel = add(this.vel, this.accel);
-		this.pos = add(this.pos, this.vel);
 		this.accel = sub(s2.pos, this.pos);
 
 	// (G*(m1*m2/r^2))/m2
@@ -120,6 +145,9 @@ star1 = function(m,posX){
 
 		this.accel = unit(this.accel);
 		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
+		
+		this.vel = add(this.vel, this.accel);
+		this.pos = add(this.pos, this.vel);
 	}
 }
 
@@ -130,8 +158,6 @@ star2 = function(m,posX){
 	this.accel = new vec2(0,0);
 
 	this.update = function(){
-		this.vel = add(this.vel, this.accel);
-		this.pos = add(this.pos, this.vel);
 		this.accel = sub(s1.pos, this.pos);
 
 	// (G*(m1*m2/r^2))/m2
@@ -142,6 +168,9 @@ star2 = function(m,posX){
 
 		this.accel = unit(this.accel);
 		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
+		
+		this.vel = add(this.vel, this.accel);
+		this.pos = add(this.pos, this.vel);
 	}
 }
 
@@ -157,6 +186,16 @@ render = function(){
 	gfx.moveTo(s1.pos.x,s1.pos.y);
 	gfx.lineTo(s2.pos.x,s2.pos.y);
 	gfx.stroke();
+
+	gfx.lineWidth = 3;
+	gfx.beginPath();
+	gfx.moveTo(cwidth/2, 10);
+	gfx.lineTo(cwidth/2+solarRad, 10);
+	gfx.stroke();
+	gfx.lineWidth = 1;
+
+	gfx.fillText(solarRad + " pixels = 1 Solar Radii = " + kmPerRad + " km", cwidth/2-100, 35);
+	gfx.fillText("1 Sun Mass = " + sunMass + " kg", cwidth/2-100, 60);
 
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';
 	var p = sub(s2.pos,s1.pos);
@@ -176,15 +215,15 @@ render = function(){
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
-	gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
+	//gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
 	gfx.beginPath();
-	gfx.arc(s1.pos.x,s1.pos.y,s1.mass*4,0,Math.PI*2);
+	gfx.arc(s1.pos.x,s1.pos.y,s1.mass*solarRad,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'blue';
-	gfx.fillText('Star 2 vel: ' + s2.vel.x.toFixed(4) + ' , ' + s2.vel.y.toFixed(4), 20,280);
+	//gfx.fillText('Star 2 vel: ' + s2.vel.x.toFixed(4) + ' , ' + s2.vel.y.toFixed(4), 20,280);
 	gfx.beginPath();
-	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*4,0,Math.PI*2);
+	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*solarRad,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	if(showVecs){
@@ -245,7 +284,6 @@ render = function(){
 	if(play){
 		s1.update(); s2.update();
 		gBox.value = G; m1Box.value = s1.mass; m2Box.value = s2.mass;
-		d1Box.value = s1.initX-cwidth/2; d2Box.value = s2.initX-cwidth/2;
 		v1Box.value = initV1; v2Box.value = initV2;
 		tick++;
 		if(tick == 25){ tick = 0; }
@@ -276,12 +314,13 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 		<input type="button" value="hide trace" id="traceButton">&nbsp;&nbsp;&nbsp;
 		<input type="button" value="hide vectors" id="vecButton">
 		<br><br>
-		<b1>G: </b1><input type="text" size="2" id="gBox"><br><br>
-		<b1>initV 1: </b1><input type="text" size="2" id="v1Box">&nbsp;&nbsp;&nbsp;
-		<b1>initV 2: </b1><input type="text" size="2" id="v2Box"><br><br>
-		<b1>Mass 1: </b1><input type="text" size="2" id="m1Box">&nbsp;&nbsp;&nbsp;
-		<b1>Mass 2: </b1><input type="text" size="2" id="m2Box"><br><br>
-		<b1>Dist 1: </b1><input type="text" size="2" id="d1Box">&nbsp;&nbsp;&nbsp;
-		<b1>Dist 2: </b1><input type="text" size="2" id="d2Box"><br><br>
+		<b1>G: </b1><input type="text" size="7" id="gBox">&nbsp;&nbsp;&nbsp;
+		<b1>ecc: </b1><input type="text" size="2" id="eccBox">&nbsp;&nbsp;&nbsp;
+		<b1>period: </b1><input type="text" size="15" id="pBox"><br><br>
+		<b1>initV 1: </b1><input type="text" size="6" id="v1Box">&nbsp;&nbsp;&nbsp;
+		<b1>initV 2: </b1><input type="text" size="6" id="v2Box"><br><br>
+		<b1>Mass 1 (Sun Mass): </b1><input type="text" size="2" id="m1Box">&nbsp;&nbsp;&nbsp;
+		<b1>Mass 2 (Sun Mass): </b1><input type="text" size="2" id="m2Box"><br><br>
+		<b1>Separation (Solar Radii): </b1><input type="text" size="2" id="sepBox">
 	</form>
 </body>
