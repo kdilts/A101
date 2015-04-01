@@ -63,9 +63,9 @@ window.onload = function(){
 
 	calculateInitV = function(p,a,e){ return (2*Math.PI*a*(1+e)) / (p*Math.sqrt(1-e*e)); }
 
-	pBox.value = period = calculatePeriod(sepBox.value*kmPerRad, s1.mass*sunMass, s2.mass*sunMass);
+	pBox.value = period = calculatePeriod(sepBox.value*kmPerRad, s1.mass*sunMass, s2.mass*sunMass); // use km or meters?
 
-	v1Box.value = initV1 = calculateInitV(period, sepBox.value*kmPerRad, ecc);
+	v1Box.value = initV1 = calculateInitV(period*1000, sepBox.value*kmPerRad, ecc);
 	v2Box.value = initV2 = -initV1;
 
 	initV1 = initV1/100000000000000;
@@ -87,7 +87,7 @@ window.onload = function(){
 
 	initV1 = initV1/100000000000000;
 	initV2 = initV2/100000000000000;
-	//G = G * 100000000000;
+	G = G * 100000000000;
 
 		redTrace = []; blueTrace = []; yellowTrace = [];
 
@@ -135,13 +135,15 @@ star1 = function(m,posX){
 	this.accel = new vec2(0,0);
 
 	this.update = function(){
-		this.accel = sub(s2.pos, this.pos);
+		this.accel = sub(s2.pos, this.pos); // pixels
+		//this.accel = mult(this.accel, 1/69550); // change to km
 
 	// (G*(m1*m2/r^2))/m2
 	
-		var m1 = this.mass; var m2 = s2.mass;
+		var m1 = this.mass; var m2 = s2.mass; // sun mass
+		//m1 = m1*sunMass; m2 = m2*sunMass; // change to kg
 
-		var r = mag(this.accel);
+		var r = mag(this.accel); // should be km because accel is km
 
 		this.accel = unit(this.accel);
 		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);
@@ -159,10 +161,12 @@ star2 = function(m,posX){
 
 	this.update = function(){
 		this.accel = sub(s1.pos, this.pos);
+		//this.accel = mult(this.accel, 1/69550); // change to km
 
 	// (G*(m1*m2/r^2))/m2
 	
 		var m1 = this.mass; var m2 = s1.mass;
+		//m1 = m1*sunMass; m2 = m2*sunMass; // change to kg
 
 		var r = mag(this.accel);
 
@@ -215,13 +219,15 @@ render = function(){
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'red';
-	//gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
+	gfx.fillText('Star 1 vel: ' + s1.vel.x.toFixed(4) + ' , ' + s1.vel.y.toFixed(4), 20,250);
+	gfx.fillText('Star 1 accel: ' + s1.accel.x.toFixed(4) + ' , ' + s1.accel.y.toFixed(4), 20,280);
 	gfx.beginPath();
 	gfx.arc(s1.pos.x,s1.pos.y,s1.mass*solarRad,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	gfx.strokeStyle = gfx.fillStyle = 'blue';
-	//gfx.fillText('Star 2 vel: ' + s2.vel.x.toFixed(4) + ' , ' + s2.vel.y.toFixed(4), 20,280);
+	gfx.fillText('Star 2 vel: ' + s2.vel.x.toFixed(4) + ' , ' + s2.vel.y.toFixed(4), 20,310);
+	gfx.fillText('Star 2 accel: ' + s2.accel.x.toFixed(4) + ' , ' + s2.accel.y.toFixed(4), 20,340);
 	gfx.beginPath();
 	gfx.arc(s2.pos.x,s2.pos.y,s2.mass*solarRad,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
