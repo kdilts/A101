@@ -7,8 +7,8 @@ var canvas; var gfx;
 var cwidth; var cheight;
 var center;
 var s1; var s2;
-var ecc;
-var G = 6.67384 * Math.pow(10,-11);
+var G = 6.673 * Math.pow(10,-11);
+var period;
 var play = false; var trace = true; var showVecs = true;
 var tick = 0;
 
@@ -47,18 +47,27 @@ window.onload = function(){
 
 	sepBox.value = 6;
 	
-	s1 = new star1(1,center.x+sepBox.value*pxPerSolarRad/2);
-	s2 = new star2(1,center.x-sepBox.value*pxPerSolarRad/2);
+	s1 = new star1(1,center.x-sepBox.value*pxPerSolarRad/2);
+	s2 = new star2(1,center.x+sepBox.value*pxPerSolarRad/2);
 
 	m1Box.value = s1.sunMasses; m2Box.value = s2.sunMasses;
 
-	calculatePeriod = function(a, m1, m2){ return Math.sqrt( (a*a*a)/(m1+m2) );	}
+	calculatePeriod = function(a, m1, m2){ return 2*Math.PI*Math.sqrt( (a*a*a)/(G*(m1+m2)) );	}
 
 	calculateInitV = function(p,a,e){ return (2*Math.PI*a*(1+e)) / (p*Math.sqrt(1-e*e)); }
+
+	period = calculatePeriod(sepBox.value*kmPerRad, s1.massKg, s2.massKg);
+	s1.vel.y = calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
+	s2.vel.y = -calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
 
 	playButton.onclick = function(){
 		if(play){ play = false; playButton.value = 'start'; }
 		else{ play = true; playButton.value = 'stop'; }
+
+		period = calculatePeriod(sepBox.value*kmPerRad, s1.massKg, s2.massKg);
+
+		s1.vel.y = calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
+		s2.vel.y = -calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
 	}
 
 	resetButton.onclick = function(){
@@ -66,8 +75,13 @@ window.onload = function(){
 
 		redTrace = []; blueTrace = []; yellowTrace = [];
 
-		s1 = new star1(m1Box.value,center.x+sepBox.value*pxPerSolarRad/2);
-		s2 = new star2(m2Box.value,center.x-sepBox.value*pxPerSolarRad/2);
+		s1 = new star1(m1Box.value,center.x-sepBox.value*pxPerSolarRad/2);
+		s2 = new star2(m2Box.value,center.x+sepBox.value*pxPerSolarRad/2);
+
+		period = calculatePeriod(sepBox.value*kmPerRad, s1.massKg, s2.massKg);
+
+		s1.vel.y = calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
+		s2.vel.y = -calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);
 
 		render();
 	}
@@ -107,8 +121,12 @@ star1 = function(m,initX){
 
 	this.update = function(){
 		// accel
-		//var r = mag(this.accel);
+		this.accel = sub(s2.pos,this.pos);
+		var r = mag(this.accel);
+		this.accel = unit(this.accel);
+		var m1 = this.massKg; var m2 = s2.massKg;
 		// (G*(m1*m2/r^2))/m2
+		this.accel = mult(this.accel, (G*((m1*m2)/(r*r))/m2));
 		
 		this.vel = add(this.vel, this.accel);
 		this.pos = add(this.pos, this.vel);
@@ -123,21 +141,13 @@ star2 = function(m,initX){
 	this.massKg = m*sunMassKg;
 
 	this.update = function(){
-		// accel
-		//var r = mag(this.accel);
-		// (G*(m1*m2/r^2))/m2
-		
-		// vel
-		// pos
-
-		/*this.accel = sub(s1.pos, this.pos);
-		//this.accel = mult(this.accel, 1/69550); // change to km
-		// (G*(m1*m2/r^2))/m2
-		var m1 = this.mass; var m2 = s1.massKg;
-		//m1 = m1*sunMass; m2 = m2*sunMass; // change to kg
+		this.accel = sub(s1.pos,this.pos);
 		var r = mag(this.accel);
 		this.accel = unit(this.accel);
-		this.accel = mult(this.accel, (G*(m1*m2/(r*r)))/m2);*/
+		var m1 = this.massKg; var m2 = s1.massKg;
+		// (G*(m1*m2/r^2))/m2
+		this.accel = mult(this.accel, (G*((m1*m2)/(r*r))/m2));
+		
 		this.vel = add(this.vel, this.accel);
 		this.pos = add(this.pos, this.vel);
 	}
@@ -168,8 +178,8 @@ render = function(){
 	// unit text
 	gfx.fillText(pxPerSolarRad + " pixels = 1 Solar Radii = " + kmPerRad + " km", cwidth/2-100, 35);
 	gfx.fillText("1 Sun Mass = " + sunMassKg + " kg", cwidth/2-100, 60);
-	gfx.fillText('       G = ' + G, 20,150);
-	gfx.fillText('Period = ', 20,170);
+	gfx.fillText('       G = ' + G + '  N*(m/kg)^2', 20,180);
+	gfx.fillText('Period = ' + period.toFixed(4) + ' hours', 20,200);
 
 	// center of mass marker
 	gfx.strokeStyle = gfx.fillStyle = 'yellow';
@@ -292,6 +302,7 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 		<br><br>
 		&nbsp;&nbsp;<b1>Mass 1 (Solar Masses): </b1><input type="text" size="2" id="m1Box"><br>
 		&nbsp;&nbsp;<b1>Mass 2 (Solar Masses): </b1><input type="text" size="2" id="m2Box"><br>
-		<b1>Separation (Solar Radii): </b1><input type="text" size="2" id="sepBox">
+		<b1>Separation (Solar Radii): </b1><input type="text" size="2" id="sepBox"><br>
+		<b1>Eccentricity: </b1><input type="text" size="2" id="eccBox" value = "0.5">
 	</form>
 </body>
