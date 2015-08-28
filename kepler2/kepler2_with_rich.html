@@ -1,0 +1,380 @@
+<html>
+<head><script language=javascript>
+	
+	var canvas; var gfx;
+	var cwidth; var cheight;
+
+	var pause = false;
+
+	var completedOrbit = false;
+	var screenPeriod = -1;
+
+	var t = 0; var deltaT = 1000/60;
+	var theta = 0; var deltaTheta;
+	var r = 0; var v = 0;
+	var ecc = 0.206; var a = 175;
+
+	var const1 = 10; var const2 = 10;
+
+	var tracePoints = [];
+
+	var wedges = []; var wedging = -1;
+	var wedgeSize = 15; var numWedges = 0;
+
+	var planetSelector; var semimajorbox; var eccbox; var playpausebutton;
+	var slowmobox; var showsectorsbox; var slider; var showvelbox; var showposbox;
+	var minbox; var maxbox; var curbox; var distbox;
+
+	var planetData = {
+		mercury:{ semimajor: .387, ecc: .206, min:38.9, max:59.1 },
+		venus:{ semimajor: .723, ecc: .007, min:34.8, max:35.3 },
+		earth:{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3 },
+		mars:{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5 },
+		jupiter:{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7 },
+		saturn:{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2 },
+		uranus:{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12 },
+		neptune:{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48 },
+		pluto:{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12 },
+		halley:{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4 }
+	}
+
+	window.onload = function(){
+		canvas = document.createElement('canvas');
+		document.body.appendChild(canvas);
+		cwidth = canvas.width = window.innerWidth*.7;
+		cheight = canvas.height = window.innerHeight;
+		canvas.setAttribute('style','position:absolute; left:0; top:0');
+		gfx = canvas.getContext('2d');
+		interval = setInterval(render,deltaT);
+
+		r = a*(1-ecc);
+		tracePoints[0] = [cwidth/2+a,cheight/2];
+
+		////////////////////////
+		planetSelector =  document.getElementById('planetSelect');
+		semimajorbox = document.getElementById('semimajor');
+		eccbox = document.getElementById('eccentricity');
+		playpausebutton = document.getElementById('playpause');
+		slowmobox = document.getElementById('slowmo');
+		showsectorsbox = document.getElementById('showsectors');
+		slider = document.getElementById('slider');
+		showvelbox = document.getElementById('showvel');
+		showposbox = document.getElementById('showpos');
+
+		minbox = document.getElementById('minvel');
+		maxbox = document.getElementById('maxvel');
+		curbox = document.getElementById('curvel');
+		distbox = document.getElementById('distbox');
+
+		semimajorbox.value = ''+planetData.mercury.semimajor + ' AU';
+		eccbox.value = ''+planetData.mercury.ecc;
+		semimajorbox.disabled = true; eccbox.disabled = true;
+		minbox.value = ''+planetData.mercury.min + ' km/s';
+		maxbox.value = ''+planetData.mercury.max + ' km/s';
+
+		semimajorbox.onchange = function(){
+			if(isNaN(parseFloat(semimajorbox.value))){ semimajorbox.value = ''; return; }
+			semimajorbox.value = parseFloat(semimajorbox.value);
+		}
+		eccbox.onchange = function(){
+			if(isNaN(parseFloat(eccbox.value))){ eccbox.value = ''; return; }
+			eccbox.value = parseFloat(eccbox.value);
+		}
+
+		playpausebutton.onclick = function(){
+			if(pause){
+				pause = false;
+				playpausebutton.value = 'Pause';
+			}else{
+				pause = true;
+				playpausebutton.value = 'Play';
+			}
+		}
+
+		slider.onchange = function(){}
+
+		slowmobox.onchange = function(){
+			if(slowmobox.checked){
+				slow = true;
+			}else{
+				slow = false;
+			}
+		}
+
+		showvelbox.onchange = function(){
+			if(showvelbox.checked){
+				showvel = true;
+			}else{
+				showvel = false;
+			}
+		}
+
+		showposbox.onchange = function(){
+			if(showposbox.checked){
+				showpos = true;
+			}else{
+				showpos = false;
+			}
+		}
+
+		planetSelector.onchange = function(){
+			switch(parseInt(planetSelector.value)){
+				case 0:
+					currentPlanet = 'mercury';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.mercury.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 1:
+					currentPlanet = 'venus'; 
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.venus.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 2:
+					currentPlanet = 'earth'; 
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.earth.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 3:
+					currentPlanet = 'mars';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.mars.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 4:
+					currentPlanet = 'jupiter';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.jupiter.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 5:
+					currentPlanet = 'saturn';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.saturn.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 6:
+					currentPlanet = 'uranus';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.uranus.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 7:
+					currentPlanet = 'neptune';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.neptune.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 8:
+					currentPlanet = 'pluto';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.pluto.ecc;
+					const1 = const2 = 20;
+					reset();
+					break;
+				case 9:
+					currentPlanet = 'halley';
+					semimajorbox.disabled = true; eccbox.disabled = true;
+					ecc = planetData.halley.ecc;
+					const1 = const2 = 3;
+					reset();
+					break;
+				case 10:
+					currentPlanet = 'custom';
+					semimajorbox.value = '';
+					eccbox.value = '';
+					minbox.value = '';
+					maxbox.value = '';
+					semimajorbox.disabled = false; eccbox.disabled = false;
+					return;
+				break;
+			}
+			semimajorbox.value = ''+planetData[currentPlanet].semimajor + ' AU';
+			eccbox.value = ''+planetData[currentPlanet].ecc;
+			minbox.value = ''+planetData[currentPlanet].min + ' km/s';
+			maxbox.value = ''+planetData[currentPlanet].max + ' km/s';
+		}
+		////////////////////////
+	}
+
+	window.onkeydown = function(e){}
+
+	window.onclick = function(e){
+		mx = e.x; my = e.y;
+		if(!mx){ mx = e.clientX; my = e.clientY; }
+
+		if(mx > 0 && mx < cwidth){
+			if(wedging === -1){ wedging = wedgeSize; }
+		}
+	}
+
+	reset = function(){
+		tracePoints = [];
+
+		wedges = []; wedging = -1;
+		wedgeSize = 15; numWedges = 0;
+
+		theta = 0; t = 0;
+
+		completedOrbit = false;
+		screenPeriod = -1;
+
+		r = a*(1-ecc);
+		tracePoints[0] = [cwidth/2+a,cheight/2];
+	}
+
+	render = function(){
+		gfx.fillStyle = 'black';
+		gfx.fillRect(0,0,cwidth,cheight);
+
+		gfx.fillStyle = gfx.strokeStyle = 'white';
+		gfx.font = '16px verdana';
+		gfx.fillText('T = ' + (t/60).toFixed(2),10,15);
+		gfx.fillText('theta = ' + theta.toFixed(4),10,35);
+		gfx.fillText('r = ' + r.toFixed(4),10,55);
+		gfx.fillText('v = ' + v.toFixed(4),10,75);
+		gfx.fillText('p = ' + screenPeriod.toFixed(4),10,95);
+		gfx.fillText('trace pts = ' + tracePoints.length,10,115);
+
+		if(pause){
+			gfx.font = '16px verdana';
+			gfx.fillText('Paused',cwidth/2-200,cheight/2-200);
+		}
+
+		gfx.fillStyle = gfx.strokeStyle = 'yellow';
+		gfx.beginPath();
+		gfx.arc(cwidth/2,cheight/2,7.5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		drawWedge();
+		drawTrace();
+		drawPlanet();
+
+		if(!pause){
+			update();
+			t++;
+		}
+	}
+
+	update = function(){
+		deltaTheta = const2/(r*r)*deltaT;
+		theta = theta + deltaTheta;
+		r = a*(1-Math.pow(ecc,2)) / (1+ecc*Math.cos(theta));
+		v = const1*(2/r - 1/a);
+
+		if(!completedOrbit && theta >= Math.PI*2){
+			screenPeriod = t;
+			completedOrbit = true;
+
+			var x = r*Math.cos(theta);
+			var y = r*Math.sin(theta);
+			tracePoints[t] = [x,y];
+		}
+
+		if(wedging >= 0){
+			var x = cwidth/2 + r*Math.cos(theta);
+			var y = cheight/2 + r*Math.sin(theta);
+
+			if(!wedges[numWedges]){ wedges[numWedges] = []; }
+			wedges[numWedges][wedgeSize-wedging] = [x,y];
+
+			wedging--;
+			if(wedging === -1){ numWedges++; }
+		}
+	}
+
+	drawWedge = function(){
+		gfx.strokeStyle = gfx.fillStyle = 'red';
+		for(var z in wedges){
+			gfx.beginPath();
+			gfx.moveTo(cwidth/2,cheight/2);
+			for(var m in wedges[z]){
+				gfx.lineTo(wedges[z][m][0], wedges[z][m][1]);
+			}
+			gfx.lineTo(cwidth/2,cheight/2);
+			gfx.fill(); gfx.stroke();
+		}
+	}
+
+	drawTrace = function(){
+		gfx.strokeStyle = 'white';
+		gfx.beginPath();
+		gfx.moveTo(cwidth/2+tracePoints[0][0], cheight/2+tracePoints[0][1]);
+		for(var z in tracePoints){
+			gfx.lineTo(cwidth/2+tracePoints[z][0], cheight/2+tracePoints[z][1]);
+		}
+		gfx.stroke();
+	}
+
+	drawPlanet = function(){
+		var x = r*Math.cos(theta);
+		var y = r*Math.sin(theta);
+
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+		gfx.beginPath();
+		gfx.arc(cwidth/2+x,cheight/2+y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+
+		if(!completedOrbit){ tracePoints[t] = [x,y]; }
+	}
+
+
+</script></head>
+<body bgcolor='grey'>
+	<form style='position:absolute; left:72%; top:2%;'>
+		<select id='planetSelect' style='width:200'>
+				<option value = "0">Mercury</option>
+				<option value = "1">Venus</option>
+				<option value = "2">Earth</option>
+				<option value = "3">Mars</option>
+				<option value = "4">Jupiter</option>
+				<option value = "5">Saturn</option>
+				<option value = "6">Uranus</option>
+				<option value = "7">Neptune</option>
+				<option value = "8">Pluto</option>
+				<option value = "9">Halley's Comet</option>
+				<option value = "10">Custom</option>
+		</select><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
+		<input type='button' id='playpause' value='Pause'><br></br>
+		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
+		<input type='checkbox' id='showsectors' checked='true'><b1>Show Sectors</b1>
+		&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Sector Size: </b1><input type='range' id='slider'><br></br>
+		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<input type='checkbox' id='showpos'><b1>Show Position Vector</b1><br></br>
+		
+		<b1>Distance from the Sun: </b1>
+		<input type = 'textbox' id='distbox' style='width:28%' disabled>
+		<br></br>
+		
+		<b1>Velocity</b1><br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Currently: </b1>
+		<input type = 'textbox' id='curvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Minimum: </b1>
+		<input type = 'textbox' id='minvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Maximum: </b1>
+		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
+		<br></br>
+	</form>
+</body>
+</html>
