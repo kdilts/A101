@@ -1,0 +1,76 @@
+<html>
+	<head></head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script src="js/Quaternion.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script>
+
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+
+			var controls = new THREE.OrbitControls(camera);
+			controls.target.z = 0;
+
+			var dist = 5; var height = 5; var spd = .0175; var camTheta = spd*45;
+
+			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
+			document.body.appendChild(renderer.domElement);
+			
+			camera.position.set(1,2,5);
+			camera.lookAt(new THREE.Vector3(0,0,0));
+
+			var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
+
+			window.onmousedown = function(){ }
+			window.onkeydown = function(e){ }
+
+//
+var CustomSinCurve = THREE.Curve.create(
+    function ( scale ) { //custom curve constructor
+        this.scale = (scale === undefined) ? 1 : scale;
+    },
+    
+    function ( t ) { //getPoint: t is between 0-1
+        var tx = t * 3 - 1.5,
+            ty = Math.sin( 2 * Math.PI * t ),
+            tz = 0;
+        
+        return new THREE.Vector3(tx, ty, tz).multiplyScalar(this.scale);
+    }
+);
+
+var path = new CustomSinCurve( 1 );
+
+var geometry = new THREE.TubeGeometry(
+    path,  //path
+    50,    //segments
+    .1,     //radius
+    32,     //radiusSegments
+    false  //closed
+);
+//
+			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+			var thing = new THREE.Mesh(geometry, material);
+			scene.add(thing);
+
+			var rotate = function(){
+				camera.position.set(Math.cos(camTheta)*dist,height,Math.sin(camTheta)*dist);
+				camera.lookAt(new THREE.Vector3(0,0,0));
+				camera.position.setLength(dist);
+			}
+
+			rotate();
+			
+			var render = function () {
+				requestAnimationFrame(render);
+				
+				renderer.render(scene, camera);
+			};
+
+			render();
+
+		</script>
+	</body>
+</html>
