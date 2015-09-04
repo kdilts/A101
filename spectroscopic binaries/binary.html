@@ -52,9 +52,13 @@ window.onload = function(){
 
 	m1Box.value = s1.sunMasses; m2Box.value = s2.sunMasses;
 
-	calculatePeriod = function(a, m1, m2){ return 2*Math.PI*Math.sqrt( (a*a*a)/(G*(m1+m2)) );	}
+	calculatePeriod = function(a, m1, m2){ return 2*Math.PI*Math.sqrt( (a*a*a)/(G*(m1+m2)) );	} // TODO input in SI, convert to astronomic for calculation, convert back to SI for output
+	// use a^3/p^2 = m1 + m2, solve
+	// p should be years, a is separation in au, masses should be in solar masses
 
-	calculateInitV = function(p,a,e){ return (2*Math.PI*a*(1+e)) / (p*Math.sqrt(1-e*e)); }
+	// SI is meters, kg, seconds
+
+	calculateInitV = function(p,a,e){ return (2*Math.PI*a*(1+e)) / (p*Math.sqrt(1-e*e)); } // TODO expect input in SI, output should be in meters/second
 
 	period = calculatePeriod(sepBox.value*kmPerRad, s1.massKg, s2.massKg);
 	s1.vel.y = calculateInitV(period,sepBox.value*kmPerRad,eccBox.value);

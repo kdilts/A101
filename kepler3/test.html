@@ -1,0 +1,119 @@
+<html>
+	<head></head>
+	<body>
+		<script src="js/three.min.js"></script>
+		<script>
+			// credit to: threejs.org. Some of this is from their introductory tutorial to 3d in javascript.
+			var planets = []; var orbitRings = [];
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
+			document.body.appendChild(renderer.domElement);
+			var geometry = new THREE.SphereGeometry(.3/8,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+			var star = new THREE.Mesh(geometry, material);
+			scene.add(star);
+			for(var i = 0; i < 8; i++){
+				geometry = new THREE.SphereGeometry(.25/8,20,20);
+				material = new THREE.MeshBasicMaterial({color: 0x00ff00});
+				planets[i] = { obj:new THREE.Mesh(geometry, material), rot:0, spd:.3, rad:.5+i*.5 }
+				planets[i].obj.position.x = .5+i*.5;
+				scene.add(planets[i].obj);
+				geometry = new THREE.TorusGeometry(.5+i*.5,.005,8,60);
+				material = new THREE.MeshBasicMaterial({color: 0xffffff});
+				orbitRings[i] = new THREE.Mesh(geometry, material);
+				orbitRings[i].rotation.x = 90*Math.PI/180;
+				scene.add(orbitRings[i]);
+			}
+			geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(0,-100,0));
+			geometry.vertices.push(new THREE.Vector3(0,100,0));
+			material = new THREE.LineBasicMaterial({
+				color: 0xffffff
+			});
+			scene.add(new THREE.Line(geometry,material));
+			geometry = new THREE.Geometry();
+			geometry.vertices.push(new THREE.Vector3(100,0,0));
+			geometry.vertices.push(new THREE.Vector3(-100,0,0));
+			scene.add(new THREE.Line(geometry,material));
+			camera.position.set(1,2,5);
+			camera.lookAt(new THREE.Vector3(0,0,0));
+			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
+			window.onmousedown = function(){ }
+			window.onkeydown = function(e){
+				console.clear();
+				console.log(camera.position);
+				if(e.which === 65){ // a (zoom in)
+					camera.position.setLength(camera.position.length()-.1);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+				if(e.which === 90){ // z (zoom out)
+					camera.position.setLength(camera.position.length()+.1);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}				
+				if(e.which === 38){ // up
+					var d = camera.position.length();
+					camera.position.y += .1;
+					if(camera.position.y > 8){ camera.position.y = 8; }
+					camera.position.setLength(d);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+				if(e.which === 40){ // down
+					var d = camera.position.length();
+					camera.position.y -= .1;
+					if(camera.position.y < -8){ camera.position.y = -8; }
+					camera.position.setLength(d);
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+				if(e.which === 37){ // left
+					//var oldY = camera.position.y;
+					var d = camera.position.length();
+					var pos = camera.position;
+					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
+					if(camera.position.z <= 0){ rot = -rot; }
+					rot += .1;
+					camera.position.x = Math.cos(rot)*d;
+					camera.position.z = Math.sin(rot)*d;
+					camera.position.setLength(d);
+					//camera.position.y = oldY;
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+				if(e.which === 39){ // right
+					//var oldY = camera.position.y;
+					var d = camera.position.length();
+					var pos = camera.position;
+					var rot = Math.acos(pos.dot(new THREE.Vector3(1,0,0))/pos.length());
+					if(camera.position.z <= 0){ rot = -rot; }
+					rot -= .1;
+					camera.position.x = Math.cos(rot)*d;
+					camera.position.z = Math.sin(rot)*d;
+					camera.position.setLength(d);
+					//camera.position.y = oldY;
+					camera.lookAt(new THREE.Vector3(0,0,0));
+					return;
+				}
+			}
+			var updatePos = function(){
+				for(var p in planets){
+					var x = planets[p];
+					planets[p].obj.position.set(Math.cos(x.rot*Math.PI/180) * x.rad, 0,
+						Math.sin(x.rot*Math.PI/180) * x.rad);
+					planets[p].rot -= x.spd;
+				}
+			}
+			var render = function () {
+				requestAnimationFrame(render);
+				
+				updatePos();
+				renderer.render(scene, camera);
+			};
+			render();
+		</script>
+	</body>
+</html>

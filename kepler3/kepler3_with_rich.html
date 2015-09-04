@@ -1,0 +1,118 @@
+<html>
+	<head></head>
+	<body bgcolor='grey'>
+		<script src="js/three.min.js"></script>
+		<script src="js/Quaternion.js"></script>
+		<script src="js/OrbitControls.js"></script>
+		<script>
+			var scene = new THREE.Scene();
+			var camera = new THREE.PerspectiveCamera(
+				75, window.innerWidth*.75/window.innerHeight*.95, 0.1, 1000);
+			var renderer = new THREE.WebGLRenderer();
+
+			var controls = new THREE.OrbitControls(camera);
+			controls.target.z = 0;
+
+			var dist = 5; var height = 5; var spd = .0175; var camTheta = spd*45;
+			
+			var t = 0; var deltaT = 1000/60;
+
+			var theta = []; var deltaTheta = [];
+			var r = [];
+			var const1 = 30; var const2 = 0.001;
+
+			var planets = [];
+
+			var planetData = [
+				{ id: 'mercury', semimajor: .387, ecc: .206, i: 7, w: 48 },
+				{ id: 'venus', semimajor: .723, ecc: .007, i: 3.4, w: 77 },
+				{ id: 'earth', semimajor: 1.0, ecc: .017, i: 0, w: 0 },
+				{ id: 'mars', semimajor: 1.52, ecc: .093, i: 1.85, w: 49.6 },
+				{ id: 'jupiter', semimajor: 5.2, ecc: .048, i: 1.3, w: 100 },
+				{ id: 'saturn', semimajor: 9.55, ecc: .056, i: 2.5, w: 114 },
+				{ id: 'uranus', semimajor: 19.2, ecc: .046, i: .77, w: 74 },
+				{ id: 'neptun', semimajor: 30.1, ecc: .009, i: 1.7, w: 131.7 },
+				{ id: 'pluto', semimajor: 39.7, ecc: .252, i: 17, w: 110 },
+				// TODO verify inclination and find omega (w) for halley
+				{ id: 'halley', semimajor: 17.9, ecc: .967, i: 162, w: 0 }
+			]
+
+			for(var p = 0; p < planetData.length; p++){
+				r[p] = planetData[p].semimajor*(1-planetData[p].ecc);
+				theta[p] = 0;
+				deltaTheta[p] = 0;
+			}
+
+			renderer.setSize(window.innerWidth*.75, window.innerHeight*.95);
+			document.body.appendChild(renderer.domElement);
+
+			var rotate = function(){
+				camera.position.set(Math.cos(camTheta)*dist,height,Math.sin(camTheta)*dist);
+				camera.lookAt(new THREE.Vector3(0,0,0));
+				camera.position.setLength(dist);
+			}
+
+			rotate();
+
+			var geometry = new THREE.SphereGeometry(.25,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+			var star = new THREE.Mesh(geometry, material);
+			scene.add(star);
+
+			var axisHelper = new THREE.AxisHelper(15);
+			scene.add(axisHelper);
+
+			var ellipse3 = function(semimajor,e,thick,res){
+				var geometry = new THREE.TorusGeometry(semimajor,thick,res,res);
+				var material = new THREE.MeshBasicMaterial({color: 0xffffff});
+				var ellipse = new THREE.Mesh(geometry, material);
+				ellipse.scale.y = (1-e/3.5);
+				return ellipse;
+			}
+
+			window.onmousedown = function(){ }
+
+			window.onkeydown = function(e){ }
+
+			var render = function () {
+				requestAnimationFrame(render);
+				
+				renderer.render(scene, camera);
+
+				for(var p = 0; p < planetData.length; p++){
+					deltaTheta[p] = const2/(r[p]*r[p])*deltaT;
+					theta[p] = theta[p] + deltaTheta[p];
+					if(theta[p] >= Math.PI*2){ theta[p] -= Math.PI*2; }
+					r[p] = planetData[p].semimajor*(1-Math.pow(planetData[p].ecc,2)) / (1+planetData[p].ecc*Math.cos(theta[p]));
+					
+					planets[p].position.x = r[p]*Math.cos(theta[p] - planetData[p].w);
+					planets[p].position.z = r[p]*Math.sin(theta[p] - planetData[p].w);
+					planets[p].position.y = r[p]*Math.sin(planetData[p].i)*Math.sin(theta[p] - planetData[p].w);
+				}
+
+				t++;
+			};
+
+			/*var ring = ellipse3(a,e,.02,40);
+			scene.add(ring);
+			ring.rotation.x = Math.PI/2;
+			ring.position.x = -a*e;
+
+			var ring = ellipse3(a,0,.02,40);
+			scene.add(ring);
+			ring.rotation.x = Math.PI/2;
+			ring.position.x = -a*e;*/
+
+			var geometry = new THREE.SphereGeometry(.125,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
+			for(var p = 0; p < planetData.length; p++){
+				planets[p] = new THREE.Mesh(geometry, material);
+				scene.add(planets[p]);
+				planets[p].position.x = r[p];
+			}
+
+			render();
+		</script>
+
+	</body>
+</html>

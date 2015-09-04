@@ -1,22 +1,38 @@
 <html>
 	<head></head>
-	<body>
+	<body bgcolor='grey'>
 		<script src="js/three.min.js"></script>
+		<script src="js/Quaternion.js"></script>
+		<script src="js/OrbitControls.js"></script>
 		<script>
 			var scene = new THREE.Scene();
-			var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
+			var camera = new THREE.PerspectiveCamera(
+				75, window.innerWidth*.75/window.innerHeight*.95, 0.1, 1000);
 			var renderer = new THREE.WebGLRenderer();
 
-			renderer.setSize(window.innerWidth*.95, window.innerHeight*.95);
+			var controls = new THREE.OrbitControls(camera);
+			controls.target.z = 0;
+
+			var dist = 5; var height = 2; var spd = .0175; var theta = spd*45;
+
+			renderer.setSize(window.innerWidth*.75, window.innerHeight*.95);
 			document.body.appendChild(renderer.domElement);
+
+			var rotate = function(){
+				camera.position.set(Math.cos(theta)*dist,height,Math.sin(theta)*dist);
+				camera.lookAt(new THREE.Vector3(0,0,0));
+				camera.position.setLength(dist);
+			}
+
+			rotate();
 
 			var geometry = new THREE.SphereGeometry(.5,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
 			var star = new THREE.Mesh(geometry, material);
-			scene.add(star);
+			//scene.add(star);
 
-			camera.position.set(1,2,5);
-			camera.lookAt(new THREE.Vector3(0,0,0));
+			//camera.position.set(1,2,5);
+			//camera.lookAt(new THREE.Vector3(0,0,0));
 
 			var axisHelper = new THREE.AxisHelper(15);
 			scene.add(axisHelper);
@@ -33,7 +49,7 @@
 
 			window.onkeydown = function(e){
 
-				if(e.which === 65){ // a (zoom in)
+				/*if(e.which === 65){ // a (zoom in)
 					camera.position.setLength(camera.position.length()-.1);
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
@@ -93,7 +109,7 @@
 
 					camera.lookAt(new THREE.Vector3(0,0,0));
 					return;
-				}
+				}*/
 			}
 
 			var render = function () {
@@ -106,5 +122,50 @@
 
 			render();
 		</script>
+
+		<form style='position:absolute; left:82%; top:2%;'>
+		<select id='planetSelect' style='width:200'>
+				<option value = "0">Mercury</option>
+				<option value = "1">Venus</option>
+				<option value = "2">Earth</option>
+				<option value = "3">Mars</option>
+				<option value = "4">Jupiter</option>
+				<option value = "5">Saturn</option>
+				<option value = "6">Uranus</option>
+				<option value = "7">Neptune</option>
+				<option value = "8">Pluto</option>
+				<option value = "9">Halley's Comet</option>
+				<option value = "10">Custom</option>
+		</select><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
+		<input type='button' id='playpause' value='Pause'>&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type='button' id='clear' value='Clear'>&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type='button' id='enter' value='Enter' hidden='true'><br></br>
+		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
+		<b1>Sector Size: </b1><input type='range' id='slider' min='5' max ='60' value='15'><br></br>
+		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<b1>Distance from the Sun: </b1>
+		<input type = 'textbox' id='distbox' style='width:28%' disabled>
+		<br></br>
+		
+		<b1>Velocity</b1><br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Currently: </b1>
+		<input type = 'textbox' id='curvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Minimum: </b1>
+		<input type = 'textbox' id='minvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Maximum: </b1>
+		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
+		<br></br>
+	</form>
+
 	</body>
 </html>
