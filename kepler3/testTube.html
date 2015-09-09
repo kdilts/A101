@@ -53,10 +53,9 @@ var geometry = new THREE.TubeGeometry(
 			var material = new THREE.LineBasicMaterial({ color: 0x0000ff });
 
 			var geometry = new THREE.Geometry();
-			for(var theta = 0; theta < Math.PI*2; theta += .1){
-		    	geometry.vertices.push(new THREE.Vector3(Math.cos(theta), 0, Math.sin(theta)));
+			for(var theta = 0; theta < Math.PI*2.05; theta += .1){
+		    	geometry.vertices.push(new THREE.Vector3(.5*Math.cos(theta), 0, Math.sin(theta)));
 			}
-
 
 			var line = new THREE.Line(geometry, material);
 
@@ -65,7 +64,7 @@ var geometry = new THREE.TubeGeometry(
 			camera.position.set(1,2,5);
 			camera.lookAt(new THREE.Vector3(0,0,0));
 
-			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
+			var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
 
 			window.onmousedown = function(){ }
 			window.onkeydown = function(e){ }

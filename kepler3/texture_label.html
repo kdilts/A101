@@ -26,6 +26,34 @@
 			window.onmousedown = function(){ }
 			window.onkeydown = function(e){ }
 
+			var canvas = document.createElement('canvas');
+			var gfx = canvas.getContext('2d');
+
+			gfx.canvas.width = 50;
+			gfx.canvas.height = 50;
+
+			gfx.fillStyle = gfx.strokeStyle
+				= 'rgba(' + 255 + ',' + 0 + ',' + 0 + ',' + 0 + ')';
+
+			gfx.fillRect(0,0,50,20);
+			gfx.fillStyle = gfx.strokeStyle = 'red';
+			gfx.font = '18px verdana';
+			gfx.fillText('test',10,15);
+
+			var texture = new THREE.Texture(canvas);
+			texture.needsUpdate = true;
+
+			var spriteMaterial = new THREE.SpriteMaterial( 
+				{ map: texture, useScreenCoordinates: false }
+			);
+
+			var sprite = new THREE.Sprite( spriteMaterial );
+			
+			sprite.scale.set(5,5,1);
+			sprite.position.set( 0, 0, 0 );
+
+			scene.add( sprite );
+
 			var rotate = function(){
 				camera.position.set(Math.cos(camTheta)*dist,height,Math.sin(camTheta)*dist);
 				camera.lookAt(new THREE.Vector3(0,0,0));
@@ -34,7 +62,13 @@
 
 			rotate();
 			
+			var theta = 0;
+
 			var render = function () {
+				sprite.position.set(Math.cos(theta)*2+1, 0, Math.sin(theta)*2+1);
+				theta += .01;
+				if(theta >= Math.PI*2){ theta -= Math.PI*2; }
+
 				requestAnimationFrame(render);
 				
 				renderer.render(scene, camera);

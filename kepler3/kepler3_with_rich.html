@@ -13,39 +13,82 @@
 			var controls = new THREE.OrbitControls(camera);
 			controls.target.z = 0;
 
+			// camera variables
 			var dist = 5; var height = 5; var spd = .0175; var camTheta = spd*45;
 			
+			// planet variables
 			var t = 0; var deltaT = 1000/60;
-
 			var theta = []; var deltaTheta = [];
 			var r = [];
-			var const1 = 30; var const2 = 0.001;
+			var const2 = 0.001; // const1 isn't used. name remains const2 for consistency with formulas given
 
 			var planets = [];
 
-			var planetData = [
-				{ id: 'mercury', semimajor: .387, ecc: .206, i: 7, w: 48 },
-				{ id: 'venus', semimajor: .723, ecc: .007, i: 3.4, w: 77 },
-				{ id: 'earth', semimajor: 1.0, ecc: .017, i: 0, w: 0 },
-				{ id: 'mars', semimajor: 1.52, ecc: .093, i: 1.85, w: 49.6 },
-				{ id: 'jupiter', semimajor: 5.2, ecc: .048, i: 1.3, w: 100 },
-				{ id: 'saturn', semimajor: 9.55, ecc: .056, i: 2.5, w: 114 },
-				{ id: 'uranus', semimajor: 19.2, ecc: .046, i: .77, w: 74 },
-				{ id: 'neptun', semimajor: 30.1, ecc: .009, i: 1.7, w: 131.7 },
-				{ id: 'pluto', semimajor: 39.7, ecc: .252, i: 17, w: 110 },
-				// TODO verify inclination and find omega (w) for halley
-				{ id: 'halley', semimajor: 17.9, ecc: .967, i: 162, w: 0 }
-			]
+			rToD = Math.PI/180;
+	var planetData = [
+		{ id: 'Mercury', semimajor: .387, ecc: .206, i: 7*rToD, w: 48*rToD },
+		{ id: 'Venus', semimajor: .723, ecc: .007, i: 3.4*rToD, w: 77*rToD },
+		{ id: 'Earth', semimajor: 1.0, ecc: .017, i: 0*rToD, w: 0*rToD },
+		{ id: 'Mars', semimajor: 1.52, ecc: .093, i: 1.85*rToD, w: 49.6*rToD },
+		{ id: 'Jupiter', semimajor: 5.2, ecc: .048, i: 1.3*rToD, w: 100*rToD },
+		{ id: 'Saturn', semimajor: 9.55, ecc: .056, i: 2.5*rToD, w: 114*rToD },
+		{ id: 'Uranus', semimajor: 19.2, ecc: .046, i: .77*rToD, w: 74*rToD },
+		{ id: 'Neptune', semimajor: 30.1, ecc: .009, i: 1.7*rToD, w: 131.7*rToD },
+		{ id: 'Pluto', semimajor: 39.7, ecc: .252, i: 17*rToD, w: 110*rToD },
+		{ id: 'Halley', semimajor: 17.9, ecc: .967, i: 162*rToD, w: 58.4*rToD },
+		{ id: 'Eris', semimajor: 67.7, ecc: .441, i: 44*rToD, w: 35.9*rToD }
+	]
 
+			//// build variable arrays that will represent the state of each planet
 			for(var p = 0; p < planetData.length; p++){
 				r[p] = planetData[p].semimajor*(1-planetData[p].ecc);
 				theta[p] = 0;
 				deltaTheta[p] = 0;
 			}
 
+			//// create orbit rings and add them to the scene
+			var lines = [];
+
+			var material = new THREE.LineBasicMaterial({ color: 0xffffff });
+
+			for(var p = 0; p < planetData.length; p++){
+				var geometry = new THREE.Geometry();
+				var ringTheta = 0; var ringDeltaTheta = 0;
+				var a = planetData[p].semimajor;
+				var ecc = planetData[p].ecc;
+
+				var ringR = a*(1-ecc);
+
+				while(ringTheta < Math.PI*2.1){
+					if(p < 3){
+						ringDeltaTheta = (const2*2)/(ringR*ringR)*deltaT;
+					}else{
+						ringDeltaTheta = (const2*10)/(ringR*ringR)*deltaT;
+					}
+					ringTheta = ringTheta + ringDeltaTheta;
+					ringR = a*(1-Math.pow(ecc,2)) / (1+ecc*Math.cos(ringTheta));
+
+			var ptx =
+				ringR*Math.cos(ringTheta - planetData[p].w);
+
+			var ptz =
+				ringR*Math.sin(ringTheta - planetData[p].w);
+
+			var pty =
+				ringR*Math.sin(planetData[p].i)*Math.sin(ringTheta - planetData[p].w);
+
+		    		geometry.vertices.push(new THREE.Vector3(ptx, pty, ptz));
+		    	}
+		    	lines.push(geometry);
+			}
+
+			for(var p in lines){ scene.add(new THREE.Line(lines[p], material)); }
+			////
+
 			renderer.setSize(window.innerWidth*.75, window.innerHeight*.95);
 			document.body.appendChild(renderer.domElement);
 
+			//// setup 3js mouse camera controls
 			var rotate = function(){
 				camera.position.set(Math.cos(camTheta)*dist,height,Math.sin(camTheta)*dist);
 				camera.lookAt(new THREE.Vector3(0,0,0));
@@ -53,34 +96,75 @@
 			}
 
 			rotate();
+			////
 
-			var geometry = new THREE.SphereGeometry(.25,20,20);
-			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
-			var star = new THREE.Mesh(geometry, material);
-			scene.add(star);
+			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
 
-			var axisHelper = new THREE.AxisHelper(15);
-			scene.add(axisHelper);
-
-			var ellipse3 = function(semimajor,e,thick,res){
-				var geometry = new THREE.TorusGeometry(semimajor,thick,res,res);
-				var material = new THREE.MeshBasicMaterial({color: 0xffffff});
-				var ellipse = new THREE.Mesh(geometry, material);
-				ellipse.scale.y = (1-e/3.5);
-				return ellipse;
+			var mx = -1; var my = -1;
+			window.onmousemove = function(e){
+				mx = e.x; my = e.y;
+				if(!mx){ mx = e.clientX; my = e.clientY; }
 			}
 
-			window.onmousedown = function(){ }
+			window.onmousedown = function(){
+				for(var p in planetData){
+					var temp = planets[p].position;
 
-			window.onkeydown = function(e){ }
+					var vec = createVector(temp.x,temp.y,temp.z, camera,
+						window.innerWidth*.75, window.innerHeight*.95);
+
+				}
+			}
+
+			//
+
+			//
+
+			//// set up label sprites for each planet
+			var createLabel = function(labelText){
+				var canvas = document.createElement('canvas');
+				var gfx = canvas.getContext('2d');
+
+				gfx.canvas.width = 150;
+				gfx.canvas.height = 50;
+
+				gfx.fillStyle = gfx.strokeStyle
+					= 'rgba(' + 255 + ',' + 0 + ',' + 0 + ',' + 0 + ')';
+
+				gfx.fillRect(0,0,gfx.canvas.width,gfx.canvas.height);
+				gfx.fillStyle = gfx.strokeStyle = 'blue';
+				gfx.font = '16px verdana';
+				gfx.fillText(labelText,10,15);
+
+				var texture = new THREE.Texture(canvas);
+				texture.needsUpdate = true;
+
+				var spriteMaterial = new THREE.SpriteMaterial( 
+					{ map: texture, useScreenCoordinates: false }
+				);
+
+				var sprite = new THREE.Sprite( spriteMaterial );
+
+				return sprite;
+			}
+
+			var sprites = [];
+			for(var p in planetData){
+				sprites[p] = createLabel(planetData[p].id);
+				sprites[p].scale.set(1.2,1.2,1);
+				scene.add(sprites[p]);
+			}
+			////
 
 			var render = function () {
 				requestAnimationFrame(render);
 				
 				renderer.render(scene, camera);
 
+				//// update the position of each planet and its label
 				for(var p = 0; p < planetData.length; p++){
 					deltaTheta[p] = const2/(r[p]*r[p])*deltaT;
+					if(planetData[p].id === 'Halley'){ deltaTheta[p] *= -1; }
 					theta[p] = theta[p] + deltaTheta[p];
 					if(theta[p] >= Math.PI*2){ theta[p] -= Math.PI*2; }
 					r[p] = planetData[p].semimajor*(1-Math.pow(planetData[p].ecc,2)) / (1+planetData[p].ecc*Math.cos(theta[p]));
@@ -88,21 +172,24 @@
 					planets[p].position.x = r[p]*Math.cos(theta[p] - planetData[p].w);
 					planets[p].position.z = r[p]*Math.sin(theta[p] - planetData[p].w);
 					planets[p].position.y = r[p]*Math.sin(planetData[p].i)*Math.sin(theta[p] - planetData[p].w);
-				}
 
-				t++;
+					sprites[p].position.x = planets[p].position.x+.5;
+					sprites[p].position.y = planets[p].position.y+.05;
+					sprites[p].position.z = planets[p].position.z;
+				}
+				////
+
+				t++; // increment time
 			};
 
-			/*var ring = ellipse3(a,e,.02,40);
-			scene.add(ring);
-			ring.rotation.x = Math.PI/2;
-			ring.position.x = -a*e;
+			//// create sun sphere and add it to scene
+			var geometry = new THREE.SphereGeometry(.25,20,20);
+			var material = new THREE.MeshBasicMaterial({color: 0xffff00});
+			var star = new THREE.Mesh(geometry, material);
+			scene.add(star);
+			////
 
-			var ring = ellipse3(a,0,.02,40);
-			scene.add(ring);
-			ring.rotation.x = Math.PI/2;
-			ring.position.x = -a*e;*/
-
+			//// create planet spheres and add them to scene
 			var geometry = new THREE.SphereGeometry(.125,20,20);
 			var material = new THREE.MeshBasicMaterial({color: 0xff0000});
 			for(var p = 0; p < planetData.length; p++){
@@ -110,6 +197,7 @@
 				scene.add(planets[p]);
 				planets[p].position.x = r[p];
 			}
+			////
 
 			render();
 		</script>
