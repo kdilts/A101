@@ -106,60 +106,32 @@
 				if(!mx){ mx = e.clientX; my = e.clientY; }
 			}
 
-			window.onmousedown = function(){
-				for(var p in planetData){
-					var temp = planets[p].position;
+			var projector = new THREE.Projector();
 
-					var vec = createVector(temp.x,temp.y,temp.z, camera,
-						window.innerWidth*.75, window.innerHeight*.95);
+			window.onmousedown = function(){	
 
-				}
 			}
-
-			//
-
-			//
-
-			//// set up label sprites for each planet
-			var createLabel = function(labelText){
-				var canvas = document.createElement('canvas');
-				var gfx = canvas.getContext('2d');
-
-				gfx.canvas.width = 150;
-				gfx.canvas.height = 50;
-
-				gfx.fillStyle = gfx.strokeStyle
-					= 'rgba(' + 255 + ',' + 0 + ',' + 0 + ',' + 0 + ')';
-
-				gfx.fillRect(0,0,gfx.canvas.width,gfx.canvas.height);
-				gfx.fillStyle = gfx.strokeStyle = 'blue';
-				gfx.font = '16px verdana';
-				gfx.fillText(labelText,10,15);
-
-				var texture = new THREE.Texture(canvas);
-				texture.needsUpdate = true;
-
-				var spriteMaterial = new THREE.SpriteMaterial( 
-					{ map: texture, useScreenCoordinates: false }
-				);
-
-				var sprite = new THREE.Sprite( spriteMaterial );
-
-				return sprite;
-			}
-
-			var sprites = [];
-			for(var p in planetData){
-				sprites[p] = createLabel(planetData[p].id);
-				sprites[p].scale.set(1.2,1.2,1);
-				scene.add(sprites[p]);
-			}
-			////
 
 			var render = function () {
 				requestAnimationFrame(render);
 				
 				renderer.render(scene, camera);
+
+				//
+				var vector = planets[0].position;
+				var v = projector.projectVector( vector, camera );
+
+		        var percX = (v.x + 1) / 2;
+		        var percY = (-v.y + 1) / 2;
+		        var left = percX * window.innerWidth*.75;
+		        var top = percY * window.innerHeight*.95;
+
+		        var pos2d = new THREE.Vector2(left.toFixed(0), top.toFixed(0));
+
+				console.clear();
+				console.log(mx, my);
+				console.log(pos2d);
+				//
 
 				//// update the position of each planet and its label
 				for(var p = 0; p < planetData.length; p++){
@@ -173,9 +145,6 @@
 					planets[p].position.z = r[p]*Math.sin(theta[p] - planetData[p].w);
 					planets[p].position.y = r[p]*Math.sin(planetData[p].i)*Math.sin(theta[p] - planetData[p].w);
 
-					sprites[p].position.x = planets[p].position.x+.5;
-					sprites[p].position.y = planets[p].position.y+.05;
-					sprites[p].position.z = planets[p].position.z;
 				}
 				////
 
