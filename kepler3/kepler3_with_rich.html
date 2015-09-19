@@ -4,14 +4,167 @@
 		<script src="js/three.min.js"></script>
 		<script src="js/Quaternion.js"></script>
 		<script src="js/OrbitControls.js"></script>
+
+		<form style='position:absolute; left:76%; top:2%;'>
+
+			<b1>Center View On: </b1>
+			<select id='planetSelect' style='width:200'>
+				<option value = "0">Sun</option>
+				<option value = "1">Mercury</option>
+				<option value = "2">Venus</option>
+				<option value = "3">Earth</option>
+				<option value = "4">Mars</option>
+				<option value = "5">Jupiter</option>
+				<option value = "6">Saturn</option>
+				<option value = "7">Uranus</option>
+				<option value = "8">Neptune</option>
+				<option value = "9">Pluto</option>
+				<option value = "10">Halley's Comet</option>
+				<option value = "11">Eris</option>
+			</select><br></br>
+
+			<b1>Simulation Speed: </b1><input type='range' id='slider' min='0' max ='50' value='1' step='1'>
+			<input type = 'textbox' id='simSpeed' style='width:10%' value='1' disabled><br></br>
+
+			&nbsp;&nbsp;&nbsp;
+			<b1>Rotate:</b1><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type = 'button' id='up' value='^'></br>
+			<input type = 'button' id='left' value='<'>
+			&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type = 'button' id='right' value='>'><br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+			<input type = 'button' id='down' value='v'><br></br>
+
+			<b1>Zoom: </b1>
+			<input type='button' id='zoomIn' value='+'>
+			<input type='button' id='zoomOut' value='-'>
+			<br></br>
+
+			<b1>Show orbit rings: </b1><br>
+			
+			<b1>Mercury </b1>
+			<input type='checkbox' id='mercuryRingBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Venus </b1><input type='checkbox' id='venusRingBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Earth </b1><input type='checkbox' id='earthRingBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Mars </b1><input type='checkbox' id='marsRingBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Jupiter </b1><input type='checkbox' id='jupiterRingBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Saturn </b1><input type='checkbox' id='saturnRingBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Uranus </b1><input type='checkbox' id='uranusRingBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Neptune </b1><input type='checkbox' id='neptuneRingBox' checked style='position:absolute; left:18%;'></br
+			>
+			<b1>Pluto </b1><input type='checkbox' id='plutoRingBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Halley </b1><input type='checkbox' id='halleyRingBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Eris </b1><input type='checkbox' id='erisRingBox' checked style='position:absolute; left:18%;'></br><br>
+
+			<input type='button' id='checkAllButton' value='Check All'>
+			<input type='button' id='uncheckAllButton' value='Uncheck All'>
+
+		</form>
+
 		<script>
+			// create canvas for text label overlay
+			var canvas = document.createElement('canvas');
+			canvas.width = window.innerWidth*.75;
+			canvas.height = window.innerHeight*.95+1;
+			canvas.style.zIndex = 0;
+			canvas.style.position='absolute';
+			canvas.style.left=0;
+			canvas.style.top=0;
+			document.body.appendChild(canvas);
+			var gfx = canvas.getContext('2d');
+
+			// 3js setup
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(
 				75, window.innerWidth*.75/window.innerHeight*.95, 0.1, 1000);
 			var renderer = new THREE.WebGLRenderer();
 
-			var controls = new THREE.OrbitControls(camera);
+			var controls = new THREE.OrbitControls(camera, canvas);
 			controls.target.z = 0;
+
+			// menu setup
+			var spdSlider = document.getElementById('slider');
+			var spdBox = document.getElementById('simSpeed');
+			var pullDown = document.getElementById('planetSelect');
+
+			var upButton = document.getElementById('up');
+			var leftButton = document.getElementById('left');
+			var rightButton = document.getElementById('right');
+			var downButton = document.getElementById('down');
+
+			var zInButton = document.getElementById('zoomIn');
+			var zOutButton = document.getElementById('zoomOut');
+
+			var checkBoxes = [];
+			checkBoxes.push(document.getElementById('mercuryRingBox'));
+			checkBoxes.push(document.getElementById('venusRingBox'));
+			checkBoxes.push(document.getElementById('earthRingBox'));
+			checkBoxes.push(document.getElementById('marsRingBox'));
+			checkBoxes.push(document.getElementById('jupiterRingBox'));
+			checkBoxes.push(document.getElementById('saturnRingBox'));
+			checkBoxes.push(document.getElementById('uranusRingBox'));
+			checkBoxes.push(document.getElementById('neptuneRingBox'));
+			checkBoxes.push(document.getElementById('plutoRingBox'));
+			checkBoxes.push(document.getElementById('halleyRingBox'));
+			checkBoxes.push(document.getElementById('erisRingBox'));
+
+			var checkAllButton = document.getElementById('checkAllButton');
+			var uncheckAllButton = document.getElementById('uncheckAllButton');
+
+			pullDown.onchange = function(){}
+
+			spdSlider.oninput = function(){
+				spdBox.value = spdSlider.value;
+				const2 = const2orig * parseFloat(spdSlider.value);
+			}
+
+			upButton.onclick = function(){
+				controls.rotateUp(Math.PI/180*5);
+				controls.update();
+			}
+
+			leftButton.onclick = function(){
+				controls.rotateLeft(Math.PI/180*5);
+				controls.update();
+			}
+
+			rightButton.onclick = function(){
+				controls.rotateLeft(-Math.PI/180*5);
+				controls.update();
+			}
+
+			downButton.onclick = function(){
+				controls.rotateUp(-Math.PI/180*5);
+				controls.update();
+			}
+
+			zInButton.onclick = function(){
+				controls.dollyIn(1.1);
+				controls.update();
+			}
+
+			zOutButton.onclick = function(){
+				controls.dollyOut(1.1);
+				controls.update();
+			}
+
+			checkAllButton.onclick = function(){
+				for(var p in checkBoxes){ checkBoxes[p].checked = true; }
+			}
+
+			uncheckAllButton.onclick = function(){
+				for(var p in checkBoxes){ checkBoxes[p].checked = false; }
+			}
 
 			// camera variables
 			var dist = 5; var height = 5; var spd = .0175; var camTheta = spd*45;
@@ -20,9 +173,10 @@
 			var t = 0; var deltaT = 1000/60;
 			var theta = []; var deltaTheta = [];
 			var r = [];
+			var const2orig = 0.001;
 			var const2 = 0.001; // const1 isn't used. name remains const2 for consistency with formulas given
 
-			var planets = [];
+			var planets = []; var planetScreenCoords = [];
 
 			rToD = Math.PI/180;
 	var planetData = [
@@ -79,14 +233,39 @@
 
 		    		geometry.vertices.push(new THREE.Vector3(ptx, pty, ptz));
 		    	}
-		    	lines.push(geometry);
+		    	//lines.push(geometry);
+		    	lines.push(new THREE.Line(geometry, material));
 			}
 
-			for(var p in lines){ scene.add(new THREE.Line(lines[p], material)); }
+			//for(var p in lines){ scene.add(new THREE.Line(lines[p], material)); }
+			for(var p in lines){ scene.add(lines[p]); }
 			////
 
 			renderer.setSize(window.innerWidth*.75, window.innerHeight*.95);
+			renderer.domElement.style.position='absolute';
+			renderer.domElement.style.left=0;
+			renderer.domElement.style.top=0;
+			renderer.domElement.style.zIndex = -1;
 			document.body.appendChild(renderer.domElement);
+
+			// function for determining if a point is in front of or behind plane
+			var zTest = function(cam, lookPt, testPt){
+				var p1 = cam.position;
+				var p2 = lookPt;
+				var p3 = testPt;
+
+				return (p2.x-p1.x)*(p3.x-p1.x)
+					+(p2.y-p1.y)*(p3.y-p1.y)
+						+(p2.z-p1.z)*(p3.z-p1.z);
+			}
+
+			// distance function
+			var getDist = function(pt1, pt2){
+				return Math.sqrt(
+					Math.pow((parseInt(pt2.x)-parseInt(pt1.x)),2)
+					+Math.pow((parseInt(pt2.y)-parseInt(pt1.y)),2)
+				);
+			}
 
 			//// setup 3js mouse camera controls
 			var rotate = function(){
@@ -108,32 +287,23 @@
 
 			var projector = new THREE.Projector();
 
-			window.onmousedown = function(){	
-
-			}
-
 			var render = function () {
 				requestAnimationFrame(render);
 				
 				renderer.render(scene, camera);
 
-				//
-				var vector = planets[0].position;
-				var v = projector.projectVector( vector, camera );
+				//// update the camera target
+				if(parseInt(pullDown.value) === 0){
+					controls.target.set(0,0,0);
+				}else{
+					controls.target.copy(
+						planets[parseInt(pullDown.value)-1].position
+					);
+				}
+				controls.update();
+				////
 
-		        var percX = (v.x + 1) / 2;
-		        var percY = (-v.y + 1) / 2;
-		        var left = percX * window.innerWidth*.75;
-		        var top = percY * window.innerHeight*.95;
-
-		        var pos2d = new THREE.Vector2(left.toFixed(0), top.toFixed(0));
-
-				console.clear();
-				console.log(mx, my);
-				console.log(pos2d);
-				//
-
-				//// update the position of each planet and its label
+				//// update the position of each planet
 				for(var p = 0; p < planetData.length; p++){
 					deltaTheta[p] = const2/(r[p]*r[p])*deltaT;
 					if(planetData[p].id === 'Halley'){ deltaTheta[p] *= -1; }
@@ -147,6 +317,66 @@
 
 				}
 				////
+
+				//// hide / show orbit rings
+				for(var p in checkBoxes){
+					if(checkBoxes[p].checked){
+						lines[p].visible = true;
+					}else{
+						lines[p].visible = false;
+					}
+				}
+				////
+
+				//// update all planets screen coords and labels
+				for(var p in planets){
+					var vector = planets[p].position.clone();
+					var v = projector.projectVector( vector, camera );
+
+			        var percX = (v.x + 1) / 2;
+			        var percY = (-v.y + 1) / 2;
+			        var left = percX * window.innerWidth*.75;
+			        var top = percY * window.innerHeight*.95;
+
+			        var pos2d = new THREE.Vector2(left.toFixed(0), top.toFixed(0));
+
+			        planetScreenCoords[p] = pos2d;
+		    	}
+
+		        var d1 = getDist(planetScreenCoords[0], planetScreenCoords[1]);
+		        var d2 = getDist(planetScreenCoords[1], planetScreenCoords[2]);
+		        var d3 = getDist(planetScreenCoords[2], planetScreenCoords[3]);
+		        var d4 = getDist(planetScreenCoords[3], planetScreenCoords[4]);
+		        var avgD = (d1+d2+d3+d4)/4;
+				////
+
+				// clear canvas
+				gfx.clearRect(0,0,canvas.width, canvas.height);
+
+				gfx.fillStyle = gfx.strokeStyle = 'red';
+				gfx.font = '16px verdana';
+				for(var p in planetData){
+					// TODO make it work for views not centered on the sun
+					if(parseInt(pullDown.value) === 0){
+						if(zTest(camera,star.position,planets[p].position) > 0){
+							var px = parseInt(planetScreenCoords[p].x);
+							var py = parseInt(planetScreenCoords[p].y);
+							gfx.fillRect(px-2.5,py-2.5,5,5);
+							if(avgD > 25 || p > 3){
+								gfx.fillText(planetData[p].id, px+3, py-2);
+							}
+						}
+					}else{
+						if(zTest(camera,planets[parseInt(pullDown.value)-1].position,planets[p].position) > 0){
+							var px = parseInt(planetScreenCoords[p].x);
+							var py = parseInt(planetScreenCoords[p].y);
+							gfx.fillRect(px-2.5,py-2.5,5,5);
+							if(avgD > 25 || p > 3){
+								gfx.fillText(planetData[p].id, px+3, py-2);
+							}
+						}						
+					}
+				}
 
 				t++; // increment time
 			};
@@ -164,6 +394,7 @@
 			for(var p = 0; p < planetData.length; p++){
 				planets[p] = new THREE.Mesh(geometry, material);
 				scene.add(planets[p]);
+				planets[p].visible = false;
 				planets[p].position.x = r[p];
 			}
 			////
