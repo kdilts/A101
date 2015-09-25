@@ -286,7 +286,7 @@ graph = function(n){
 			gfx.restore();
 		}
 
-		if(this.mouseIn){
+		/*if(this.mouseIn){
 			gfx.save();
 			gfx.strokeStyle = gfx.fillStyle = 'green';
 			gfx.translate(.035*cwidth+(n*.33*cwidth),.94*cheight);
@@ -316,7 +316,7 @@ graph = function(n){
 			}
 
 			gfx.restore();
-		}
+		}*/
 
 		gfx.fillStyle = gfx.strokeStyle = 'black';
 		gfx.fillRect(.05*cwidth+(this.id*.33*cwidth),.50125*cheight,50,-70);

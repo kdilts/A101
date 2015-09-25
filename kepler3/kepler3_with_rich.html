@@ -41,7 +41,7 @@
 			<input type='button' id='zoomOut' value='-'>
 			<br></br>
 
-			<b1>Show orbit rings: </b1><br>
+			<b1>Show orbit rings: </b1><br></br>
 			
 			<b1>Mercury </b1>
 			<input type='checkbox' id='mercuryRingBox' checked style='position:absolute; left:18%;'><br>
@@ -66,8 +66,36 @@
 
 			<b1>Eris </b1><input type='checkbox' id='erisRingBox' checked style='position:absolute; left:18%;'></br><br>
 
-			<input type='button' id='checkAllButton' value='Check All'>
-			<input type='button' id='uncheckAllButton' value='Uncheck All'>
+			<input type='button' id='ringCheckAllButton' value='Check All'>
+			<input type='button' id='ringUncheckAllButton' value='Uncheck All'><br></br>
+
+			<b1>Show name tags: </b1><br></br>
+			
+			<b1>Mercury </b1>
+			<input type='checkbox' id='mercuryTagBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Venus </b1><input type='checkbox' id='venusTagBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Earth </b1><input type='checkbox' id='earthTagBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Mars </b1><input type='checkbox' id='marsTagBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Jupiter </b1><input type='checkbox' id='jupiterTagBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Saturn </b1><input type='checkbox' id='saturnTagBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Uranus </b1><input type='checkbox' id='uranusTagBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Neptune </b1><input type='checkbox' id='neptuneTagBox' checked style='position:absolute; left:18%;'></br
+			>
+			<b1>Pluto </b1><input type='checkbox' id='plutoTagBox' checked style='position:absolute; left:18%;'></br>
+
+			<b1>Halley </b1><input type='checkbox' id='halleyTagBox' checked style='position:absolute; left:18%;'><br>
+
+			<b1>Eris </b1><input type='checkbox' id='erisTagBox' checked style='position:absolute; left:18%;'></br><br>
+
+			<input type='button' id='tagCheckAllButton' value='Check All'>
+			<input type='button' id='tagUncheckAllButton' value='Uncheck All'><br></br>
 
 		</form>
 
@@ -105,21 +133,37 @@
 			var zInButton = document.getElementById('zoomIn');
 			var zOutButton = document.getElementById('zoomOut');
 
-			var checkBoxes = [];
-			checkBoxes.push(document.getElementById('mercuryRingBox'));
-			checkBoxes.push(document.getElementById('venusRingBox'));
-			checkBoxes.push(document.getElementById('earthRingBox'));
-			checkBoxes.push(document.getElementById('marsRingBox'));
-			checkBoxes.push(document.getElementById('jupiterRingBox'));
-			checkBoxes.push(document.getElementById('saturnRingBox'));
-			checkBoxes.push(document.getElementById('uranusRingBox'));
-			checkBoxes.push(document.getElementById('neptuneRingBox'));
-			checkBoxes.push(document.getElementById('plutoRingBox'));
-			checkBoxes.push(document.getElementById('halleyRingBox'));
-			checkBoxes.push(document.getElementById('erisRingBox'));
+			var ringBoxes = [];
+			ringBoxes.push(document.getElementById('mercuryRingBox'));
+			ringBoxes.push(document.getElementById('venusRingBox'));
+			ringBoxes.push(document.getElementById('earthRingBox'));
+			ringBoxes.push(document.getElementById('marsRingBox'));
+			ringBoxes.push(document.getElementById('jupiterRingBox'));
+			ringBoxes.push(document.getElementById('saturnRingBox'));
+			ringBoxes.push(document.getElementById('uranusRingBox'));
+			ringBoxes.push(document.getElementById('neptuneRingBox'));
+			ringBoxes.push(document.getElementById('plutoRingBox'));
+			ringBoxes.push(document.getElementById('halleyRingBox'));
+			ringBoxes.push(document.getElementById('erisRingBox'));
 
-			var checkAllButton = document.getElementById('checkAllButton');
-			var uncheckAllButton = document.getElementById('uncheckAllButton');
+			var ringCheckAllButton = document.getElementById('ringCheckAllButton');
+			var ringUncheckAllButton = document.getElementById('ringUncheckAllButton');
+
+			var tagBoxes = [];
+			tagBoxes.push(document.getElementById('mercuryTagBox'));
+			tagBoxes.push(document.getElementById('venusTagBox'));
+			tagBoxes.push(document.getElementById('earthTagBox'));
+			tagBoxes.push(document.getElementById('marsTagBox'));
+			tagBoxes.push(document.getElementById('jupiterTagBox'));
+			tagBoxes.push(document.getElementById('saturnTagBox'));
+			tagBoxes.push(document.getElementById('uranusTagBox'));
+			tagBoxes.push(document.getElementById('neptuneTagBox'));
+			tagBoxes.push(document.getElementById('plutoTagBox'));
+			tagBoxes.push(document.getElementById('halleyTagBox'));
+			tagBoxes.push(document.getElementById('erisTagBox'));
+
+			var tagCheckAllButton = document.getElementById('tagCheckAllButton');
+			var tagUncheckAllButton = document.getElementById('tagUncheckAllButton');
 
 			pullDown.onchange = function(){}
 
@@ -158,12 +202,20 @@
 				controls.update();
 			}
 
-			checkAllButton.onclick = function(){
-				for(var p in checkBoxes){ checkBoxes[p].checked = true; }
+			ringCheckAllButton.onclick = function(){
+				for(var p in ringBoxes){ ringBoxes[p].checked = true; }
 			}
 
-			uncheckAllButton.onclick = function(){
-				for(var p in checkBoxes){ checkBoxes[p].checked = false; }
+			ringUncheckAllButton.onclick = function(){
+				for(var p in ringBoxes){ ringBoxes[p].checked = false; }
+			}
+
+			tagCheckAllButton.onclick = function(){
+				for(var p in tagBoxes){ tagBoxes[p].checked = true; }
+			}
+
+			tagUncheckAllButton.onclick = function(){
+				for(var p in tagBoxes){ tagBoxes[p].checked = false; }
 			}
 
 			// camera variables
@@ -259,14 +311,6 @@
 						+(p2.z-p1.z)*(p3.z-p1.z);
 			}
 
-			// distance function
-			var getDist = function(pt1, pt2){
-				return Math.sqrt(
-					Math.pow((parseInt(pt2.x)-parseInt(pt1.x)),2)
-					+Math.pow((parseInt(pt2.y)-parseInt(pt1.y)),2)
-				);
-			}
-
 			//// setup 3js mouse camera controls
 			var rotate = function(){
 				camera.position.set(Math.cos(camTheta)*dist,height,Math.sin(camTheta)*dist);
@@ -276,8 +320,6 @@
 
 			rotate();
 			////
-
-			//var axisHelper = new THREE.AxisHelper(15); scene.add(axisHelper);
 
 			var mx = -1; var my = -1;
 			window.onmousemove = function(e){
@@ -319,8 +361,8 @@
 				////
 
 				//// hide / show orbit rings
-				for(var p in checkBoxes){
-					if(checkBoxes[p].checked){
+				for(var p in ringBoxes){
+					if(ringBoxes[p].checked){
 						lines[p].visible = true;
 					}else{
 						lines[p].visible = false;
@@ -342,12 +384,6 @@
 
 			        planetScreenCoords[p] = pos2d;
 		    	}
-
-		        var d1 = getDist(planetScreenCoords[0], planetScreenCoords[1]);
-		        var d2 = getDist(planetScreenCoords[1], planetScreenCoords[2]);
-		        var d3 = getDist(planetScreenCoords[2], planetScreenCoords[3]);
-		        var d4 = getDist(planetScreenCoords[3], planetScreenCoords[4]);
-		        var avgD = (d1+d2+d3+d4)/4;
 				////
 
 				// clear canvas
@@ -356,13 +392,12 @@
 				gfx.fillStyle = gfx.strokeStyle = 'red';
 				gfx.font = '16px verdana';
 				for(var p in planetData){
-					// TODO make it work for views not centered on the sun
 					if(parseInt(pullDown.value) === 0){
 						if(zTest(camera,star.position,planets[p].position) > 0){
 							var px = parseInt(planetScreenCoords[p].x);
 							var py = parseInt(planetScreenCoords[p].y);
 							gfx.fillRect(px-2.5,py-2.5,5,5);
-							if(avgD > 25 || p > 3){
+							if(tagBoxes[p].checked){
 								gfx.fillText(planetData[p].id, px+3, py-2);
 							}
 						}
@@ -371,7 +406,7 @@
 							var px = parseInt(planetScreenCoords[p].x);
 							var py = parseInt(planetScreenCoords[p].y);
 							gfx.fillRect(px-2.5,py-2.5,5,5);
-							if(avgD > 25 || p > 3){
+							if(tagBoxes[p].checked){
 								gfx.fillText(planetData[p].id, px+3, py-2);
 							}
 						}						

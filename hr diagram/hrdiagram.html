@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
+
+<script type="text/javascript"charset="utf-8">
+    var currentAge = 0;
+
+    var canvas; var gfx;
+    var cwidth; var cheight;
+    var interval; var buttons;
+
+    // Read CSV's
+    var rawData = null;
+    d3.text("hrdiagram.csv", function(data) {
+        rawData = d3.csv.parseRows(data);
+
+        // Parse CSV's 
+        getColumn = function(csv, column){
+            var col = [];
+            for(var x = 0; x < csv.length; x++){
+                col.push(csv[x][column]);
+            }
+            return col;
+        }
+
+    });
+
+    // initialize canvas and buttons
+    window.onload = function(){
+        canvas = document.getElementById('myCanvas');
+        gfx = canvas.getContext('2d');
+        cwidth = canvas.width = window.innerWidth;
+        cheight = canvas.height = window.innerHeight;        
+        interval = setInterval(render,1000/60);
+
+        buttons = document.getElementsByTagName('input');
+
+        buttons[0].style.left = cwidth/2-300 + 'px';
+        buttons[1].style.left = cwidth/2-265 + 'px';
+        buttons[2].style.left = cwidth/2-208 + 'px';
+        buttons[3].style.left = cwidth/2-50 + 'px';
+        buttons[4].style.left = cwidth/2-25 + 'px';
+        buttons[5].style.left = cwidth/2+7 + 'px';
+
+        for(var b = 0; b < buttons.length; b++){ buttons[b].style.top = '3px'; }
+    }
+
+    window.onresize = function(){
+        cwidth = canvas.width = window.innerWidth;
+        cheight = canvas.height = window.innerHeight;
+
+        buttons[0].style.left = cwidth/2-300 + 'px';
+        buttons[1].style.left = cwidth/2-265 + 'px';
+        buttons[2].style.left = cwidth/2-208 + 'px';
+        buttons[3].style.left = cwidth/2-50 + 'px';
+        buttons[4].style.left = cwidth/2-25 + 'px';
+        buttons[5].style.left = cwidth/2+7 + 'px'; 
+    }
+
+    // render loop
+    var render = function(){
+        // clear canvas
+        gfx.fillStyle = gfx.strokeStyle = 'black';
+        gfx.fillRect(0,0,cwidth,cheight);
+
+        gfx.fillStyle = gfx.strokeStyle = 'grey';
+        gfx.fillRect(0,0,cwidth,28);
+
+        gfx.fillStyle = gfx.strokeStyle = 'black';
+        gfx.font = '18px verdana';
+        gfx.fillText('Add Stars:', cwidth/2-150, 21);
+
+        // axis labels and age display
+        gfx.fillStyle = gfx.strokeStyle = 'yellow';
+        gfx.font = '14px verdana';
+        gfx.fillText('Luminosity (Solar Lum.)', 30, 60);
+        gfx.fillText('Temperature (K)', cwidth-150, cheight-50);
+        
+        gfx.fillStyle = gfx.strokeStyle = 'black';
+        gfx.font = '18px verdana';
+        if(currentAge == 0){
+            gfx.fillText('Age = ZAMS', cwidth/2+150, 20);
+        }else{
+            gfx.fillText('Age = ' + currentAge, cwidth/2+150, 20);
+        }
+
+        // draw grid
+        var gridWidth = 12; var gridHeight = 9; // number of squares shown
+        gfx.fillStyle = gfx.strokeStyle = 'grey';
+
+        for(var x = 0; x < gridWidth; x++){
+            gfx.beginPath();
+            gfx.moveTo(cwidth/gridWidth*x, 0);
+            gfx.lineTo(cwidth/gridWidth*x, cheight);
+            gfx.stroke();
+        }
+
+        for(var y = 0; y < gridHeight; y++){
+            gfx.beginPath();
+            gfx.moveTo(0,cheight/gridHeight*y);
+            gfx.lineTo(cwidth, cheight/gridHeight*y);
+            gfx.stroke();
+        }
+
+        // interval tags
+        yAxisLabels = [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
+        xAxisLabels = [];
+        for(var x = 0; x < gridWidth; x++){
+            xAxisLabels.push(Math.pow(10,3.505+.1*x).toFixed(0));
+        }
+
+        gfx.fillStyle = gfx.strokeStyle = 'grey';
+        gfx.font = '14px verdana';
+
+        for(var x in yAxisLabels){
+            gfx.fillText(yAxisLabels[yAxisLabels.length-x], 25, cheight/gridHeight*x-5);
+        }
+
+        for(var x = 1; x < xAxisLabels.length; x++){
+            gfx.fillText(xAxisLabels[xAxisLabels.length-x], cwidth/gridWidth*x+5, cheight-25);
+        }
+    }
+
+</script>
+</head>
+<body bgcolor='grey'>
+    
+    <canvas id = 'myCanvas' style ='position:absolute; left:0px; top:0px;'></canvas>
+    
+    <input type='button' id='init' value='Init' style='position:absolute;'>
+
+    <input type='button' id='evolve' value='Evolve' style='position:absolute;'>
+
+    <input type='button' id='step' value='Step' style='position:absolute;'>
+
+    <input type='button' id='add1' value='1' style='position:absolute;'>
+
+    <input type='button' id='add10' value='10' style='position:absolute;'>
+
+    <input type='button' id='add100' value='100' style='position:absolute;'>
+</body></html>
