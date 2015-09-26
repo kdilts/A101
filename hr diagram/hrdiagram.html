@@ -10,21 +10,25 @@
     var cwidth; var cheight;
     var interval; var buttons;
 
-    // Read CSV's
     var rawData = null;
-    d3.text("hrdiagram.csv", function(data) {
-        rawData = d3.csv.parseRows(data);
 
-        // Parse CSV's 
-        getColumn = function(csv, column){
-            var col = [];
+    // Read CSV
+    d3.text("hrdiagram.csv", data);
+    function data(e){
+        rawData = d3.csv.parseRows(e);
+    }
+
+    getColumn = function(csv, column){
+        var col = [];
+        if(csv){
             for(var x = 0; x < csv.length; x++){
                 col.push(csv[x][column]);
             }
             return col;
+        }else{
+            return null;
         }
-
-    });
+    }
 
     // initialize canvas and buttons
     window.onload = function(){
@@ -58,8 +62,31 @@
         buttons[5].style.left = cwidth/2+7 + 'px'; 
     }
 
+    var lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+        return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+    }
+
+    var plot = function(logL, logT){
+        var minLogT = 3.505; var maxLogT = 4.505;
+        var minLogL = -2; var maxLogL = 6;
+
+        temp = lerp(minLogT,maxLogT,logT,cwidth,0);
+        lum = lerp(minLogL,maxLogL,logL,cheight,0);
+
+        //console.log(Math.pow(10,logL) + ' ' + Math.pow(10,logT));
+
+        var r = parseInt(lerp(minLogT,maxLogT,logT,255,20));
+        var b = parseInt(lerp(minLogT,maxLogT,logT,20,255));
+
+        gfx.fillStyle = gfx.strokeStyle = 'rgb(' + r + ',0,' + b + ')';
+        gfx.beginPath();
+        gfx.arc(temp,lum,1,0,Math.PI*2);
+        gfx.fill(); gfx.stroke();
+    }
+
     // render loop
     var render = function(){
+
         // clear canvas
         gfx.fillStyle = gfx.strokeStyle = 'black';
         gfx.fillRect(0,0,cwidth,cheight);
@@ -103,6 +130,12 @@
             gfx.stroke();
         }
 
+        if(rawData){
+            for(var x = 0; x < 70; x++){
+                plot(rawData[1][1+x*6], rawData[1][2+x*6]);
+            }
+        }
+
         // interval tags
         yAxisLabels = [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
         xAxisLabels = [];
@@ -118,7 +151,7 @@
         }
 
         for(var x = 1; x < xAxisLabels.length; x++){
-            gfx.fillText(xAxisLabels[xAxisLabels.length-x], cwidth/gridWidth*x+5, cheight-25);
+            gfx.fillText(xAxisLabels[xAxisLabels.length-x], cwidth/gridWidth*(x-1)+5, cheight-25);
         }
     }
 
