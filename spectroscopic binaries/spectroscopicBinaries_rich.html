@@ -1,0 +1,422 @@
+<head>
+	<script type="text/javascript" src="tinycolor.js"></script>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+var centerX = .666*1024; var centerY = .17*768;
+
+var intervalId;
+
+var buttons = [];
+var sliders = [];
+var textBoxes = [];
+
+var simSpeed = 1;
+
+var img;
+
+var center = null;
+
+var showTrace = true;
+
+var currentSep = 1; var sepValues = [.1,.2,.4,.6,.8,1,2];
+var currentEcc = .5;
+var currentIncl = 75; var currentNode = 0;
+var currentMass1 = 1; var currentMass2 = 1;
+
+var maxV; var minV;
+
+var pViewCenter;
+var eViewCenter;
+var viewDiameter = 160;
+
+//
+var t = [0,0,0,0]; var deltaT = 1000/60;
+var theta = [0,0,0,0]; var deltaTheta = [0,0,0,0];
+var v = [0,0,0,0];
+var ecc = [0,.9,.5,.2]; var a = [80,80,80,80];
+var rot = [0, Math.PI, 0, 0];
+var rad = [a[0]*(1-ecc[0]), a[1]*(1-ecc[1]), a[2]*(1-ecc[2]), a[3]*(1-ecc[3])];
+var const1 = 30; var const2 = 5;
+//
+update = function(){
+	for(var i = 0; i < 4; i++){
+		deltaTheta[i] = const2/(rad[i]*rad[i])*deltaT;
+		theta[i] = theta[i] + deltaTheta[i];
+		if(theta[i] >= Math.PI*2){ theta[i] -= Math.PI*2; }
+		rad[i] = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(theta[i]));
+	}
+}
+//
+drawRing = function(i){
+	gfx.save();
+	gfx.lineWidth = 2;
+	gfx.translate(pViewCenter.x, pViewCenter.y);
+
+	gfx.fillStyle = gfx.strokeStyle = 'red';
+
+	var tempTheta = 0;
+	var tempDeltaTheta;
+	var tempR = a[i]*(1-ecc[i]);
+
+	tempDeltaTheta = const2/(tempR*tempR)*deltaT;
+	tempTheta = tempTheta + tempDeltaTheta;
+	tempR = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(tempTheta));
+
+	gfx.beginPath();
+	gfx.moveTo(tempR*Math.cos(tempTheta), tempR*Math.sin(tempTheta));
+	while(tempTheta < Math.PI*2.5){
+		tempDeltaTheta = const2/(tempR*tempR)*deltaT;
+		tempTheta = tempTheta + tempDeltaTheta;
+		tempR = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(tempTheta));
+
+		gfx.lineTo(tempR*Math.cos(tempTheta), tempR*Math.sin(tempTheta));
+	}
+	gfx.stroke();
+
+	gfx.restore();
+}
+//
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	center = {x:300,y:600};
+	pViewCenter = {x:250, y:cheight-195};
+	eViewCenter = {x:cwidth-285, y:cheight-195};
+
+	buttons[0] = document.getElementById('submitButton');
+	buttons[1] = document.getElementById('trailButton');
+	buttons[2] = document.getElementById('speedUpButton');
+	buttons[3] = document.getElementById('slowDownButton');
+
+	buttons[4] = document.getElementById('aDownButton');
+	buttons[5] = document.getElementById('aUpButton');
+	
+	buttons[6] = document.getElementById('eDownButton');
+	buttons[7] = document.getElementById('eUpButton');
+
+	buttons[8] = document.getElementById('iDownButton');
+	buttons[9] = document.getElementById('iUpButton');
+	
+	buttons[10] = document.getElementById('wDownButton');
+	buttons[11] = document.getElementById('wUpButton');
+
+	buttons[0].onclick = function(){
+		currentSep = parseFloat(sliders[0].value);
+		currentEcc = parseFloat(sliders[1].value);
+		currentIncl = parseInt(sliders[2].value);
+		currentNode = parseInt(sliders[3].value);
+		currentMass1 = parseFloat(massBox1.value);
+		currentMass2 = parseFloat(massBox2.value);
+	}
+
+	buttons[1].onclick = function(){
+		if(showTrace){
+			buttons[1].value = 'Trail on';
+			showTrace = false;
+		}else{
+			buttons[1].value = 'Trail off';
+			showTrace = true;
+		}
+	}
+
+	buttons[2].onclick = function(){
+		simSpeed++; if(simSpeed > 9){ simSpeed = 9; }
+		clearInterval(intervalId);
+		intervalId = setInterval(render,1000/60*simSpeed);
+	}
+
+	buttons[3].onclick = function(){
+		simSpeed--; if(simSpeed < 1){ simSpeed = 1; }
+		clearInterval(intervalId);
+		intervalId = setInterval(render,1000/60*simSpeed);
+	}
+
+	buttons[4].onclick = function(){
+		switch(parseFloat(sliders[0].value)){
+			case .1:
+				return;
+			case .2:
+				sliders[0].value = parseFloat(sliders[0].value)-.1;
+				return;
+			case .4:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case .6:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case .8:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case 1:
+				sliders[0].value = parseFloat(sliders[0].value)-.2;
+				return;
+			case 2:
+				sliders[0].value = parseFloat(sliders[0].value)-1;
+				return;
+		}
+	}
+
+	buttons[5].onclick = function(){
+		switch(parseFloat(sliders[0].value)){
+			case .1:
+				sliders[0].value = parseFloat(sliders[0].value)+.1;
+				return;
+			case .2:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .4:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .6:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case .8:
+				sliders[0].value = parseFloat(sliders[0].value)+.2;
+				return;
+			case 1:
+				sliders[0].value = parseFloat(sliders[0].value)+1;
+				return;
+			case 2:
+				return;
+		}
+	}
+
+	buttons[6].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)-.1;}
+	buttons[7].onclick = function(){sliders[1].value = parseFloat(sliders[1].value)+.1;}
+
+	buttons[8].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)-15;}
+	buttons[9].onclick = function(){sliders[2].value = parseFloat(sliders[2].value)+15;}
+
+	buttons[10].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)-15;}
+	buttons[11].onclick = function(){sliders[3].value = parseFloat(sliders[3].value)+15;}
+
+	sliders[0] = document.getElementById('aSlider');
+	sliders[1] = document.getElementById('eSlider');
+	sliders[2] = document.getElementById('iSlider');
+	sliders[3] = document.getElementById('wSlider');
+
+	sliders[0].onchange = function(){
+		console.log(sliders[0].value, sepValues.indexOf(parseFloat(sliders[0].value)))
+		while(sepValues.indexOf(parseFloat(sliders[0].value)) === -1){
+			sliders[0].value -= .1;
+		}
+	}
+
+	sliders[0].style.width = sliders[1].style.width =
+			sliders[2].style.width = sliders[3].style.width = 105;
+
+	sliders[0].value = currentSep;	sliders[1].value = currentEcc;
+	sliders[2].value = currentIncl;	sliders[3].value = currentNode;
+
+	textBoxes[0] = document.getElementById('massBox1');
+	textBoxes[1] = document.getElementById('massBox2');
+
+	textBoxes[0].value = currentMass1; textBoxes[1].value = currentMass2;
+
+	currentSep = parseFloat(sliders[0].value); currentEcc = parseFloat(sliders[1].value);
+	currentIncl = parseInt(sliders[2].value); currentNode = parseInt(sliders[3].value);
+
+	intervalId = setInterval(render,1000/60*simSpeed);
+}
+
+window.onresize = function(){ window.resizeTo(1040,836); }
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	gfx.clearRect(0,0,cwidth,cheight);
+
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.font = '14px verdana';
+	gfx.fillText(''+simSpeed,608,25);
+	for(var s in sliders){
+		gfx.fillText(''+sliders[s].value,40,120+s*83);
+	}
+
+	gfx.fillText('Priveleged View', 200, 750);
+	gfx.fillText('Earth View', 700, 750);
+	
+	// rainbow bar
+	gfx.strokeRect(350,280,450,100);
+	for(var x = 0; x < 450; x++){
+		var c = new tinycolor('hsv('+
+        lerp(0,450,x,0,300) +',1,1)');
+
+        var r = parseInt(c._r);
+        var g = parseInt(c._g);
+        var b = parseInt(c._b);
+
+        gfx.fillStyle = gfx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
+        drawLine(350+x,280,350+x,380);
+	}
+
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+
+	// box for graph
+	gfx.strokeRect(350,100,450,150);
+
+	// doppler shift lines
+	line1x = 440; line2x = 680;
+	drawLine(line1x,265,line1x,275);
+	drawLine(line2x,265,line2x,275);
+
+	for(var i = 0; i < 4; i++){
+		var x = rad[i]*Math.cos(theta[i]);
+		var y = rad[i]*Math.sin(theta[i]);
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.beginPath();
+		gfx.arc(pViewCenter.x+x,pViewCenter.y+y,5,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}
+
+	gfx.beginPath();
+	gfx.arc(pViewCenter.x,pViewCenter.y,5,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	// outline viewports
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.beginPath();
+	gfx.arc(parseInt(pViewCenter.x),parseInt(pViewCenter.y),5,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(250,cheight-195,160,0,Math.PI*2);
+	gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(cwidth-285,cheight-195,5,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(cwidth-285,cheight-195,160,0,Math.PI*2);
+	gfx.stroke();
+
+	for(var i = 0; i < 4; i++){ drawRing(i); }
+
+	update();
+
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+    return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+drawLine = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
+
+	</script>
+</head>
+<body bgcolor="white">
+	<form>
+			<input type='button' id='submitButton' value='Enter'>
+			<input type='button' id='trailButton' value='Trail off'>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>Simulation Speed: </b1>
+			<input type='button' id='slowDownButton' value='<-'>
+			&nbsp; &nbsp;
+			&nbsp; &nbsp;
+			<input type='button' id='speedUpButton' value='->'>
+			<br></br>
+			<b1>M1: </b1>
+			<input type = 'textBox' id = 'massBox1' size='2'></input>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>M2: </b1>
+			<input type = 'textBox' id = 'massBox2' size='2'></input>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>Radial Velocity</b1>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>P: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; years</b1>
+			<br></br>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>km/sec</b1>
+			<br>
+			<b1>a: </b1><br>
+			</input></input></input>
+			0.1<input type = 'range' id = 'aSlider' min='0.1' max = '2.0' step = '.1'>2.0
+			<br>
+			
+			<input type='button' id='aDownButton' value='<-'>
+			<input type='button' id='aUpButton' value='->'>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>km/sec</b1>
+			<br><br>
+			<b1>e: </b1>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			</input></input></input><br>
+			0.0<input type = 'range' id = 'eSlider' min='0' max = '.9' step='.1'>0.9
+			<br>
+			
+			<input type='button' id='eDownButton' value='<-'>
+			<input type='button' id='eUpButton' value='->'>
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+			<b1>km/sec</b1>
+			<br></br>
+			<b1>i: </b1>
+			</input></input></input><br>
+			0<input type = 'range' id = 'iSlider' min='0' max = '90' step='15'>90
+			<br>
+			
+			<input type='button' id='iDownButton' value='<-'>
+			<input type='button' id='iUpButton' value='->'>
+			</br><br>
+			<b1>w: </b1>
+			</input></input></input><br>
+			-90<input type = 'range' id = 'wSlider' min='-90' max = '90' step='15'>90
+			<br>
+			
+			<input type='button' id='wDownButton' value='<-'>
+			<input type='button' id='wUpButton' value='->'>
+		</form>
+</body>
