@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js" charset="utf-8"></script>
-
+<script type="text/javascript" src="d3/d3.min.js"></script>
+<script type="text/javascript" src="tinycolor.js"></script>
 <script type="text/javascript"charset="utf-8">
-    var currentAge = 0;
+    var currentAge = 0; var timeStep = 2000000;
+    var playing = false;
 
     var canvas; var gfx;
     var cwidth; var cheight;
@@ -12,10 +13,48 @@
 
     var rawData = null;
 
+    var mx; var my;
+
+    var stars = []; var starOffset = .14; var colorOffset = .15;
+
+    var star = function(l,t){
+        this.lum = l;
+        this.temp = t;
+        this.visible = false;
+        this.selected = false;
+
+        this.getCoords = function(){
+            var minLogT = 3.505; var maxLogT = 4.505;
+            var minLogL = -2; var maxLogL = 6;
+
+            var x = lerp(minLogT,maxLogT,this.temp,cwidth,0)+starOffset*cwidth;
+            var y = lerp(minLogL,maxLogL,this.lum,cheight,0);
+
+            return [x,y];
+        }
+
+        this.plot = function(){
+            if(!this.visible){ return; }
+            plot(this.lum, this.temp);
+            if(this.selected){
+                var coords = this.getCoords();
+                gfx.fillStyle = gfx.strokeStyle = 'white';
+                gfx.beginPath();
+                gfx.arc(coords[0], coords[1], 4, 0, Math.PI*2);
+                gfx.stroke();
+            }
+        }
+    }
+
     // Read CSV
     d3.text("hrdiagram.csv", data);
     function data(e){
         rawData = d3.csv.parseRows(e);
+
+        for(var x = 0; x < 150; x++){
+            stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3]));
+        }
+
     }
 
     getColumn = function(csv, column){
@@ -30,6 +69,19 @@
         }
     }
 
+    findClosest = function(set, value){ // finds index of closest matching value
+        var closest = null; var max = -1;
+        for(var x in set){
+            if(set[x] > max){ max = set[x]; }
+            if(closest == null){ closest = x; }
+            else if( Math.abs(set[x]-value) < Math.abs(set[closest]-value) ){
+                closest = x;
+            }
+        }
+        if(value > max){ return -1; }
+        return closest;
+    }
+
     // initialize canvas and buttons
     window.onload = function(){
         canvas = document.getElementById('myCanvas');
@@ -40,32 +92,114 @@
 
         buttons = document.getElementsByTagName('input');
 
-        buttons[0].style.left = cwidth/2-300 + 'px';
-        buttons[1].style.left = cwidth/2-265 + 'px';
-        buttons[2].style.left = cwidth/2-208 + 'px';
-        buttons[3].style.left = cwidth/2-50 + 'px';
-        buttons[4].style.left = cwidth/2-25 + 'px';
-        buttons[5].style.left = cwidth/2+7 + 'px';
+        buttons[0].style.left = cwidth/2-300-61 + 'px';
+        buttons[1].style.left = cwidth/2-265-44 + 'px';
+        buttons[2].style.left = cwidth/2-208-44 + 'px';
+        buttons[3].style.left = cwidth/2-208 + 'px';
+        buttons[4].style.left = cwidth/2-50 + 'px';
+        buttons[5].style.left = cwidth/2-25 + 'px';
+        buttons[6].style.left = cwidth/2+7 + 'px'; 
 
         for(var b = 0; b < buttons.length; b++){ buttons[b].style.top = '3px'; }
+
+        // init button
+        buttons[0].onclick = function(){
+            for(var s in stars){
+                stars[s].visible = false;
+                var tempDat = getColumn(rawData, s*3+2);
+                var lumDat = getColumn(rawData, s*3+1);
+                stars[s].lum = lumDat[1];
+                stars[s].temp = tempDat[1];
+                currentAge = 0;
+                timeStep = 2000000;
+                playing = false;
+            }
+        }
+
+        // evolve button
+        buttons[1].onclick = function(){
+            playing = true;
+        }
+
+        // stop button
+        buttons[2].onclick = function(){
+            playing = false;
+        }
+
+        // step button
+        buttons[3].onclick = function(){
+            currentAge += timeStep;
+            timeStep += timeStep*.01;
+            for(var s in stars){
+                var timeDat = getColumn(rawData, s*3);
+                var tempDat = getColumn(rawData, s*3+2);
+                var lumDat = getColumn(rawData, s*3+1);
+                var row = findClosest(timeDat, currentAge);
+                if(row !== -1){
+                    stars[s].lum = lumDat[row];
+                    stars[s].temp = tempDat[row];
+                }else{
+                    stars[s].visible = false;
+                }
+            }
+        }
+
+        // add 1 button
+        buttons[4].onclick = function(){
+            stars[parseInt(Math.random()*150)].visible = true;
+        }
+
+        // add 15 button
+        buttons[5].onclick = function(){
+            for(var i = 0; i < 15; i++){
+                stars[parseInt(Math.random()*150)].visible = true;
+            }
+        }
+
+        // add 150 button
+        buttons[6].onclick = function(){
+            for(var s in stars){
+                stars[s].visible = true;
+            }
+        }
+    }
+
+    // handle user input
+    window.onmousemove = function(e){
+        mx = e.x; my = e.y;
+        if(!mx){ mx = e.clientX; my = e.clientY; }
+    }
+
+    window.onmousedown = function(e){
+        for(var s in stars){ stars[s].selected = false; }
+
+        for(var s in stars){
+            var coords = stars[s].getCoords();
+            if(Math.abs(mx-coords[0]) < 5 && Math.abs(my-coords[1]) < 5){
+                if(!stars[s].visible){ return; }
+                stars[s].selected = true;
+            }
+        }
     }
 
     window.onresize = function(){
         cwidth = canvas.width = window.innerWidth;
         cheight = canvas.height = window.innerHeight;
 
-        buttons[0].style.left = cwidth/2-300 + 'px';
-        buttons[1].style.left = cwidth/2-265 + 'px';
-        buttons[2].style.left = cwidth/2-208 + 'px';
-        buttons[3].style.left = cwidth/2-50 + 'px';
-        buttons[4].style.left = cwidth/2-25 + 'px';
-        buttons[5].style.left = cwidth/2+7 + 'px'; 
+        buttons[0].style.left = cwidth/2-300-61 + 'px';
+        buttons[1].style.left = cwidth/2-265-44 + 'px';
+        buttons[2].style.left = cwidth/2-208-44 + 'px';
+        buttons[3].style.left = cwidth/2-208 + 'px';
+        buttons[4].style.left = cwidth/2-50 + 'px';
+        buttons[5].style.left = cwidth/2-25 + 'px';
+        buttons[6].style.left = cwidth/2+7 + 'px'; 
     }
 
     var lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
         return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
     }
 
+    // draw a star
     var plot = function(logL, logT){
         var minLogT = 3.505; var maxLogT = 4.505;
         var minLogL = -2; var maxLogL = 6;
@@ -73,14 +207,16 @@
         temp = lerp(minLogT,maxLogT,logT,cwidth,0);
         lum = lerp(minLogL,maxLogL,logL,cheight,0);
 
-        //console.log(Math.pow(10,logL) + ' ' + Math.pow(10,logT));
+        var c = new tinycolor('hsv('+
+           lerp(0,cwidth-parseInt(colorOffset*cwidth),temp,300,0) +',1,1)');
 
-        var r = parseInt(lerp(minLogT,maxLogT,logT,255,20));
-        var b = parseInt(lerp(minLogT,maxLogT,logT,20,255));
+        var r = parseInt(c._r);
+        var g = parseInt(c._g);
+        var b = parseInt(c._b);
 
-        gfx.fillStyle = gfx.strokeStyle = 'rgb(' + r + ',0,' + b + ')';
+        gfx.fillStyle = gfx.strokeStyle = 'rgb(' + r + ',' + g + ',' + b + ')';
         gfx.beginPath();
-        gfx.arc(temp,lum,1,0,Math.PI*2);
+        gfx.arc(temp+starOffset*cwidth,lum,2,0,Math.PI*2);
         gfx.fill(); gfx.stroke();
     }
 
@@ -109,7 +245,7 @@
         if(currentAge == 0){
             gfx.fillText('Age = ZAMS', cwidth/2+150, 20);
         }else{
-            gfx.fillText('Age = ' + currentAge, cwidth/2+150, 20);
+            gfx.fillText('Age = ' + currentAge.toExponential(), cwidth/2+150, 20);
         }
 
         // draw grid
@@ -130,12 +266,6 @@
             gfx.stroke();
         }
 
-        if(rawData){
-            for(var x = 0; x < 70; x++){
-                plot(rawData[1][1+x*6], rawData[1][2+x*6]);
-            }
-        }
-
         // interval tags
         yAxisLabels = [0.01, 0.1, 1, 10, 100, 1000, 10000, 100000, 1000000];
         xAxisLabels = [];
@@ -153,6 +283,13 @@
         for(var x = 1; x < xAxisLabels.length; x++){
             gfx.fillText(xAxisLabels[xAxisLabels.length-x], cwidth/gridWidth*(x-1)+5, cheight-25);
         }
+
+        // plot stars
+        for(var s in stars){ stars[s].plot(); }
+
+        if(playing){
+            buttons[3].onclick();
+        }
     }
 
 </script>
@@ -161,15 +298,17 @@
     
     <canvas id = 'myCanvas' style ='position:absolute; left:0px; top:0px;'></canvas>
     
-    <input type='button' id='init' value='Init' style='position:absolute;'>
+    <input type='button' id='init' value='Reset' style='position:absolute;'>
 
     <input type='button' id='evolve' value='Evolve' style='position:absolute;'>
+
+    <input type='button' id='stop' value='Stop' style='position:absolute;'>
 
     <input type='button' id='step' value='Step' style='position:absolute;'>
 
     <input type='button' id='add1' value='1' style='position:absolute;'>
 
-    <input type='button' id='add10' value='10' style='position:absolute;'>
+    <input type='button' id='add15' value='15' style='position:absolute;'>
 
-    <input type='button' id='add100' value='100' style='position:absolute;'>
+    <input type='button' id='add150' value='150' style='position:absolute;'>
 </body></html>
