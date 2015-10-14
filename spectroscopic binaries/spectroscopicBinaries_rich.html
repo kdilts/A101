@@ -19,41 +19,138 @@ var center = null;
 
 var showTrace = true;
 
-var currentSep = 1; var sepValues = [.1,.2,.4,.6,.8,1,2];
-var currentEcc = .5;
-var currentIncl = 75; var currentNode = 0;
+var currentSep = 2; var sepValues = [.1,.2,.4,.6,.8,1,2];
+var currentEcc = .2;
+var currentIncl = 0; var currentNode = 0;
 var currentMass1 = 1; var currentMass2 = 1;
+var massRatio = currentMass1/currentMass2;
 
 var maxV; var minV;
 
 var pViewCenter;
 var eViewCenter;
 var viewDiameter = 160;
+var fixedA = 60;
+
+var lineCoords = [];
+
+var oldCoords = [];
+var newCoords = [];
 
 //
 var t = [0,0,0,0]; var deltaT = 1000/60;
 var theta = [0,0,0,0]; var deltaTheta = [0,0,0,0];
 var v = [0,0,0,0];
-var ecc = [0,.9,.5,.2]; var a = [80,80,80,80];
-var rot = [0, Math.PI, 0, 0];
+var ecc = [.2,.2,.2,.2];
+
+var a = [ fixedA*currentSep, fixedA*currentSep*massRatio,
+		  fixedA*currentSep, fixedA*currentSep*massRatio ];
+
+var rot = [0, Math.PI, 0, Math.PI];
 var rad = [a[0]*(1-ecc[0]), a[1]*(1-ecc[1]), a[2]*(1-ecc[2]), a[3]*(1-ecc[3])];
 var const1 = 30; var const2 = 5;
+
+var G = 6.67*Math.pow(10,-11);
+var kgPerSolarMass = 1.989*Math.pow(10,30);
+var mPerAu = 1.496*Math.pow(10,11);
+
+calculatePeriod = function(){
+	var period = Math.sqrt(Math.pow(currentSep,3)/(currentMass1+currentMass2));
+	return period.toFixed(2);
+}
+
+calculateVmax = function(){
+	var M = (currentMass1+currentMass2)*kgPerSolarMass;
+	var a = currentSep*mPerAu;
+	var e = currentEcc;
+	var vmaxsqrd = ((G*M)/a)*((1+e)/(1-e));
+	return (Math.sqrt(vmaxsqrd)/1000).toFixed(2);
+}
+
+calculateVmin = function(){
+	var M = (currentMass1+currentMass2)*kgPerSolarMass;
+	var a = currentSep*mPerAu;
+	var e = currentEcc;
+	var vmaxsqrd = ((G*M)/a)*((1-e)/(1+e));
+	return (Math.sqrt(vmaxsqrd)/1000).toFixed(2);
+}
+
+calculateV = function(i){
+	var M = (currentMass1+currentMass2)*kgPerSolarMass;
+	var a = currentSep*mPerAu;
+	var r = rad[i]*mPerAu;
+	var vsqrd = G*M*((2/r)-(1/a));
+	return (Math.sqrt(Math.abs(vsqrd))/1000).toFixed(2);
+}
+
+calculateRadV = function(i){
+	if(oldCoords[0] && newCoords[0]){
+		var v = calculateV(i);
+		var phi = 
+			(parseInt(oldCoords[i].y)-parseInt(newCoords[i].y))/(parseInt(oldCoords[i].x)-parseInt(newCoords[i].x))
+		
+		var deg = Math.PI/180;
+		gfx.fillText('' + phi, 100,100);
+		gfx.fillText('' + currentNode, 100,120);
+		return v*Math.sin(currentIncl*deg)*Math.cos(phi-currentNode*deg);
+	}
+}
+
+plotDots = function(i){
+	var x = lerp(0,Math.PI*2,theta[i],800,350);
+	var y;
+
+	if(i%2==0){
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		y = lerp(-calculateVmax(i),calculateVmax(i),calculateRadV(i),100,250);
+	}else{
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+		y = lerp(-calculateVmax(i),calculateVmax(i),calculateRadV(i),250,100);
+	}
+
+	gfx.beginPath();
+	gfx.arc(x,y,5,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+}
+
+plotLines = function(i){}
+
 //
 update = function(){
+	massRatio = currentMass1/currentMass2;
 	for(var i = 0; i < 4; i++){
-		deltaTheta[i] = const2/(rad[i]*rad[i])*deltaT;
-		theta[i] = theta[i] + deltaTheta[i];
-		if(theta[i] >= Math.PI*2){ theta[i] -= Math.PI*2; }
+		if(i%2==0){
+			deltaTheta[i] = (const2*massRatio)/(rad[i]*rad[i])*deltaT;
+		}else{
+			deltaTheta[i] = deltaTheta[i-1];
+		}
+		theta[i] = theta[i] - deltaTheta[i];
+		if(theta[i] <= 0){ theta[i] += Math.PI*2; }
 		rad[i] = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(theta[i]));
+
+		if(i < 2){
+			var x = rad[i]*Math.cos(theta[i]+rot[i]);
+			var y = rad[i]*Math.sin(theta[i]+rot[i]);
+			newCoords[i] = {x:x, y:y};
+		}
 	}
 }
 //
 drawRing = function(i){
+	if(!showTrace){ return; }
 	gfx.save();
 	gfx.lineWidth = 2;
-	gfx.translate(pViewCenter.x, pViewCenter.y);
-
-	gfx.fillStyle = gfx.strokeStyle = 'red';
+	if(i < 2){
+		gfx.translate(pViewCenter.x,pViewCenter.y);
+	}else{
+		gfx.translate(eViewCenter.x,eViewCenter.y);
+	}
+	//gfx.rotate(rot[i]);
+	if(i%2==0){
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+	}else{
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+	}
 
 	var tempTheta = 0;
 	var tempDeltaTheta;
@@ -64,13 +161,23 @@ drawRing = function(i){
 	tempR = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(tempTheta));
 
 	gfx.beginPath();
-	gfx.moveTo(tempR*Math.cos(tempTheta), tempR*Math.sin(tempTheta));
+	if(i < 2){
+		gfx.moveTo(tempR*Math.cos(tempTheta+rot[i]),
+			tempR*Math.sin(tempTheta+rot[i]));
+	}else{
+		gfx.moveTo(tempR*Math.cos(tempTheta+rot[i]),
+			Math.cos(currentIncl*Math.PI/180)*tempR*Math.sin(tempTheta+rot[i]));
+	}
+
 	while(tempTheta < Math.PI*2.5){
 		tempDeltaTheta = const2/(tempR*tempR)*deltaT;
 		tempTheta = tempTheta + tempDeltaTheta;
 		tempR = a[i]*(1-Math.pow(ecc[i],2)) / (1+ecc[i]*Math.cos(tempTheta));
-
-		gfx.lineTo(tempR*Math.cos(tempTheta), tempR*Math.sin(tempTheta));
+		if(i < 2){
+			gfx.lineTo(tempR*Math.cos(tempTheta+rot[i]), tempR*Math.sin(tempTheta+rot[i]));
+		}else{
+			gfx.lineTo(tempR*Math.cos(tempTheta+rot[i]), Math.cos(currentIncl*Math.PI/180)*tempR*Math.sin(tempTheta+rot[i]));
+		}
 	}
 	gfx.stroke();
 
@@ -114,6 +221,23 @@ window.onload = function(){
 		currentNode = parseInt(sliders[3].value);
 		currentMass1 = parseFloat(massBox1.value);
 		currentMass2 = parseFloat(massBox2.value);
+
+		massRatio = currentMass1/currentMass2;
+
+		for(var i = 0; i < ecc.length; i++){
+			theta[i] = 0;
+			rot[i] = currentNode*Math.PI/180;
+			a[i] = fixedA*currentSep;
+
+			if(i%2 == 1){ // offset one orbit 180 degrees and account for mass
+				rot[i] += Math.PI;
+				a[i] = fixedA*currentSep*massRatio;
+			}
+
+			ecc[i] = currentEcc;
+			rad[i] = a[i]*(1-ecc[i]);
+		}
+
 	}
 
 	buttons[1].onclick = function(){
@@ -234,21 +358,93 @@ render = function(){
 
 	gfx.clearRect(0,0,cwidth,cheight);
 
-	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.font = '14px verdana';
+	gfx.fillText('Priveleged View', 200, 750);
+	gfx.fillText('Earth View', 700, 750);
+
+	// star connector lines
+	if(lineCoords[0]){
+		gfx.fillStyle = gfx.strokeStyle = 'black';
+		gfx.save();
+		gfx.translate(pViewCenter.x,pViewCenter.y);
+		//gfx.rotate(currentNode*Math.PI/180);
+		drawLine(lineCoords[0].x,lineCoords[0].y,lineCoords[1].x,lineCoords[1].y);
+		gfx.restore();
+
+		gfx.save();
+		gfx.translate(eViewCenter.x,eViewCenter.y);
+		//gfx.rotate(currentNode*Math.PI/180);
+		drawLine(lineCoords[0].x,Math.cos(currentIncl*Math.PI/180)*lineCoords[0].y,lineCoords[1].x,Math.cos(currentIncl*Math.PI/180)*lineCoords[1].y);
+		gfx.restore();
+	}
+
+	//rings
+	for(var i = 0; i < 4; i++){ drawRing(i); }
+
+	// stars
+	for(var i = 0; i < 4; i++){
+		if(i%2==0){
+			gfx.fillStyle = gfx.strokeStyle = 'red';
+		}else{
+			gfx.fillStyle = gfx.strokeStyle = 'blue';
+		}
+		var x = rad[i]*Math.cos(theta[i]+rot[i]);
+		var y = rad[i]*Math.sin(theta[i]+rot[i]);
+		lineCoords[i] = {x:x, y:y};
+		gfx.save();
+		if(i < 2){
+			gfx.translate(pViewCenter.x,pViewCenter.y);
+		}else{
+			gfx.translate(eViewCenter.x,eViewCenter.y);
+		}
+		//gfx.rotate(rot[i]);
+		gfx.beginPath();
+		if(i < 2){
+			//if(x+pViewCenter.x < cwidth/2-5){
+				oldCoords[i] = {x:x, y:y};
+				gfx.arc(x,y,5,0,Math.PI*2);
+			//}
+		}else{
+			//if(x+eViewCenter.x > cwidth/2+5){
+				gfx.arc(x,Math.cos(currentIncl*Math.PI/180)*y,5,0,Math.PI*2);
+			//}
+		}
+		gfx.fill(); gfx.stroke();
+		gfx.restore();
+	}
+
+	// viewports centers
+	gfx.fillStyle = gfx.strokeStyle = 'black';
+	gfx.beginPath();
+	gfx.arc(parseInt(pViewCenter.x),parseInt(pViewCenter.y),2,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	gfx.beginPath();
+	gfx.arc(cwidth-285,cheight-195,2,0,Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	//boundary boxes
+	gfx.fillStyle = gfx.strokeStyle = 'white';
+	gfx.fillRect(0,0,cwidth,pViewCenter.y-145);
+
+	// menu text
+	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.fillText(''+simSpeed,608,25);
 	for(var s in sliders){
 		gfx.fillText(''+sliders[s].value,40,120+s*83);
 	}
 
-	gfx.fillText('Priveleged View', 200, 750);
-	gfx.fillText('Earth View', 700, 750);
-	
+	gfx.fillText('P: '+calculatePeriod()+' years', cwidth-165,62);
+	gfx.fillText(''+calculateVmax()+' km/sec', cwidth-210,100);
+	gfx.fillText('0 km/sec', cwidth-210,174);
+	gfx.fillText('-'+calculateVmax()+' km/sec', cwidth-210,248);
+
 	// rainbow bar
+	gfx.fillStyle = gfx.strokeStyle = 'black';
 	gfx.strokeRect(350,280,450,100);
 	for(var x = 0; x < 450; x++){
 		var c = new tinycolor('hsv('+
-        lerp(0,450,x,0,300) +',1,1)');
+        lerp(450,0,x,0,300) +',1,1)');
 
         var r = parseInt(c._r);
         var g = parseInt(c._g);
@@ -263,43 +459,19 @@ render = function(){
 	// box for graph
 	gfx.strokeRect(350,100,450,150);
 
+	// dashed line in graph
+	var dashLength = 39;
+	for(var i = 0; i < 12; i++){
+		drawLine(350+i*dashLength,175,350+i*dashLength+dashLength/2,175);
+	}
+
+	// plot star dots on graph
+	plotDots(0); plotDots(1);
+
 	// doppler shift lines
 	line1x = 440; line2x = 680;
 	drawLine(line1x,265,line1x,275);
 	drawLine(line2x,265,line2x,275);
-
-	for(var i = 0; i < 4; i++){
-		var x = rad[i]*Math.cos(theta[i]);
-		var y = rad[i]*Math.sin(theta[i]);
-		gfx.fillStyle = gfx.strokeStyle = 'red';
-		gfx.beginPath();
-		gfx.arc(pViewCenter.x+x,pViewCenter.y+y,5,0,Math.PI*2);
-		gfx.fill(); gfx.stroke();
-	}
-
-	gfx.beginPath();
-	gfx.arc(pViewCenter.x,pViewCenter.y,5,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
-	// outline viewports
-	gfx.fillStyle = gfx.strokeStyle = 'black';
-	gfx.beginPath();
-	gfx.arc(parseInt(pViewCenter.x),parseInt(pViewCenter.y),5,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
-	gfx.beginPath();
-	gfx.arc(250,cheight-195,160,0,Math.PI*2);
-	gfx.stroke();
-
-	gfx.beginPath();
-	gfx.arc(cwidth-285,cheight-195,5,0,Math.PI*2);
-	gfx.fill(); gfx.stroke();
-
-	gfx.beginPath();
-	gfx.arc(cwidth-285,cheight-195,160,0,Math.PI*2);
-	gfx.stroke();
-
-	for(var i = 0; i < 4; i++){ drawRing(i); }
 
 	update();
 
@@ -349,7 +521,7 @@ drawLine = function(x1,y1,x2,y2){
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<b1>P: &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; years</b1>
+			<b1> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </b1>
 			<br></br>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -362,7 +534,7 @@ drawLine = function(x1,y1,x2,y2){
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<b1>km/sec</b1>
+			<b1></b1>
 			<br>
 			<b1>a: </b1><br>
 			</input></input></input>
@@ -381,7 +553,7 @@ drawLine = function(x1,y1,x2,y2){
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<b1>km/sec</b1>
+			<b1></b1>
 			<br><br>
 			<b1>e: </b1>
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
@@ -401,7 +573,7 @@ drawLine = function(x1,y1,x2,y2){
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
 			&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-			<b1>km/sec</b1>
+			<b1></b1>
 			<br></br>
 			<b1>i: </b1>
 			</input></input></input><br>

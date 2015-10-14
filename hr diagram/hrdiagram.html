@@ -17,7 +17,8 @@
 
     var stars = []; var starOffset = .14; var colorOffset = .15;
 
-    var star = function(l,t){
+    var star = function(l,t,m){
+        this.mass = m;
         this.lum = l;
         this.temp = t;
         this.visible = false;
@@ -42,17 +43,22 @@
                 gfx.beginPath();
                 gfx.arc(coords[0], coords[1], 4, 0, Math.PI*2);
                 gfx.stroke();
+
+                gfx.fillText('mass: ' + parseFloat(this.mass).toExponential(), 100, 80);
+                gfx.fillText('lum: ' + parseFloat(this.lum).toExponential(), 100,100);
+                gfx.fillText('temp: ' + parseFloat(this.temp).toExponential(), 100,120);
+
             }
         }
     }
 
     // Read CSV
-    d3.text("hrdiagram.csv", data);
+    d3.text("new.csv", data);
     function data(e){
         rawData = d3.csv.parseRows(e);
 
         for(var x = 0; x < 150; x++){
-            stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3]));
+            stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3], rawData[0][x*3]));
         }
 
     }
@@ -71,13 +77,16 @@
 
     findClosest = function(set, value){ // finds index of closest matching value
         var closest = null; var max = -1;
-        for(var x in set){
-            if(set[x] > max){ max = set[x]; }
+        for(var x = 1; x < set.length; x++){
+            if(parseInt(set[x]) > max){ max = set[x]; }
+            //console.log(set[x], max);
             if(closest == null){ closest = x; }
             else if( Math.abs(set[x]-value) < Math.abs(set[closest]-value) ){
                 closest = x;
             }
+            //console.log(x,closest,max);
         }
+
         if(value > max){ return -1; }
         return closest;
     }
@@ -135,10 +144,13 @@
                 var tempDat = getColumn(rawData, s*3+2);
                 var lumDat = getColumn(rawData, s*3+1);
                 var row = findClosest(timeDat, currentAge);
+                console.log(row);
                 if(row !== -1){
+                    //console.log(s,stars[s].lum,stars[s].temp);
                     stars[s].lum = lumDat[row];
                     stars[s].temp = tempDat[row];
                 }else{
+                    //console.log(s);
                     stars[s].visible = false;
                 }
             }
