@@ -1,6 +1,16 @@
 <head>
 	<script type="text/javascript" src="tinycolor.js"></script>
-	<script language=javascript>
+	<script type="text/javascript" src="is.js"></script>
+	<script type="text/javascript">
+
+// meet friday at 2
+// TODO
+
+// if statments mass ratio
+// show two cycles of orbits
+
+// limit displacement on spectrum -- doesn't account for mass ratio properly
+// show w rotation on earth view -- problem w/ order of application of w and i
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -29,8 +39,18 @@ var const1 = 30; var const2 = .0005;
 
 var count1 = count2 = 0;
 
+var ff = false; var ie = false; var chr = false;
+
+var lim;
+
+var lMin; var lMax;
+
 window.onload = function(){
 	window.resizeTo(1040,836);
+
+	if(is.ie()){ ie = true; }
+	if(is.firefox()){ ff = true; }
+	if(is.chrome()){ chr = true; }
 
 	// initialize canvases
 	for(var i = 0; i < 5; i++){
@@ -74,8 +94,19 @@ window.onload = function(){
 		if(i < 4){
 			sliders[i] = document.createElement('input');
 			sliders[i].type = 'range';
-			sliders[i].setAttribute('style',
-				'position:absolute; left:8.5%; top:'+(sliderOffset+i*sliderSpacing)+'%');
+
+			if(chr){
+				sliders[i].setAttribute('style',
+					'position:absolute; left:8.5%; top:'+(sliderOffset+i*sliderSpacing)+'%;');
+			}else if(ff){
+				sliders[i].setAttribute('style',
+					'position:absolute; left:8.5%; top:'+(sliderOffset+i*sliderSpacing)+'%; width:12%');
+			}else if(ie){
+
+				sliders[i].setAttribute('style',
+					'position:absolute; left:9.1%; top:'+((sliderOffset-1.5)+i*(sliderSpacing))+'%; width:12%');				
+			}
+
 			document.body.appendChild(sliders[i]);
 		}
 
@@ -213,7 +244,7 @@ window.onload = function(){
 	// initialize text boxes
 	boxes[0] = document.createElement('input');
 	boxes[1] = document.createElement('input');
-	boxes[0].type = boxes[1].type = 'textBox';
+	boxes[0].type = boxes[1].type = 'text';
 	boxes[0].setAttribute('style','position:absolute; left:4%; top:4.5%; width:4%');
 	boxes[1].setAttribute('style','position:absolute; left:15.5%; top:4.5%; width:4%');
 	document.body.appendChild(boxes[0]);
@@ -245,18 +276,25 @@ calculate = function(){
 	calculateVs(a,m1,m2);
 	calculateRadVs(i,w);
 	calculateLambdas();
+
+	lim = 0;
+	for(var i in pViewPaths[0]){
+		if(pViewPaths[0][i].t <= Math.PI*2){ lim++; }
+	}
 }
 
 calculateLambdas = function(){
 	lambdas = [[],[]];
 	var lambda0 = .25; var arbConst = 1;
+	lMin = null; lMax = null;
 	for(var z in radialVels){
 		for(var i in radialVels[z]){
 			lambdas[z][i] = lambda0*(1+radialVels[z][i]*arbConst);
-			//console.log(lambdas[z][i]);
+			if(lMin === null || lambdas[z][i] < lMin){ lMin = lambdas[z][i]; }
+			if(lMax === null || lambdas[z][i] > lMax){ lMax = lambdas[z][i]; }
 		}
-		//console.log('-----------');
 	}
+	console.log(lMin, lMax);
 }
 
 calculateVelocity = function(a,m1,m2,r){
@@ -274,7 +312,7 @@ calculateVs = function(a,m1,m2){
 }
 
 calcRV = function(v,theta,inc,w){
-	var radV = v*Math.sin(inc*Math.PI/180)*Math.cos(theta-(w*Math.PI/180));
+	var radV = v*Math.sin(inc*Math.PI/180)*Math.cos(theta-((w-0)*Math.PI/180));
 	//console.log(Math.sin(inc*Math.PI/180), Math.cos(theta-(w*Math.PI/180)));
 	return radV.toFixed(2);
 }
@@ -303,13 +341,13 @@ calculatePview = function(a,e,w,m1,m2){
 	var r = a * 1 - e;
 	var deltaTheta = const2/(r*r)*deltaT;
 
-	theta = theta + deltaTheta;
-	r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
-	deltaTheta = const2/(r*r)*deltaT;
+		theta = theta + deltaTheta;
+		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
+		deltaTheta = const2/(r*r)*deltaT;
 
-	while(theta < Math.PI*2.01){
-		path1.push(rtToxy(r,theta+w*Math.PI/180));
-		path2.push(rtToxy(r*m1/m2,theta+Math.PI+w*Math.PI/180));
+	while(theta < Math.PI*2.5){
+		path1.push(rtToxy(r,theta));
+		path2.push(rtToxy(r*m1/m2,theta+Math.PI));
 		theta = theta + deltaTheta;
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
@@ -357,11 +395,23 @@ calculateVMax = function(m1,m2,a,e){
 calculateThetas = function(){
 	for(var z = 0; z < 2; z++){
 		for(var i = 0; i < pViewPaths[z].length; i++){
-			pViewPaths[z][i].cTheta = Math.atan2(
+			var idx1 = i; var idx2 = i-1;
+			if(idx2 < 0){ idx2 = pViewPaths.length-1; }
+
+			/*pViewPaths[z][i].cTheta = Math.atan2(
 				pViewPaths[z][i].x,
 				pViewPaths[z][i].y
+			);*/
+
+			pViewPaths[z][i].cTheta = Math.atan2(
+				pViewPaths[z][idx2].x-pViewPaths[z][idx1].x,
+				pViewPaths[z][idx2].y-pViewPaths[z][idx1].y
 			);
-			//console.log(z,pViewPaths[z][i].cTheta);
+			
+			/*pViewPaths[z][i].cTheta = Math.atan(
+				pViewPaths[z][idx2].y-pViewPaths[z][idx1].y/				
+				pViewPaths[z][idx2].x-pViewPaths[z][idx1].x
+			);*/
 		}
 	}
 }
@@ -379,7 +429,7 @@ renderMenu = function(){
 	gfxMenu.font = '12pt verdana';
 
 	gfxMenu.fillText('Speed:',410,18);
-	gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
+	
 
 	gfxMenu.fillText(''+currentRVMax+' km/s', window.innerWidth-118, 46);
 	gfxMenu.fillText('-'+currentRVMax+' km/s', window.innerWidth-118, 46+canvases[2].height);
@@ -389,16 +439,46 @@ renderMenu = function(){
 
 	gfxMenu.fillText('Period: '+ currentP +' yrs',window.innerWidth-300,18);
 
-	gfxMenu.fillText('a: .1',2,95); gfxMenu.fillText('e: 0',2,172);
-	gfxMenu.fillText('i: 0',2,249); gfxMenu.fillText('w: -90',2,326);
+	if(chr){
+		gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
 
-	gfxMenu.fillText('2',255,95); gfxMenu.fillText('.9',255,172);
-	gfxMenu.fillText('90',255,249); gfxMenu.fillText('90',255,326);
+		gfxMenu.fillText('a: .1',2,95); gfxMenu.fillText('e: 0',2,172);
+		gfxMenu.fillText('i: 0',2,249); gfxMenu.fillText('w: -90',2,326);
 
-	gfxMenu.fillText(''+sliders[0].value,142,120);
-	gfxMenu.fillText(''+sliders[1].value,142,197);
-	gfxMenu.fillText(''+sliders[2].value,142,274);
-	gfxMenu.fillText(''+sliders[3].value,142,351);
+		gfxMenu.fillText('2',255,95); gfxMenu.fillText('.9',255,172);
+		gfxMenu.fillText('90',255,249); gfxMenu.fillText('90',255,326);
+
+		gfxMenu.fillText(''+sliders[0].value,142,120);
+		gfxMenu.fillText(''+sliders[1].value,142,197);
+		gfxMenu.fillText(''+sliders[2].value,142,274);
+		gfxMenu.fillText(''+sliders[3].value,142,351);
+	}else if(ff){
+		gfxMenu.fillText(''+simSpeed,window.innerWidth/2+6,18);
+
+		gfxMenu.fillText('a: .1',2,95); gfxMenu.fillText('e: 0',2,172);
+		gfxMenu.fillText('i: 0',2,249); gfxMenu.fillText('w: -90',2,326);
+
+		gfxMenu.fillText('2',259,95); gfxMenu.fillText('.9',259,172);
+		gfxMenu.fillText('90',259,249); gfxMenu.fillText('90',259,326);
+
+		gfxMenu.fillText(''+sliders[0].value,142,120);
+		gfxMenu.fillText(''+sliders[1].value,142,197);
+		gfxMenu.fillText(''+sliders[2].value,142,274);
+		gfxMenu.fillText(''+sliders[3].value,142,351);
+	}else if(ie){
+		gfxMenu.fillText(''+simSpeed,window.innerWidth/2+3,18);
+
+		gfxMenu.fillText('a: .1',2,97); gfxMenu.fillText('e: 0',2,176);
+		gfxMenu.fillText('i: 0',2,255); gfxMenu.fillText('w: -90',2,334);
+
+		gfxMenu.fillText('2',255,97); gfxMenu.fillText('.9',255,176);
+		gfxMenu.fillText('90',255,255); gfxMenu.fillText('90',255,334);
+
+		gfxMenu.fillText(''+sliders[0].value,142,120);
+		gfxMenu.fillText(''+sliders[1].value,142,197);
+		gfxMenu.fillText(''+sliders[2].value,142,274);
+		gfxMenu.fillText(''+sliders[3].value,142,351);		
+	}
 }
 
 renderLeft = function(){
@@ -408,6 +488,9 @@ renderLeft = function(){
 	
 	changeColor(gfxLeft,'black');
 	arc(gfxLeft,center.x,center.y,3,true);
+
+	gfxLeft.font = '12pt verdana';
+	gfxLeft.fillText('Fiducial View', 180, 30);
 
 	var scale = 60;
 	gfxLeft.save();
@@ -445,11 +528,25 @@ renderLeft = function(){
 	changeColor(gfxLeft,'blue');
 	arc(gfxLeft,pViewPaths[1][count2].x*scale,pViewPaths[1][count2].y*scale,5,true);
 
+	// view direction indicator
+	changeColor(gfxLeft, 'black');
+	gfxLeft.save();
+	gfxLeft.rotate(currentW*Math.PI/180);
+	gfxLeft.translate(0,canvases[0].height/2-35);
+	gfxLeft.beginPath();
+	gfxLeft.moveTo(0,0); gfxLeft.lineTo(-4,10);
+	gfxLeft.lineTo(4,10); gfxLeft.lineTo(0,0);
+	gfxLeft.fill(); gfxLeft.stroke();
+	gfxLeft.restore();
+
 	count1+= simSpeed; count2+= simSpeed;
 	if(count1 >= pViewPaths[0].length){ count1 = 0; }
 	if(count2 >= pViewPaths[1].length){ count2 = 0; }
-	if(pViewPaths[0][count1].t > Math.PI*2){ count1 = 0; }
-	if(pViewPaths[1][count2].t > Math.PI*3){ count2 = 0; }
+	
+	///// previously removed
+	if(pViewPaths[0][count1].t > Math.PI*2 + (currentW*Math.PI/180) ){ count1 = 0; }
+	if(pViewPaths[1][count2].t > Math.PI*3 + (currentW*Math.PI/180) ){ count2 = 0; }
+	////
 
 	gfxLeft.restore();
 }
@@ -462,9 +559,13 @@ renderRight = function(){
 	changeColor(gfxRight,'black');
 	arc(gfxRight,center.x,center.y,3,true);
 
+	gfxRight.font = '12pt verdana';
+	gfxRight.fillText('Earth View', 190, 30);
+
 	var scale = 60;
 	gfxRight.save();
 	gfxRight.translate(center.x, center.y);
+	//gfxRight.rotate(currentW*Math.PI/180);
 	if(trails){
 		changeColor(gfxRight,'red');
 		var begin = false;
@@ -525,31 +626,31 @@ renderGraph = function(){
 			if(currentM1 > currentM2){
 				gfxGraph.beginPath();
 				gfxGraph.moveTo(
-					lerp(0,pViewPaths[0].length, i ,0,canvases[2].width),
+					lerp(0,lim, i ,0,canvases[2].width/2),
 					lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height)
 				);
 			}else{
 				gfxGraph.beginPath();
 				gfxGraph.moveTo(
-					lerp(0,pViewPaths[0].length, i ,0,canvases[2].width),
+					lerp(0,lim, i ,0,canvases[2].width/2),
 					lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
 				);				
 			}
 		}else{
 			if(currentM1 > currentM2){
-				//if(pViewPaths[0][i].t <= Math.PI*2){
+				if(pViewPaths[0][i].t <= Math.PI*2){
 					gfxGraph.lineTo(
-						lerp(0,pViewPaths[0].length, i ,0,canvases[2].width),
+						lerp(0,lim, i ,0,canvases[2].width/2),
 						lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height)
 					);
-				//}
+				}
 			}else{
-				//if(pViewPaths[0][i].t <= Math.PI*2){
+				if(pViewPaths[0][i].t <= Math.PI*2){
 					gfxGraph.lineTo(
-						lerp(0,pViewPaths[0].length, i ,0,canvases[2].width),
+						lerp(0,lim, i ,0,canvases[2].width/2),
 						lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
 					);
-				//}				
+				}				
 			}
 		}
 	}
@@ -564,29 +665,29 @@ renderGraph = function(){
 			gfxGraph.beginPath();
 			if(currentM2 > currentM1){
 				gfxGraph.moveTo(
-					lerp(0,pViewPaths[1].length, i ,0,canvases[2].width),
+					lerp(0,lim, i ,0,canvases[2].width/2),
 					lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
 				);
 			}else{
 				gfxGraph.moveTo(
-					lerp(0,pViewPaths[1].length, i ,0,canvases[2].width),
+					lerp(0,lim, i ,0,canvases[2].width/2),
 					lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
 				);				
 			}
 		}else{
-			//if(pViewPaths[0][i].t <= Math.PI*2){
+			if(pViewPaths[0][i].t <= Math.PI*2){
 				if(currentM2 > currentM1){
 					gfxGraph.lineTo(
-						lerp(0,pViewPaths[1].length, i ,0,canvases[2].width),
+						lerp(0,lim, i ,0,canvases[2].width/2),
 						lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
 					);
 				}else{
 					gfxGraph.lineTo(
-						lerp(0,pViewPaths[1].length, i ,0,canvases[2].width),
+						lerp(0,lim, i ,0,canvases[2].width/2),
 						lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
 					);					
 				}
-			//}
+			}
 		}
 	}
 	gfxGraph.stroke();
@@ -595,12 +696,12 @@ renderGraph = function(){
 	changeColor(gfxGraph,'red');
 	if(currentM2 < currentM1){
 		arc(gfxGraph,
-			lerp(0,pViewPaths[1].length, count1 ,0,canvases[2].width),
+			lerp(0,lim, count1 ,0,canvases[2].width),
 			lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
 		5,true);
 	}else{
 		arc(gfxGraph,
-			lerp(0,pViewPaths[1].length, count1 ,0,canvases[2].width),
+			lerp(0,lim, count1 ,0,canvases[2].width),
 			lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
 		5,true);
 	}
@@ -608,12 +709,12 @@ renderGraph = function(){
 	changeColor(gfxGraph,'blue');
 	if(currentM2 > currentM1){
 		arc(gfxGraph,
-			lerp(0,pViewPaths[1].length, count2 ,0,canvases[2].width),
+			lerp(0,lim, count2 ,0,canvases[2].width),
 			lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
 		5,true);
 	}else{
 		arc(gfxGraph,
-			lerp(0,pViewPaths[1].length, count2 ,0,canvases[2].width),
+			lerp(0,lim, count2 ,0,canvases[2].width),
 			lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
 		5,true);
 	}
@@ -644,26 +745,33 @@ renderSpectrum = function(){
 	drawLine(gfxSpectrum,width/4*3,0,width/4*3,10);
 
 	// red lines
-	changeColor(gfxSpectrum,'red');
-	arc(gfxSpectrum,width/4+lambdas[0][count1],5,3,true);
-	changeColor(gfxSpectrum,'black');
-	drawLine(gfxSpectrum,width/4+lambdas[0][count1],10,width/4+lambdas[0][count1],height);
+	var disp1 = lerp(lMin,lMax,lambdas[0][count1],-15,15);
+	var disp2 = lerp(
+		lMin*(currentM1/currentM2),lMax*(currentM1/currentM2),
+		lambdas[0][count1]*(currentM1/currentM2),
+		-15,15
+	);
 
 	changeColor(gfxSpectrum,'red');
-	arc(gfxSpectrum,width/4*3+lambdas[0][count1],5,3,true);
+	arc(gfxSpectrum,width/4+disp1,5,3,true);
 	changeColor(gfxSpectrum,'black');
-	drawLine(gfxSpectrum,width/4*3+lambdas[0][count1],10,width/4*3+lambdas[0][count1],height);
+	drawLine(gfxSpectrum,width/4+disp1,10,width/4+disp1,height);
+
+	changeColor(gfxSpectrum,'red');
+	arc(gfxSpectrum,width/4*3+disp1,5,3,true);
+	changeColor(gfxSpectrum,'black');
+	drawLine(gfxSpectrum,width/4*3+disp1,10,width/4*3+disp1,height);
 
 	// blue lines
 	changeColor(gfxSpectrum,'blue');
-	arc(gfxSpectrum,width/4*3-lambdas[0][count1]*(currentM1/currentM2),5,3,true);
+	arc(gfxSpectrum,width/4*3-disp2,5,3,true);
 	changeColor(gfxSpectrum,'black');
-	drawLine(gfxSpectrum,width/4*3-lambdas[0][count1]*(currentM1/currentM2),10,width/4*3-lambdas[0][count1]*(currentM1/currentM2),height);
+	drawLine(gfxSpectrum,width/4*3-disp2,10,width/4*3-disp2,height);
 
 	changeColor(gfxSpectrum,'blue');
-	arc(gfxSpectrum,width/4-lambdas[0][count1]*(currentM1/currentM2),5,3,true);
+	arc(gfxSpectrum,width/4-disp2,5,3,true);
 	changeColor(gfxSpectrum,'black');
-	drawLine(gfxSpectrum,width/4-lambdas[0][count1]*(currentM1/currentM2),10,width/4-lambdas[0][count1]*(currentM1/currentM2),height);
+	drawLine(gfxSpectrum,width/4-disp2,10,width/4-disp2,height);
 }
 
 arc = function(gfx,x,y,d,fill){

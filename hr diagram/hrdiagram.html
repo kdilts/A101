@@ -17,10 +17,11 @@
 
     var stars = []; var starOffset = .14; var colorOffset = .15;
 
-    var star = function(l,t,m){
+    var star = function(lum,t,m,life){
         this.mass = m;
-        this.lum = l;
+        this.lum = lum;
         this.temp = t;
+        this.life = life;
         this.visible = false;
         this.selected = false;
 
@@ -44,10 +45,13 @@
                 gfx.arc(coords[0], coords[1], 4, 0, Math.PI*2);
                 gfx.stroke();
 
-                gfx.fillText('mass: ' + parseFloat(this.mass).toExponential(), 100, 80);
-                gfx.fillText('lum: ' + parseFloat(this.lum).toExponential(), 100,100);
-                gfx.fillText('temp: ' + parseFloat(this.temp).toExponential(), 100,120);
+                gfx.fillText('Mass: ' + (parseFloat(this.mass).toFixed(2)) + ' Solar Masses', 100, 80);
 
+                gfx.fillText('Luminosity: ' + parseFloat(Math.pow(10,this.lum)).toPrecision(2) + ' Solar Luminosities', 100,100);
+
+                gfx.fillText('Temperature: ' + parseFloat(Math.pow(10,this.temp)).toPrecision(2) + ' K', 100,120);
+
+                gfx.fillText('Main Cycle Life Span: ', 100,140);
             }
         }
     }
@@ -58,9 +62,18 @@
         rawData = d3.csv.parseRows(e);
 
         for(var x = 0; x < 150; x++){
-            stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3], rawData[0][x*3]));
+            //stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3], rawData[0][x*3]));
         }
 
+        for(var i = 0; i < 30; i++){
+            //stars[parseInt(Math.random()*stars.length-1)].visible = true;
+        }
+
+        for(var i = -1; i <= 6; i++){
+            var temp = new star(i,4,1,1);
+            stars.push(temp);
+            temp.visible = true;
+        }
     }
 
     getColumn = function(csv, column){
@@ -105,9 +118,6 @@
         buttons[1].style.left = cwidth/2-265-44 + 'px';
         buttons[2].style.left = cwidth/2-208-44 + 'px';
         buttons[3].style.left = cwidth/2-208 + 'px';
-        buttons[4].style.left = cwidth/2-50 + 'px';
-        buttons[5].style.left = cwidth/2-25 + 'px';
-        buttons[6].style.left = cwidth/2+7 + 'px'; 
 
         for(var b = 0; b < buttons.length; b++){ buttons[b].style.top = '3px'; }
 
@@ -122,6 +132,11 @@
                 currentAge = 0;
                 timeStep = 2000000;
                 playing = false;
+            }
+
+
+            for(var i = 0; i < 30; i++){
+                stars[parseInt(Math.random()*stars.length)].visible = true;
             }
         }
 
@@ -144,7 +159,6 @@
                 var tempDat = getColumn(rawData, s*3+2);
                 var lumDat = getColumn(rawData, s*3+1);
                 var row = findClosest(timeDat, currentAge);
-                console.log(row);
                 if(row !== -1){
                     //console.log(s,stars[s].lum,stars[s].temp);
                     stars[s].lum = lumDat[row];
@@ -153,25 +167,6 @@
                     //console.log(s);
                     stars[s].visible = false;
                 }
-            }
-        }
-
-        // add 1 button
-        buttons[4].onclick = function(){
-            stars[parseInt(Math.random()*150)].visible = true;
-        }
-
-        // add 15 button
-        buttons[5].onclick = function(){
-            for(var i = 0; i < 15; i++){
-                stars[parseInt(Math.random()*150)].visible = true;
-            }
-        }
-
-        // add 150 button
-        buttons[6].onclick = function(){
-            for(var s in stars){
-                stars[s].visible = true;
             }
         }
     }
@@ -190,6 +185,7 @@
             if(Math.abs(mx-coords[0]) < 5 && Math.abs(my-coords[1]) < 5){
                 if(!stars[s].visible){ return; }
                 stars[s].selected = true;
+                break;
             }
         }
     }
@@ -202,9 +198,6 @@
         buttons[1].style.left = cwidth/2-265-44 + 'px';
         buttons[2].style.left = cwidth/2-208-44 + 'px';
         buttons[3].style.left = cwidth/2-208 + 'px';
-        buttons[4].style.left = cwidth/2-50 + 'px';
-        buttons[5].style.left = cwidth/2-25 + 'px';
-        buttons[6].style.left = cwidth/2+7 + 'px'; 
     }
 
     var lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
@@ -217,7 +210,7 @@
         var minLogL = -2; var maxLogL = 6;
 
         temp = lerp(minLogT,maxLogT,logT,cwidth,0);
-        lum = lerp(minLogL,maxLogL,logL,cheight,0);
+        lum = lerp(minLogL,maxLogL,logL,cheight,0)+92;
 
         var c = new tinycolor('hsv('+
            lerp(0,cwidth-parseInt(colorOffset*cwidth),temp,300,0) +',1,1)');
@@ -242,10 +235,6 @@
         gfx.fillStyle = gfx.strokeStyle = 'grey';
         gfx.fillRect(0,0,cwidth,28);
 
-        gfx.fillStyle = gfx.strokeStyle = 'black';
-        gfx.font = '18px verdana';
-        gfx.fillText('Add Stars:', cwidth/2-150, 21);
-
         // axis labels and age display
         gfx.fillStyle = gfx.strokeStyle = 'yellow';
         gfx.font = '14px verdana';
@@ -257,7 +246,7 @@
         if(currentAge == 0){
             gfx.fillText('Age = ZAMS', cwidth/2+150, 20);
         }else{
-            gfx.fillText('Age = ' + currentAge.toExponential(), cwidth/2+150, 20);
+            gfx.fillText('Age = ' + currentAge.toPrecision(2), cwidth/2+150, 20);
         }
 
         // draw grid
@@ -318,9 +307,4 @@
 
     <input type='button' id='step' value='Step' style='position:absolute;'>
 
-    <input type='button' id='add1' value='1' style='position:absolute;'>
-
-    <input type='button' id='add15' value='15' style='position:absolute;'>
-
-    <input type='button' id='add150' value='150' style='position:absolute;'>
 </body></html>
