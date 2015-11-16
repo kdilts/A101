@@ -3,11 +3,8 @@
 	<script type="text/javascript" src="is.js"></script>
 	<script type="text/javascript">
 
-// meet friday at 2
-// TODO
-// if statments mass ratio
-// limit displacement on spectrum -- doesn't account for mass ratio properly
-// show w rotation on earth view -- problem w/ order of application of w and i
+// limit scale so that both orbits are always visible
+// limit displacement on spectrum
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -159,6 +156,8 @@ window.onload = function(){
 
 		count1 = count2 = 0;
 
+		secondHalf = false;
+
 		calculate();
 	}
 
@@ -291,6 +290,7 @@ calculateLambdas = function(){
 			if(lMax === null || lambdas[z][i] > lMax){ lMax = lambdas[z][i]; }
 		}
 	}
+
 	console.log(lMin, lMax);
 }
 
@@ -329,6 +329,9 @@ calculateRadVs = function(inc,w){
 		}
 	}
 	currentRVMax = max;
+
+	radialVels[0][0] = -radialVels[0][0];
+	radialVels[1][0] = -radialVels[1][0];
 }
 
 calculatePview = function(a,e,w,m1,m2){
@@ -342,7 +345,7 @@ calculatePview = function(a,e,w,m1,m2){
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
 
-	while(theta < Math.PI*2.5){
+	while(theta < Math.PI*2.05){
 		path1.push(rtToxy(r,theta));
 		path2.push(rtToxy(r*m1/m2,theta+Math.PI));
 		theta = theta + deltaTheta;
@@ -355,15 +358,19 @@ calculatePview = function(a,e,w,m1,m2){
 
 calculateEview = function(){
 	var path1 = []; var path2 = [];
+	var cosT = Math.cos(Math.PI/180*currentW);
+	var sinT = Math.sin(Math.PI/180*currentW);
 	for(var i in pViewPaths[0]){
-		var x = pViewPaths[0][i].x;
-		var y = Math.cos(currentI*Math.PI/180)*pViewPaths[0][i].y;
+		var x = pViewPaths[0][i].x*cosT - pViewPaths[0][i].y*sinT;
+		var y = pViewPaths[0][i].x*sinT + pViewPaths[0][i].y*cosT;
+		y = y * Math.cos(currentI*Math.PI/180);
 		path1.push({x:x,y:y});
 	}
 
 	for(var i in pViewPaths[1]){
-		var x = pViewPaths[1][i].x;
-		var y = Math.cos(currentI*Math.PI/180)*pViewPaths[1][i].y;
+		var x = pViewPaths[1][i].x*cosT - pViewPaths[1][i].y*sinT;
+		var y = pViewPaths[1][i].x*sinT + pViewPaths[1][i].y*cosT;
+		y = y * Math.cos(currentI*Math.PI/180);
 		path2.push({x:x,y:y});
 	}
 
@@ -395,20 +402,11 @@ calculateThetas = function(){
 			var idx1 = i; var idx2 = i-1;
 			if(idx2 < 0){ idx2 = pViewPaths.length-1; }
 
-			/*pViewPaths[z][i].cTheta = Math.atan2(
-				pViewPaths[z][i].x,
-				pViewPaths[z][i].y
-			);*/
-
 			pViewPaths[z][i].cTheta = Math.atan2(
 				pViewPaths[z][idx2].x-pViewPaths[z][idx1].x,
 				pViewPaths[z][idx2].y-pViewPaths[z][idx1].y
 			);
 			
-			/*pViewPaths[z][i].cTheta = Math.atan(
-				pViewPaths[z][idx2].y-pViewPaths[z][idx1].y/				
-				pViewPaths[z][idx2].x-pViewPaths[z][idx1].x
-			);*/
 		}
 	}
 }
@@ -568,7 +566,6 @@ renderRight = function(){
 	var scale = 60;
 	gfxRight.save();
 	gfxRight.translate(center.x, center.y);
-	//gfxRight.rotate(currentW*Math.PI/180);
 	if(trails){
 		changeColor(gfxRight,'red');
 		var begin = false;
@@ -850,11 +847,7 @@ renderSpectrum = function(){
 
 	// red lines
 	var disp1 = lerp(lMin,lMax,lambdas[0][count1],-15,15);
-	var disp2 = lerp(
-		lMin*(currentM1/currentM2),lMax*(currentM1/currentM2),
-		lambdas[0][count1]*(currentM1/currentM2),
-		-15,15
-	);
+	var disp2 = lerp(lMin,lMax,lambdas[0][count1],-15,15);
 
 	changeColor(gfxSpectrum,'red');
 	arc(gfxSpectrum,width/4+disp1,5,3,true);
