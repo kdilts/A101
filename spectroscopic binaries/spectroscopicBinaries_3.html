@@ -5,10 +5,7 @@
 
 // meet friday at 2
 // TODO
-
 // if statments mass ratio
-// show two cycles of orbits
-
 // limit displacement on spectrum -- doesn't account for mass ratio properly
 // show w rotation on earth view -- problem w/ order of application of w and i
 
@@ -37,7 +34,7 @@ var trails = true;
 var simSpeed = 3; var deltaT = 1000/60;
 var const1 = 30; var const2 = .0005;
 
-var count1 = count2 = 0;
+var count1 = count2 = 0; secondHalf = false;
 
 var ff = false; var ie = false; var chr = false;
 
@@ -540,11 +537,17 @@ renderLeft = function(){
 	gfxLeft.restore();
 
 	count1+= simSpeed; count2+= simSpeed;
-	if(count1 >= pViewPaths[0].length){ count1 = 0; }
+	if(count1 >= pViewPaths[0].length){
+		count1 = 0;
+		if(secondHalf){ secondHalf = false }else{ secondHalf = true; }
+	}
 	if(count2 >= pViewPaths[1].length){ count2 = 0; }
 	
 	///// previously removed
-	if(pViewPaths[0][count1].t > Math.PI*2 + (currentW*Math.PI/180) ){ count1 = 0; }
+	if(pViewPaths[0][count1].t > Math.PI*2 + (currentW*Math.PI/180) ){
+		count1 = 0;
+		if(secondHalf){ secondHalf = false }else{ secondHalf = true; }
+	}
 	if(pViewPaths[1][count2].t > Math.PI*3 + (currentW*Math.PI/180) ){ count2 = 0; }
 	////
 
@@ -620,7 +623,7 @@ renderGraph = function(){
 	// red line
 	changeColor(gfxGraph,'red');
 	var begin = false;
-	for(var i in radialVels[0]){
+	for(var i = 1; i < radialVels[0].length; i++){
 		if(!begin){
 			begin = true;
 			if(currentM1 > currentM2){
@@ -656,10 +659,48 @@ renderGraph = function(){
 	}
 	gfxGraph.stroke();
 
+	// red second half
+	begin = false;
+	for(var i = 1; i < radialVels[0].length; i++){
+		if(!begin){
+			begin = true;
+			if(currentM1 > currentM2){
+				gfxGraph.beginPath();
+				gfxGraph.moveTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height)
+				);
+			}else{
+				gfxGraph.beginPath();
+				gfxGraph.moveTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
+				);				
+			}
+		}else{
+			if(currentM1 > currentM2){
+				if(pViewPaths[0][i].t <= Math.PI*2){
+					gfxGraph.lineTo(
+						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+						lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height)
+					);
+				}
+			}else{
+				if(pViewPaths[0][i].t <= Math.PI*2){
+					gfxGraph.lineTo(
+						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+						lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
+					);
+				}				
+			}
+		}
+	}
+	gfxGraph.stroke();
+
 	// blue line
 	changeColor(gfxGraph,'blue');
 	var begin = false;
-	for(var i in radialVels[0]){
+	for(var i = 1; i < radialVels[0].length; i++){
 		if(!begin){
 			begin = true;
 			gfxGraph.beginPath();
@@ -692,31 +733,94 @@ renderGraph = function(){
 	}
 	gfxGraph.stroke();
 
+	// blue second half
+	begin = false;
+	for(var i = 1; i < radialVels[0].length; i++){
+		if(!begin){
+			begin = true;
+			gfxGraph.beginPath();
+			if(currentM2 > currentM1){
+				gfxGraph.moveTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
+				);
+			}else{
+				gfxGraph.moveTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
+				);				
+			}
+		}else{
+			if(pViewPaths[0][i].t <= Math.PI*2){
+				if(currentM2 > currentM1){
+					gfxGraph.lineTo(
+						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+						lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
+					);
+				}else{
+					gfxGraph.lineTo(
+						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+						lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
+					);					
+				}
+			}
+		}
+	}
+	gfxGraph.stroke();
+
 	// dots
 	changeColor(gfxGraph,'red');
-	if(currentM2 < currentM1){
-		arc(gfxGraph,
-			lerp(0,lim, count1 ,0,canvases[2].width),
-			lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
-		5,true);
+	if(!secondHalf){
+		if(currentM2 < currentM1){
+			arc(gfxGraph,
+				lerp(0,lim, count1 ,0,canvases[2].width/2),
+				lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
+			5,true);
+		}else{
+			arc(gfxGraph,
+				lerp(0,lim, count1 ,0,canvases[2].width/2),
+				lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
+			5,true);
+		}
 	}else{
-		arc(gfxGraph,
-			lerp(0,lim, count1 ,0,canvases[2].width),
-			lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
-		5,true);
+		if(currentM2 < currentM1){
+			arc(gfxGraph,
+				lerp(0,lim, count1 ,canvases[2].width/2,canvases[2].width),
+				lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
+			5,true);
+		}else{
+			arc(gfxGraph,
+				lerp(0,lim, count1 ,canvases[2].width/2,canvases[2].width),
+				lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
+			5,true);
+		}		
 	}
 
 	changeColor(gfxGraph,'blue');
-	if(currentM2 > currentM1){
-		arc(gfxGraph,
-			lerp(0,lim, count2 ,0,canvases[2].width),
-			lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
-		5,true);
+	if(!secondHalf){
+		if(currentM2 > currentM1){
+			arc(gfxGraph,
+				lerp(0,lim, count2 ,0,canvases[2].width/2),
+				lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
+			5,true);
+		}else{
+			arc(gfxGraph,
+				lerp(0,lim, count2 ,0,canvases[2].width/2),
+				lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
+			5,true);
+		}
 	}else{
-		arc(gfxGraph,
-			lerp(0,lim, count2 ,0,canvases[2].width),
-			lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
-		5,true);
+		if(currentM2 > currentM1){
+			arc(gfxGraph,
+				lerp(0,lim, count2 ,canvases[2].width/2,canvases[2].width),
+				lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
+			5,true);
+		}else{
+			arc(gfxGraph,
+				lerp(0,lim, count2 ,canvases[2].width/2,canvases[2].width),
+				lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
+			5,true);
+		}		
 	}
 }
 
