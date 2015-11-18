@@ -3,8 +3,10 @@
 	<script type="text/javascript" src="is.js"></script>
 	<script type="text/javascript">
 
+// meet friday at 1
 // limit scale so that both orbits are always visible
 // limit displacement on spectrum
+// magic numbers to prevent skipping at different ecc
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -400,7 +402,7 @@ calculateThetas = function(){
 	for(var z = 0; z < 2; z++){
 		for(var i = 0; i < pViewPaths[z].length; i++){
 			var idx1 = i; var idx2 = i-1;
-			if(idx2 < 0){ idx2 = pViewPaths.length-1; }
+			if(idx2 < 0){ idx2 = pViewPaths[z].length-1; }
 
 			pViewPaths[z][i].cTheta = Math.atan2(
 				pViewPaths[z][idx2].x-pViewPaths[z][idx1].x,
@@ -536,10 +538,10 @@ renderLeft = function(){
 
 	count1+= simSpeed; count2+= simSpeed;
 	if(count1 >= pViewPaths[0].length){
-		count1 = 0;
+		count1 = 20;
 		if(secondHalf){ secondHalf = false }else{ secondHalf = true; }
 	}
-	if(count2 >= pViewPaths[1].length){ count2 = 0; }
+	if(count2 >= pViewPaths[1].length){ count2 = 20; }
 	
 	///// previously removed
 	if(pViewPaths[0][count1].t > Math.PI*2 + (currentW*Math.PI/180) ){
@@ -620,36 +622,36 @@ renderGraph = function(){
 	// red line
 	changeColor(gfxGraph,'red');
 	var begin = false;
+	var redPt1; var redPt2;
+	var bluePt1; var bluePt2;
 	for(var i = 1; i < radialVels[0].length; i++){
 		if(!begin){
 			begin = true;
 			if(currentM1 > currentM2){
 				gfxGraph.beginPath();
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,0,canvases[2].width/2),
-					lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height)
-				);
+				var x = lerp(0,lim, i ,0,canvases[2].width/2);
+				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height);
+				gfxGraph.moveTo(x,y);
 			}else{
 				gfxGraph.beginPath();
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,0,canvases[2].width/2),
-					lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-				);				
+				var x = lerp(0,lim, i ,0,canvases[2].width/2);
+				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
+				gfxGraph.moveTo(x,y);
 			}
 		}else{
 			if(currentM1 > currentM2){
 				if(pViewPaths[0][i].t <= Math.PI*2){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,0,canvases[2].width/2),
-						lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height)
-					);
+					var x = lerp(0,lim, i ,0,canvases[2].width/2);
+					var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height);
+					gfxGraph.lineTo(x,y);
+					redPt1 = {x:x,y:y};
 				}
 			}else{
 				if(pViewPaths[0][i].t <= Math.PI*2){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,0,canvases[2].width/2),
-						lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-					);
+					var x = lerp(0,lim, i ,0,canvases[2].width/2);
+					var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
+					gfxGraph.lineTo(x,y);
+					redPt1 = {x:x,y:y};
 				}				
 			}
 		}
@@ -662,17 +664,17 @@ renderGraph = function(){
 		if(!begin){
 			begin = true;
 			if(currentM1 > currentM2){
+				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height);
 				gfxGraph.beginPath();
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-					lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height)
-				);
+				gfxGraph.moveTo(x,y);
+				redPt2 = {x:x,y:y};
 			}else{
+				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
 				gfxGraph.beginPath();
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-					lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-				);				
+				gfxGraph.moveTo(x,y);
+				redPt2 = {x:x,y:y};			
 			}
 		}else{
 			if(currentM1 > currentM2){
@@ -693,6 +695,8 @@ renderGraph = function(){
 		}
 	}
 	gfxGraph.stroke();
+
+	drawLine(gfxGraph,redPt1.x,redPt1.y,redPt2.x,redPt2.y);
 
 	// blue line
 	changeColor(gfxGraph,'blue');
@@ -715,15 +719,15 @@ renderGraph = function(){
 		}else{
 			if(pViewPaths[0][i].t <= Math.PI*2){
 				if(currentM2 > currentM1){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,0,canvases[2].width/2),
-						lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
-					);
+					var x = lerp(0,lim, i ,0,canvases[2].width/2);
+					var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height);
+					gfxGraph.lineTo(x,y);
+					bluePt1 = {x:x,y:y};
 				}else{
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,0,canvases[2].width/2),
-						lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-					);					
+					var x = lerp(0,lim, i ,0,canvases[2].width/2);
+					var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height);
+					gfxGraph.lineTo(x,y);
+					bluePt1 = {x:x,y:y};				
 				}
 			}
 		}
@@ -737,15 +741,15 @@ renderGraph = function(){
 			begin = true;
 			gfxGraph.beginPath();
 			if(currentM2 > currentM1){
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-					lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
-				);
+				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+				var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height);
+				gfxGraph.moveTo(x,y);
+				bluePt2 = {x:x,y:y};
 			}else{
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-					lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-				);				
+				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+				var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height);
+				gfxGraph.moveTo(x,y);		
+				bluePt2 = {x:x,y:y};		
 			}
 		}else{
 			if(pViewPaths[0][i].t <= Math.PI*2){
@@ -764,6 +768,8 @@ renderGraph = function(){
 		}
 	}
 	gfxGraph.stroke();
+
+	drawLine(gfxGraph,bluePt1.x,bluePt1.y,bluePt2.x,bluePt2.y);
 
 	// dots
 	changeColor(gfxGraph,'red');
@@ -819,6 +825,7 @@ renderGraph = function(){
 			5,true);
 		}		
 	}
+
 }
 
 renderSpectrum = function(){
