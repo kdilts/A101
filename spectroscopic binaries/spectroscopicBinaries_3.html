@@ -3,10 +3,17 @@
 	<script type="text/javascript" src="is.js"></script>
 	<script type="text/javascript">
 
-// meet friday at 1
-// limit scale so that both orbits are always visible
+// meet tuesday at 2:30
 // limit displacement on spectrum
-// magic numbers to prevent skipping at different ecc
+// scale graph to work properly for different mass ratios
+
+// magic numbers to prevent skipping at different ecc / sep
+	// works for sep = 1. anything else seems to break it
+
+// changed velocity calculation to have an absolute value
+// preventing taking the sqrt of a negative and gettting NaN
+// may need to rewrite graphing function to use radialVels[1]
+// instead of repeatedly applying mass ratio to radialVels[0]
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -40,6 +47,8 @@ var ff = false; var ie = false; var chr = false;
 var lim;
 
 var lMin; var lMax;
+
+var scale = 60;
 
 window.onload = function(){
 	window.resizeTo(1040,836);
@@ -160,6 +169,10 @@ window.onload = function(){
 
 		secondHalf = false;
 
+		scale = 60;
+
+		console.clear();
+
 		calculate();
 	}
 
@@ -279,35 +292,93 @@ calculate = function(){
 	for(var i in pViewPaths[0]){
 		if(pViewPaths[0][i].t <= Math.PI*2){ lim++; }
 	}
+
+	calculateScale();
+}
+
+calculateScale = function(){
+	var maxX = null; var minX = null;
+	var maxY = null; var minY = null;
+	var width = canvases[0].width/2;
+	var height = canvases[0].height/2;
+
+	for(var z in pViewPaths){
+		for(var i in pViewPaths[z]){
+			var x = pViewPaths[z][i].x*scale;
+			var y = pViewPaths[z][i].y*scale;
+
+			if(maxX === null || x > maxX){ maxX = x; }
+			if(maxY === null || y > maxY){ maxY = y; }
+			if(minX === null || x < minX){ minX = x; }
+			if(minY === null || y < minY){ minY = y; }
+		}
+	}
+
+	if(Math.abs(maxX) > width || Math.abs(minX) > width){
+		scale -= 5;
+		calculateScale();
+		return;
+	}
+
+	if(Math.abs(maxY) > height || Math.abs(minY) > height){
+		scale -= 5;
+		calculateScale();
+		return;
+	}
 }
 
 calculateLambdas = function(){
 	lambdas = [[],[]];
+	var lambda1Valid = true; var lambda2Valid = true;
+
 	var lambda0 = .25; var arbConst = 1;
 	lMin = null; lMax = null;
 	for(var z in radialVels){
 		for(var i in radialVels[z]){
 			lambdas[z][i] = lambda0*(1+radialVels[z][i]*arbConst);
+			if(isNaN(lambdas[z][i])){
+				//console.log('lambdas: ',z,i,lambdas[z][i]);
+				if(z == 0){ lambda1Valid = false; }
+				if(z == 1){ lambda2Valid = false; }
+			}
 			if(lMin === null || lambdas[z][i] < lMin){ lMin = lambdas[z][i]; }
 			if(lMax === null || lambdas[z][i] > lMax){ lMax = lambdas[z][i]; }
 		}
 	}
 
-	console.log(lMin, lMax);
+	console.log('lambdas 1 valid: '+ lambda1Valid);
+	console.log('lambdas 2 valid: '+ lambda2Valid);
+
+	//console.log(lMin, lMax);
 }
 
+// scale a by mass ratio for blue star here or at function call
 calculateVelocity = function(a,m1,m2,r){
 	var vsqrd = G*((m1+m2)*kgPerSolarMass)*(2/(r*mPerAu) - 1/(a*mPerAu));
-	return (Math.sqrt(vsqrd)/1000).toFixed(2);
+	//var v = (Math.sqrt(vsqrd)/1000).toFixed(2);
+	var v = (Math.sqrt(Math.abs(vsqrd))/1000).toFixed(2);
+	if(isNaN(v)){ console.log('>>>>> ',a,m1,m2,r,v,vsqrd); }
+	return v;
 }
 
 calculateVs = function(a,m1,m2){
 	velocities = [[],[]];
+	var vel1Valid = true; var vel2Valid = true;
+
 	for(var z in pViewPaths){
 		for(var i in pViewPaths[z]){
-			velocities[z].push(calculateVelocity(a,m1,m2,pViewPaths[z][i].r));
+			var tempV = calculateVelocity(a,m1,m2,pViewPaths[z][i].r);
+			velocities[z].push(tempV);
+			if(isNaN(tempV)){
+				//console.log('Vs: ',z,i,tempV);
+				if(z == 0){ vel1Valid = false; }
+				if(z == 1){ vel2Valid = false; }
+			}
 		}
 	}
+
+	console.log('velocities 1 valid: '+ vel1Valid);
+	console.log('velocities 2 valid: '+ vel2Valid);
 }
 
 calcRV = function(v,theta,inc,w){
@@ -318,12 +389,19 @@ calcRV = function(v,theta,inc,w){
 
 calculateRadVs = function(inc,w){
 	radialVels = [[],[]];
+	var radV1Valid = true; var radV2Valid = true;
 
 	var max = null;
 	for(var z in velocities){
 		for(var i in velocities[z]){
 			var rv = calcRV(velocities[z][i],pViewPaths[z][i].cTheta,inc,w);
 			radialVels[z].push(rv);
+
+			if(isNaN(rv)){
+				//console.log('radVs: ',z,i,rv);
+				if(z == 0){ radV1Valid = false; }
+				if(z == 1){ radV2Valid = false; }
+			}
 
 			if(max == null){ max = rv; }
 			if(parseFloat(rv) > parseFloat(max)){ max = rv; }
@@ -334,13 +412,16 @@ calculateRadVs = function(inc,w){
 
 	radialVels[0][0] = -radialVels[0][0];
 	radialVels[1][0] = -radialVels[1][0];
+
+	console.log('radialVels 1 valid: '+ radV1Valid);
+	console.log('radialVels 2 valid: '+ radV2Valid);
 }
 
 calculatePview = function(a,e,w,m1,m2){
 	var path1 = []; var path2 = [];
 
 	var theta = 0;
-	var r = a * 1 - e;
+	var r = a * (1 - e);
 	var deltaTheta = const2/(r*r)*deltaT;
 
 		theta = theta + deltaTheta;
@@ -354,6 +435,24 @@ calculatePview = function(a,e,w,m1,m2){
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
 	}
+
+	var p1Valid = true; var p2Valid = true;
+	for(var i in path1){
+		if(isNaN(path1[i].x)){ console.log(i, path1[i]); p1Valid = false; }
+		if(isNaN(path1[i].y)){ console.log(i, path1[i]); p1Valid = false; }
+		if(isNaN(path1[i].r)){ console.log(i, path1[i]); p1Valid = false; }
+		if(isNaN(path1[i].t)){ console.log(i, path1[i]); p1Valid = false; }
+	}
+
+	for(var i in path2){
+		if(isNaN(path2[i].x)){ console.log(i, path2[i]); p2Valid = false; }
+		if(isNaN(path2[i].y)){ console.log(i, path2[i]); p2Valid = false; }
+		if(isNaN(path2[i].r)){ console.log(i, path2[i]); p2Valid = false; }
+		if(isNaN(path2[i].t)){ console.log(i, path2[i]); p2Valid = false; }
+	}
+
+	console.log('pview path1 valid: ' + p1Valid);
+	console.log('pview path2 valid: ' + p2Valid);
 
 	return [path1, path2];
 }
@@ -375,6 +474,20 @@ calculateEview = function(){
 		y = y * Math.cos(currentI*Math.PI/180);
 		path2.push({x:x,y:y});
 	}
+
+	var p1Valid = true; var p2Valid = true;
+	for(var i in path1){
+		if(isNaN(path1[i].x)){ console.log(i, path1[i]); p1Valid = false; }
+		if(isNaN(path1[i].y)){ console.log(i, path1[i]); p1Valid = false; }
+	}
+
+	for(var i in path2){
+		if(isNaN(path2[i].x)){ console.log(i, path2[i]); p2Valid = false; }
+		if(isNaN(path2[i].y)){ console.log(i, path2[i]); p2Valid = false; }
+	}
+
+	console.log('eview path1 valid: ' + p1Valid);
+	console.log('eview path2 valid: ' + p2Valid);
 
 	return [path1, path2];
 }
@@ -399,6 +512,7 @@ calculateVMax = function(m1,m2,a,e){
 }
 
 calculateThetas = function(){
+	var ct1Valid = true; ct2Valid = true;
 	for(var z = 0; z < 2; z++){
 		for(var i = 0; i < pViewPaths[z].length; i++){
 			var idx1 = i; var idx2 = i-1;
@@ -409,8 +523,16 @@ calculateThetas = function(){
 				pViewPaths[z][idx2].y-pViewPaths[z][idx1].y
 			);
 			
+			if(isNaN(pViewPaths[z][i].cTheta)){
+				console.log('cTheta: ',z,i,pViewPaths[z][i].cTheta);
+				if(z == 0){ ct1Valid = false; }
+				if(z == 1){ ct2Valid = false; }
+			}
 		}
 	}
+
+	console.log('cThetas1 valid: ' + ct1Valid);
+	console.log('cThetas2 valid: ' + ct2Valid);
 }
 
 render = function(){
@@ -427,7 +549,6 @@ renderMenu = function(){
 
 	gfxMenu.fillText('Speed:',410,18);
 	
-
 	gfxMenu.fillText(''+currentRVMax+' km/s', window.innerWidth-118, 46);
 	gfxMenu.fillText('-'+currentRVMax+' km/s', window.innerWidth-118, 46+canvases[2].height);
 	gfxMenu.fillText('0 km/s', window.innerWidth-118, 46+canvases[2].height/2);
@@ -489,7 +610,6 @@ renderLeft = function(){
 	gfxLeft.font = '12pt verdana';
 	gfxLeft.fillText('Fiducial View', 180, 30);
 
-	var scale = 60;
 	gfxLeft.save();
 	gfxLeft.translate(center.x, center.y);
 	if(trails){
@@ -538,10 +658,11 @@ renderLeft = function(){
 
 	count1+= simSpeed; count2+= simSpeed;
 	if(count1 >= pViewPaths[0].length){
-		count1 = 20;
+		count1 = skip();
+		//console.log(skip());
 		if(secondHalf){ secondHalf = false }else{ secondHalf = true; }
 	}
-	if(count2 >= pViewPaths[1].length){ count2 = 20; }
+	if(count2 >= pViewPaths[1].length){ count2 = skip(); }
 	
 	///// previously removed
 	if(pViewPaths[0][count1].t > Math.PI*2 + (currentW*Math.PI/180) ){
@@ -552,6 +673,20 @@ renderLeft = function(){
 	////
 
 	gfxLeft.restore();
+}
+
+skip = function(){
+	if(currentE == 0){ return 20; }
+	if(currentE == .1){ return 18; }
+	if(currentE == .2){ return 15; }
+	if(currentE == .3){ return 12; }
+	if(currentE == .4){ return 9; }
+	if(currentE == .5){ return 6; }
+	if(currentE == .6){ return 3; }
+	if(currentE == .7){ return 0; }
+	if(currentE == .8){ return 0; }
+	if(currentE == .9){ return 0; }
+	return 0;
 }
 
 renderRight = function(){
@@ -565,7 +700,6 @@ renderRight = function(){
 	gfxRight.font = '12pt verdana';
 	gfxRight.fillText('Earth View', 190, 30);
 
-	var scale = 60;
 	gfxRight.save();
 	gfxRight.translate(center.x, center.y);
 	if(trails){
