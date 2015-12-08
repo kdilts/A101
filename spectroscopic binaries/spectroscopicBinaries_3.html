@@ -272,9 +272,10 @@ window.onload = function(){
 window.onresize = function(){ window.resizeTo(1040,836); }
 
 calculate = function(){
-	var a = parseFloat(currentA); var e = parseFloat(currentE);
+	var a = parseFloat(currentA);
+	var m1 = parseFloat(currentM1); var m2 = parseFloat(currentM2);	
+	var e = parseFloat(currentE);
 	var i = parseFloat(currentI); var w = parseFloat(currentW);
-	var m1 = parseFloat(currentM1); var m2 = parseFloat(currentM2);
 
 	currentP = calculatePeriod(a,m1,m2);
 	currentVMin = calculateVMin(m1,m2,a,e);
@@ -355,8 +356,7 @@ calculateLambdas = function(){
 // scale a by mass ratio for blue star here or at function call
 calculateVelocity = function(a,m1,m2,r){
 	var vsqrd = G*((m1+m2)*kgPerSolarMass)*(2/(r*mPerAu) - 1/(a*mPerAu));
-	//var v = (Math.sqrt(vsqrd)/1000).toFixed(2);
-	var v = (Math.sqrt(Math.abs(vsqrd))/1000).toFixed(2);
+	var v = (Math.sqrt(vsqrd)/1000).toFixed(2);
 	if(isNaN(v)){ console.log('>>>>> ',a,m1,m2,r,v,vsqrd); }
 	return v;
 }
@@ -364,10 +364,18 @@ calculateVelocity = function(a,m1,m2,r){
 calculateVs = function(a,m1,m2){
 	velocities = [[],[]];
 	var vel1Valid = true; var vel2Valid = true;
+	var a1 = a/(1+m1/m2); var a2 = a/(1+m2/m1);
 
 	for(var z in pViewPaths){
 		for(var i in pViewPaths[z]){
-			var tempV = calculateVelocity(a,m1,m2,pViewPaths[z][i].r);
+			var tempV;
+			if(z == 0){
+				tempV = calculateVelocity(a,m1,m2,pViewPaths[z][i].r);
+				tempV = tempV*a1/a;
+			}else{
+				tempV = calculateVelocity(a,m1,m2,pViewPaths[z][i].r);
+				tempV = tempV*a2/a;
+			}
 			velocities[z].push(tempV);
 			if(isNaN(tempV)){
 				//console.log('Vs: ',z,i,tempV);
@@ -428,12 +436,15 @@ calculatePview = function(a,e,w,m1,m2){
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
 
+		console.log(r,theta);
+
 	while(theta < Math.PI*2.05){
 		path1.push(rtToxy(r,theta));
-		path2.push(rtToxy(r*m1/m2,theta+Math.PI));
+		path2.push(rtToxy(r,theta+Math.PI));
 		theta = theta + deltaTheta;
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
+		console.log(r,theta);
 	}
 
 	var p1Valid = true; var p2Valid = true;
@@ -627,14 +638,15 @@ renderLeft = function(){
 		gfxLeft.stroke();
 
 		changeColor(gfxLeft,'blue');
+		var mr = currentM1/currentM2;
 		begin = false;
 		for(var p in pViewPaths[1]){
 			if(!begin){
 				begin = true;
 				gfxLeft.beginPath();
-				gfxLeft.moveTo(pViewPaths[1][p].x*scale,pViewPaths[1][p].y*scale);
+				gfxLeft.moveTo(pViewPaths[1][p].x*scale*mr,pViewPaths[1][p].y*scale*mr);
 			}else{
-				gfxLeft.lineTo(pViewPaths[1][p].x*scale,pViewPaths[1][p].y*scale);
+				gfxLeft.lineTo(pViewPaths[1][p].x*scale*mr,pViewPaths[1][p].y*scale*mr);
 			}
 		}
 		gfxLeft.stroke();
@@ -643,7 +655,7 @@ renderLeft = function(){
 	changeColor(gfxLeft,'red');
 	arc(gfxLeft,pViewPaths[0][count1].x*scale,pViewPaths[0][count1].y*scale,5,true);
 	changeColor(gfxLeft,'blue');
-	arc(gfxLeft,pViewPaths[1][count2].x*scale,pViewPaths[1][count2].y*scale,5,true);
+	arc(gfxLeft,pViewPaths[1][count2].x*scale*mr,pViewPaths[1][count2].y*scale*mr,5,true);
 
 	// view direction indicator
 	changeColor(gfxLeft, 'black');
@@ -717,14 +729,15 @@ renderRight = function(){
 		gfxRight.stroke();
 
 		changeColor(gfxRight,'blue');
+		var mr = currentM1/currentM2;
 		begin = false;
 		for(var p in eViewPaths[1]){
 			if(!begin){
 				begin = true;
 				gfxRight.beginPath();
-				gfxRight.moveTo(eViewPaths[1][p].x*scale,eViewPaths[1][p].y*scale);
+				gfxRight.moveTo(eViewPaths[1][p].x*scale*mr,eViewPaths[1][p].y*scale*mr);
 			}else{
-				gfxRight.lineTo(eViewPaths[1][p].x*scale,eViewPaths[1][p].y*scale);
+				gfxRight.lineTo(eViewPaths[1][p].x*scale*mr,eViewPaths[1][p].y*scale*mr);
 			}
 		}
 		gfxRight.stroke();
@@ -733,7 +746,7 @@ renderRight = function(){
 	changeColor(gfxRight,'red');
 	arc(gfxRight,eViewPaths[0][count1].x*scale,eViewPaths[0][count1].y*scale,5,true);
 	changeColor(gfxRight,'blue');
-	arc(gfxRight,eViewPaths[1][count2].x*scale,eViewPaths[1][count2].y*scale,5,true);
+	arc(gfxRight,eViewPaths[1][count2].x*scale*mr,eViewPaths[1][count2].y*scale*mr,5,true);
 
 	gfxRight.restore();
 }
@@ -761,33 +774,17 @@ renderGraph = function(){
 	for(var i = 1; i < radialVels[0].length; i++){
 		if(!begin){
 			begin = true;
-			if(currentM1 > currentM2){
-				gfxGraph.beginPath();
-				var x = lerp(0,lim, i ,0,canvases[2].width/2);
-				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height);
-				gfxGraph.moveTo(x,y);
-			}else{
-				gfxGraph.beginPath();
-				var x = lerp(0,lim, i ,0,canvases[2].width/2);
-				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
-				gfxGraph.moveTo(x,y);
-			}
+			gfxGraph.beginPath();
+			var x = lerp(0,lim, i ,0,canvases[2].width/2);
+			var y = lerp(-currentRVMax,currentRVMax, -radialVels[0][i] ,0,canvases[2].height);
+			gfxGraph.moveTo(x,y);
 		}else{
-			if(currentM1 > currentM2){
-				if(pViewPaths[0][i].t <= Math.PI*2){
-					var x = lerp(0,lim, i ,0,canvases[2].width/2);
-					var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height);
-					gfxGraph.lineTo(x,y);
-					redPt1 = {x:x,y:y};
-				}
-			}else{
-				if(pViewPaths[0][i].t <= Math.PI*2){
-					var x = lerp(0,lim, i ,0,canvases[2].width/2);
-					var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
-					gfxGraph.lineTo(x,y);
-					redPt1 = {x:x,y:y};
-				}				
-			}
+			if(pViewPaths[0][i].t <= Math.PI*2){
+				var x = lerp(0,lim, i ,0,canvases[2].width/2);
+				var y = lerp(-currentRVMax,currentRVMax, -radialVels[0][i] ,0,canvases[2].height);
+				gfxGraph.lineTo(x,y);
+				redPt1 = {x:x,y:y};
+			}				
 		}
 	}
 	gfxGraph.stroke();
@@ -797,34 +794,17 @@ renderGraph = function(){
 	for(var i = 1; i < radialVels[0].length; i++){
 		if(!begin){
 			begin = true;
-			if(currentM1 > currentM2){
-				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
-				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i]*(currentM2/currentM1) ,0,canvases[2].height);
-				gfxGraph.beginPath();
-				gfxGraph.moveTo(x,y);
-				redPt2 = {x:x,y:y};
-			}else{
-				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
-				var y = lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height);
-				gfxGraph.beginPath();
-				gfxGraph.moveTo(x,y);
-				redPt2 = {x:x,y:y};			
-			}
+			var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+			var y = lerp(-currentRVMax,currentRVMax, -radialVels[0][i] ,0,canvases[2].height);
+			gfxGraph.beginPath();
+			gfxGraph.moveTo(x,y);
+			redPt2 = {x:x,y:y};
 		}else{
-			if(currentM1 > currentM2){
-				if(pViewPaths[0][i].t <= Math.PI*2){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-						lerp(-currentRVMax,currentRVMax, radialVels[0][i]*currentM2/currentM1 ,0,canvases[2].height)
-					);
-				}
-			}else{
-				if(pViewPaths[0][i].t <= Math.PI*2){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-						lerp(-currentRVMax,currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-					);
-				}				
+			if(pViewPaths[0][i].t <= Math.PI*2){
+				gfxGraph.lineTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(-currentRVMax,currentRVMax, -radialVels[0][i] ,0,canvases[2].height)
+				);
 			}
 		}
 	}
@@ -835,70 +815,42 @@ renderGraph = function(){
 	// blue line
 	changeColor(gfxGraph,'blue');
 	var begin = false;
-	for(var i = 1; i < radialVels[0].length; i++){
+	for(var i = 1; i < radialVels[1].length; i++){
 		if(!begin){
 			begin = true;
 			gfxGraph.beginPath();
-			if(currentM2 > currentM1){
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,0,canvases[2].width/2),
-					lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
-				);
-			}else{
-				gfxGraph.moveTo(
-					lerp(0,lim, i ,0,canvases[2].width/2),
-					lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-				);				
-			}
+			gfxGraph.moveTo(
+				lerp(0,lim, i ,0,canvases[2].width/2),
+				lerp(currentRVMax,-currentRVMax, radialVels[1][i] ,0,canvases[2].height)
+			);				
 		}else{
-			if(pViewPaths[0][i].t <= Math.PI*2){
-				if(currentM2 > currentM1){
-					var x = lerp(0,lim, i ,0,canvases[2].width/2);
-					var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height);
-					gfxGraph.lineTo(x,y);
-					bluePt1 = {x:x,y:y};
-				}else{
-					var x = lerp(0,lim, i ,0,canvases[2].width/2);
-					var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height);
-					gfxGraph.lineTo(x,y);
-					bluePt1 = {x:x,y:y};				
-				}
-			}
+			//if(pViewPaths[1][i].t <= Math.PI*2){
+				var x = lerp(0,lim, i ,0,canvases[2].width/2);
+				var y = lerp(currentRVMax,-currentRVMax, radialVels[1][i] ,0,canvases[2].height);
+				gfxGraph.lineTo(x,y);
+				bluePt1 = {x:x,y:y};
+			//}
 		}
 	}
 	gfxGraph.stroke();
 
 	// blue second half
 	begin = false;
-	for(var i = 1; i < radialVels[0].length; i++){
+	for(var i = 1; i < radialVels[1].length; i++){
 		if(!begin){
 			begin = true;
 			gfxGraph.beginPath();
-			if(currentM2 > currentM1){
-				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
-				var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height);
-				gfxGraph.moveTo(x,y);
-				bluePt2 = {x:x,y:y};
-			}else{
-				var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
-				var y = lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height);
-				gfxGraph.moveTo(x,y);		
-				bluePt2 = {x:x,y:y};		
-			}
+			var x = lerp(0,lim, i ,canvases[2].width/2,canvases[2].width);
+			var y = lerp(currentRVMax,-currentRVMax, radialVels[1][i] ,0,canvases[2].height);
+			gfxGraph.moveTo(x,y);		
+			bluePt2 = {x:x,y:y};
 		}else{
-			if(pViewPaths[0][i].t <= Math.PI*2){
-				if(currentM2 > currentM1){
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-						lerp(currentRVMax,-currentRVMax, radialVels[0][i]*(currentM1/currentM2) ,0,canvases[2].height)
-					);
-				}else{
-					gfxGraph.lineTo(
-						lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
-						lerp(currentRVMax,-currentRVMax, radialVels[0][i] ,0,canvases[2].height)
-					);					
-				}
-			}
+			//if(pViewPaths[1][i].t <= Math.PI*2){
+				gfxGraph.lineTo(
+					lerp(0,lim, i ,canvases[2].width/2,canvases[2].width),
+					lerp(currentRVMax,-currentRVMax, radialVels[1][i] ,0,canvases[2].height)
+				);
+			//}
 		}
 	}
 	gfxGraph.stroke();
@@ -908,58 +860,29 @@ renderGraph = function(){
 	// dots
 	changeColor(gfxGraph,'red');
 	if(!secondHalf){
-		if(currentM2 < currentM1){
-			arc(gfxGraph,
-				lerp(0,lim, count1 ,0,canvases[2].width/2),
-				lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
-			5,true);
-		}else{
-			arc(gfxGraph,
-				lerp(0,lim, count1 ,0,canvases[2].width/2),
-				lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
-			5,true);
-		}
+		arc(gfxGraph,
+			lerp(0,lim, count1 ,0,canvases[2].width/2),
+			lerp(-currentRVMax,currentRVMax, -radialVels[0][count1] ,0,canvases[2].height),
+		5,true);
 	}else{
-		if(currentM2 < currentM1){
-			arc(gfxGraph,
-				lerp(0,lim, count1 ,canvases[2].width/2,canvases[2].width),
-				lerp(-currentRVMax,currentRVMax, radialVels[0][count1]*(currentM2/currentM1) ,0,canvases[2].height),
-			5,true);
-		}else{
-			arc(gfxGraph,
-				lerp(0,lim, count1 ,canvases[2].width/2,canvases[2].width),
-				lerp(-currentRVMax,currentRVMax, radialVels[0][count1] ,0,canvases[2].height),
-			5,true);
-		}		
+		arc(gfxGraph,
+			lerp(0,lim, count1 ,canvases[2].width/2,canvases[2].width),
+			lerp(-currentRVMax,currentRVMax, -radialVels[0][count1] ,0,canvases[2].height),
+		5,true);		
 	}
 
 	changeColor(gfxGraph,'blue');
 	if(!secondHalf){
-		if(currentM2 > currentM1){
-			arc(gfxGraph,
-				lerp(0,lim, count2 ,0,canvases[2].width/2),
-				lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
-			5,true);
-		}else{
-			arc(gfxGraph,
-				lerp(0,lim, count2 ,0,canvases[2].width/2),
-				lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
-			5,true);
-		}
+		arc(gfxGraph,
+			lerp(0,lim, count2 ,0,canvases[2].width/2),
+			lerp(currentRVMax,-currentRVMax, radialVels[1][count2] ,0,canvases[2].height),
+		5,true);
 	}else{
-		if(currentM2 > currentM1){
-			arc(gfxGraph,
-				lerp(0,lim, count2 ,canvases[2].width/2,canvases[2].width),
-				lerp(currentRVMax,-currentRVMax, radialVels[0][count2]*(currentM1/currentM2) ,0,canvases[2].height),
-			5,true);
-		}else{
-			arc(gfxGraph,
-				lerp(0,lim, count2 ,canvases[2].width/2,canvases[2].width),
-				lerp(currentRVMax,-currentRVMax, radialVels[0][count2] ,0,canvases[2].height),
-			5,true);
-		}		
+		arc(gfxGraph,
+			lerp(0,lim, count2 ,canvases[2].width/2,canvases[2].width),
+			lerp(currentRVMax,-currentRVMax, radialVels[1][count2] ,0,canvases[2].height),
+		5,true);		
 	}
-
 }
 
 renderSpectrum = function(){
@@ -987,8 +910,8 @@ renderSpectrum = function(){
 	drawLine(gfxSpectrum,width/4*3,0,width/4*3,10);
 
 	// red lines
-	var disp1 = lerp(lMin,lMax,lambdas[0][count1],-15,15);
-	var disp2 = lerp(lMin,lMax,lambdas[0][count1],-15,15);
+	var disp1 = lerp(-lMax,lMax,lambdas[0][count1],-15,15);
+	var disp2 = -lerp(-lMax,lMax,lambdas[1][count1],-15,15);
 
 	changeColor(gfxSpectrum,'red');
 	arc(gfxSpectrum,width/4+disp1,5,3,true);
