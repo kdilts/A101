@@ -1,0 +1,598 @@
+<head>
+	<script language=javascript>
+
+// TODO remove velocity vector
+
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var pi = Math.PI;
+cos = function(x){ return Math.cos(x); }
+sin = function(x){ return Math.sin(x); }
+
+var G = 6.67*Math.pow(10,-11);
+var kgPerSolarMass = 1.989*Math.pow(10,30);
+var mPerAu = 1.496*Math.pow(10,11);
+
+var mx = null; var my = null;
+
+var pause = false;
+
+var currentPlanet = 0; var scale;
+var minX; var maxX;
+
+var deltaT = 1000/60; var count = 0;
+
+var wedging = false; var wedgeCounter;
+var wedges = []; var numWedges = 0;
+
+var ox; var oy; var nx; var ny; // coordinates for velocity vector
+
+var planetData = [
+	// mercury
+	{ semimajor: .387, ecc: .206, min:38.9, max:59.1, const1:.0001, const2:.0001 },
+	// venus
+	{ semimajor: .723, ecc: .007, min:34.8, max:35.3, const1:.0005, const2:.0005 }, 
+	// earth
+	{ semimajor: 1.0, ecc: .017, min:29.3, max:30.3, const1:.001, const2:.001 }, 
+	// mars
+	{ semimajor: 1.52, ecc: .093, min:22.0, max:26.5, const1:.001, const2:.001 }, 
+	// jupiter
+	{ semimajor: 5.2, ecc: .048, min:12.5, max:13.7, const1:.025, const2:.025 }, 
+	// saturn
+	{ semimajor: 9.55, ecc: .056, min:9.12, max:10.2, const1:.05, const2:.05 }, 
+	// uranus
+	{ semimajor: 19.2, ecc: .046, min:6.5, max:7.12, const1:.2, const2:.2 }, 
+	// neptune
+	{ semimajor: 30.1, ecc: .009, min:5.39, max:5.48, const1:.5, const2:.5 }, 
+	// pluto
+	{ semimajor: 39.7, ecc: .252, min:3.66, max:6.12, const1:.6, const2:.6 }, 
+	// halley
+	{ semimajor: 17.9, ecc: .967, min:0.913, max:54.4, const1:.01, const2:.01 } 
+]
+
+var planetPaths = [];
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	// make sure click is inside canvas and not already adding a wedge
+	if(mx > 0 && mx < cwidth){
+		if(my > 0 && my < cheight && wedging == false){
+			if(!pause){
+				// start drawing wedge
+				wedging = true;
+				wedgeCounter = parseInt(slider.value);
+				wedges.push([]);
+			}
+		}
+	}
+}
+
+window.onresize = function(){ scale = 3000; calculateScale(); }
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth*.7;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	// assign menu items
+	planetSelector =  document.getElementById('planetSelect');
+	semimajorbox = document.getElementById('semimajor');
+	eccbox = document.getElementById('eccentricity');
+	playpausebutton = document.getElementById('playpause');
+	clearbutton = document.getElementById('clear');
+	enterbutton = document.getElementById('enter');
+	rescalebutton = document.getElementById('rescale');
+	slowmobox = document.getElementById('slowmo');
+	showsectorsbox = document.getElementById('showsectors');
+	slider = document.getElementById('slider');
+	showvelbox = document.getElementById('showvel');
+
+	minbox = document.getElementById('minvel');
+	maxbox = document.getElementById('maxvel');
+	curbox = document.getElementById('curvel');
+	distbox = document.getElementById('distbox');
+
+	rescalebutton.onclick = function(){
+		scale = 3000;
+		calculateScale();
+	}
+
+	playpausebutton.onclick = function(){
+		if(pause){
+			pause = false;
+			playpausebutton.value = 'Pause';
+		}else{
+			pause = true;
+			playpausebutton.value = 'Play';
+		}
+	}
+
+	planetSelector.onchange = function(){
+		currentPlanet = parseInt(planetSelector.value);
+		scale = 3000; 
+		count = 0;
+
+		clearWedges();
+
+		if(currentPlanet <= 9){ // non-custom planets
+			calculateScale();
+			semimajorbox.value = planetData[currentPlanet].semimajor + ' AU';
+			eccbox.value = planetData[currentPlanet].ecc;
+			minbox.value = planetData[currentPlanet].min + ' km/s';
+			maxbox.value = planetData[currentPlanet].max + ' km/s';
+			enterbutton.hidden = true;
+
+			// remove custom data
+			removeCustomData();
+
+			// get scale bar data
+			findMinMax();
+
+		}else{ // custom values
+			eccbox.value = semimajorbox.value = '';
+			enterbutton.hidden = false;
+		}
+	}
+
+	slowmobox.onchange = function(){ clearWedges(); }
+
+	slider.onchange = function(){ clearWedges(); }
+
+	clearbutton.onclick = function(){ clearWedges(); }
+
+	enterbutton.onclick = function(){
+		clearWedges();
+		removeCustomData();
+		scale = 3000; 
+		count = 0;
+
+		if(eccbox.value && semimajorbox.value){
+			// input validation
+			eccbox.value = parseFloat(eccbox.value);
+			semimajorbox.value = parseFloat(semimajorbox.value);
+			if(isNaN(parseFloat(eccbox.value))){ return; }
+			if(isNaN(parseFloat(semimajorbox.value))){ return; }
+
+			// create data entry
+			var dat = { 
+				semimajor: semimajorbox.value,
+				ecc: eccbox.value, 
+				min:null, max:null, 
+				const1:null, const2:null 
+			};
+
+			// decide const values
+			var order = Math.round(Math.log10(semimajorbox.value));
+			if(order == -0 || order == -1){ dat.const1 = dat.const2 = .0005; }
+			else if(order == 0){  dat.const1 = dat.const2 = .001; }
+			else if(order == 1){  dat.const1 = dat.const2 = .04;  }
+			else if(order == 2){  dat.const1 = dat.const2 = .4;  }
+			else { semimajorbox.value = eccbox.value = ''; return; }
+
+			// calculate min / max velocity
+			dat.min = parseFloat(calculateVMin(dat.semimajor, dat.ecc));
+			dat.max = parseFloat(calculateVMax(dat.semimajor, dat.ecc));
+
+			// update min / max boxes
+			minbox.value = dat.min;
+			maxbox.value = dat.max;
+
+			// add to planet data
+			planetData.push(dat);
+
+			// calculate path / scale
+			planetPaths.push(calculate(10));
+			calculateScale();
+			findMinMax();
+
+			// adjust consts
+			while(planetPaths[10].length < 500 || planetPaths[10].length > 1000){
+				if(planetPaths[10].length < 500){
+					planetData[10].const1 /= 2;
+					planetData[10].const2 /= 2;
+				}else if(planetPaths[10].length > 1000){
+					planetData[10].const1 *= 2;
+					planetData[10].const2 *= 2;
+				}
+
+				planetPaths[10] = calculate(10);
+				calculateScale();
+			}
+
+			// add units
+			semimajorbox.value += ' AU';
+			minbox.value += ' km/s';
+			maxbox.value += ' km/s';
+		}
+	}
+
+	// calculate planet paths
+	for(var i in planetData){ planetPaths.push(calculate(i));}
+	planetSelector.onchange();
+
+	setInterval(render,1000/60);
+}
+
+wedge = function(){
+	wedges[numWedges].push([
+		planetPaths[currentPlanet][count].x,
+		planetPaths[currentPlanet][count].y
+	]);
+
+	wedgeCounter--;
+	if(wedgeCounter == 0){ wedging = false; numWedges++; }
+}
+
+clearWedges = function(){
+	numWedges = 0;
+	wedges = [];
+	wedging = false;
+}
+
+removeCustomData = function(){
+	if(planetData.length == 11){
+		var tempDat = planetData;
+		var tempPath = planetPaths;
+
+		planetData = []; planetPaths = [];
+
+		for(var i = 0; i < 10; i++){
+			planetData.push(tempDat[i]);
+			planetPaths.push(tempPath[i]);
+		}
+	}
+}
+
+calculate = function(i){
+	var a = planetData[i].semimajor;
+	var e = planetData[i].ecc;
+	var path = [];
+
+	var const1 = planetData[i].const1;
+	var const2 = planetData[i].const2;
+
+	var theta = 0; 
+	var r = a*(1-e);
+	var deltaTheta = const2/(r*r)*deltaT;
+
+		theta = theta + deltaTheta;
+		r = a*(1-(e*e)) / (1+e*cos(theta));
+		deltaTheta = const2/(r*r)*deltaT;
+
+	while(theta < pi*2.01){
+		path.push(rtToxy(r,theta));
+		theta = theta + deltaTheta;
+		r = a*(1-(e*e)) / (1+e*cos(theta));
+		deltaTheta = const2/(r*r)*deltaT;
+	}
+
+	return path;
+}
+
+calculateScale = function(){
+	var maxX = null; var minX = null;
+	var maxY = null; var minY = null;
+	var width = cwidth/2-10;
+	var height = cheight/2-60;
+
+	for(var i in planetPaths[currentPlanet]){
+		var x = planetPaths[currentPlanet][i].x*scale;
+		var y = planetPaths[currentPlanet][i].y*scale;
+
+		if(maxX === null || x > maxX){ maxX = x; }
+		if(maxY === null || y > maxY){ maxY = y; }
+		if(minX === null || x < minX){ minX = x; }
+		if(minY === null || y < minY){ minY = y; }
+	}
+
+	if(Math.abs(maxX) > width || Math.abs(minX) > width){
+		//scale -= 1;
+		scale *= .9;
+		calculateScale();
+		return;
+	}
+
+	if(Math.abs(maxY) > height || Math.abs(minY) > height){
+		//scale -= 1;
+		scale *= .9;
+		calculateScale();
+		return;
+	}
+}
+
+calculateVMin = function(a,e){
+	var M = kgPerSolarMass;
+	a = a*mPerAu;
+	e = parseFloat(e);
+	var vminsqrd = ((G*M)/a)*((1-e)/(1+e));
+	return (Math.sqrt(vminsqrd)/1000).toFixed(2);
+}
+
+calculateVMax = function(a,e){
+	var M = kgPerSolarMass;
+	a = a*mPerAu;
+	e = parseFloat(e);
+	var vmaxsqrd = ((G*M)/a)*((1+e)/(1-e));
+	return (Math.sqrt(vmaxsqrd)/1000).toFixed(2);
+}
+
+findMinMax = function(){
+	minX = maxX = null;
+	for(var i in planetPaths[currentPlanet]){
+		if(minX == null || planetPaths[currentPlanet][i].x < minX){
+			minX = planetPaths[currentPlanet][i].x;
+		}
+
+		if(maxX == null || planetPaths[currentPlanet][i].x > maxX){
+			maxX = planetPaths[currentPlanet][i].x;
+		}		
+	}
+}
+
+rtToxy = function(r,t){
+	var x = r*cos(t);
+	var y = r*sin(t);
+	return {x:x,y:y,r:r,t:t};
+}
+
+render = function(){
+	// handle resize
+	cwidth = canvas.width = window.innerWidth*.7;
+	cheight = canvas.height = window.innerHeight;
+
+	// clear screen
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	// draw wedges
+	if(wedging){ wedge(); }
+
+	for(var i in wedges){
+		gfx.save();
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.translate(cwidth/2, cheight/2);
+		gfx.beginPath();
+
+		gfx.moveTo(0,0);
+
+		for(var z in wedges[i]){
+			gfx.lineTo(wedges[i][z][0]*scale, wedges[i][z][1]*scale);
+		}
+
+		gfx.lineTo(0,0);
+
+		gfx.fill(); gfx.stroke();
+		gfx.restore();
+	}
+
+	// draw sun
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.beginPath();
+	gfx.arc(cwidth/2,cheight/2, 5, 0, Math.PI*2);
+	gfx.fill(); gfx.stroke();
+
+	if(planetPaths[currentPlanet]){
+		// draw path
+		gfx.save();
+		gfx.translate(cwidth/2, cheight/2);
+		gfx.fillStyle = gfx.strokeStyle = 'white';
+		var begin = false;
+		for(var p in planetPaths[currentPlanet]){
+			if(!begin){
+				begin = true;
+				gfx.beginPath();
+				gfx.moveTo(planetPaths[currentPlanet][p].x*scale,planetPaths[currentPlanet][p].y*scale);
+			}else{
+				gfx.lineTo(planetPaths[currentPlanet][p].x*scale,planetPaths[currentPlanet][p].y*scale);
+			}
+		}
+		gfx.stroke();
+		gfx.restore();
+
+		// velocity box information
+		var len = planetPaths[currentPlanet].length/2;
+		var maxV = planetData[currentPlanet].max;
+		var minV = planetData[currentPlanet].min;
+		var velvecMod;
+		if(count < len){
+			velvecMod = curbox.value = lerp(0,len,count,maxV,minV).toFixed(2);
+			curbox.value += ' km/s';
+			velvecMod /= 7;
+		}else{
+			velvecMod = curbox.value = lerp(len,len*2,count,minV,maxV).toFixed(2);
+			curbox.value += ' km/s';
+			velvecMod /= 7;
+		}
+
+		// draw planet
+		gfx.save();
+		gfx.translate(cwidth/2, cheight/2);
+
+		var oc = count-1;
+		if(oc < 0){ oc = planetPaths[currentPlanet].length-1; }
+
+		var opx = planetPaths[currentPlanet][oc].x*scale;
+		var opy = planetPaths[currentPlanet][oc].y*scale;		
+
+		var px = planetPaths[currentPlanet][count].x*scale;
+		var py = planetPaths[currentPlanet][count].y*scale;
+
+		var velvec = mult(unit(sub(new vec2(px,py),new vec2(opx,opy))),30+velvecMod);
+
+		// velocity vector
+		if(showvelbox.checked){
+			gfx.fillStyle = gfx.strokeStyle = 'red';
+			gfx.lineWidth = 3;
+			gfx.beginPath();
+			gfx.moveTo(px,py);
+			gfx.lineTo(px+velvec.x,py+velvec.y);
+			gfx.stroke();
+
+			gfx.lineWidth = 1;
+		}
+
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.beginPath();
+		gfx.arc(
+			px,
+			py,
+			5, 0, Math.PI*2
+		);
+		gfx.fill(); gfx.stroke();
+		gfx.restore();
+
+		// draw scale bar
+		gfx.save();
+		gfx.fillStyle = gfx.strokeStyle = 'white';
+		gfx.font = '16px verdana';
+		gfx.lineWidth = 2;
+		gfx.translate(cwidth/2,30);
+		
+		var pxToAU = ((Math.abs(minX)+Math.abs(maxX))*scale)/2; // = semimajor axis
+		pxToAU *= 1/planetData[currentPlanet].semimajor; // = 1 AU
+
+		var label = 1;
+
+		if(planetData[currentPlanet].semimajor > 8){
+			label = 10;
+			pxToAU *= 10;
+		}
+
+		// horizontal line
+		gfx.beginPath(); gfx.moveTo(-pxToAU/2,0);
+		gfx.lineTo(pxToAU/2,0); gfx.stroke();
+		
+		// vertical ends
+		gfx.beginPath(); gfx.moveTo(-pxToAU/2,-10);
+		gfx.lineTo(-pxToAU/2,10); gfx.stroke();
+
+		gfx.beginPath(); gfx.moveTo(pxToAU/2,10);
+		gfx.lineTo(pxToAU/2,-10); gfx.stroke();
+
+		// label
+		gfx.fillText(label + ' AU', -17,-8);
+
+		gfx.restore()
+
+		// window scale for debug
+		//gfx.font = '16px verdana';
+		//gfx.fillText('scale: ' + scale, 10,cheight - 20);
+
+		// distance box information
+		var dist = Math.sqrt(
+			Math.pow((planetPaths[currentPlanet][count].x*scale),2)
+			+
+			Math.pow((planetPaths[currentPlanet][count].y*scale),2)
+		);
+
+		dist /= pxToAU;
+		dist *= label;
+
+		distbox.value = (dist).toFixed(2) + ' AU';
+
+		// mouse timer
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		if(!wedging){
+			gfx.fillRect(mx+20,my+20,50,10);
+			gfx.fillRect(mx+70,my+20,-2,10);
+		}else{
+			gfx.fillRect(mx+20,my+20,50*wedgeCounter/slider.value,10);
+			gfx.fillRect(mx+70,my+20,-2,10);
+		}
+
+		// timer bar
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+		gfx.font = '16px verdana';
+		gfx.fillText('= constant time interval for area sweeps', cwidth-350, cheight-18);
+		if(!wedging){
+			gfx.fillRect(cwidth-455, cheight-28, 100,12);
+			gfx.fillRect(cwidth-355, cheight-28, -2,12);
+		}else{
+			gfx.fillRect(cwidth-455, cheight-28, 100*wedgeCounter/slider.value,12);
+			gfx.fillRect(cwidth-355, cheight-28, -2,12);
+		}
+
+		if(!pause){
+			// advance simulation
+			if(slowmobox.checked){
+				count++;
+			}else{
+				count += 2;
+			}
+
+			// reset simulation after each orbit
+			if(planetPaths[currentPlanet].t > pi*2){ count = 0; }
+			if(count > planetPaths[currentPlanet].length-1){ count = 0; }
+		}
+	}
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+	<form style='position:absolute; left:72%; top:2%;'>
+		<select id='planetSelect' style='width:200'>
+				<option value = "0">Mercury</option>
+				<option value = "1">Venus</option>
+				<option value = "2">Earth</option>
+				<option value = "3">Mars</option>
+				<option value = "4">Jupiter</option>
+				<option value = "5">Saturn</option>
+				<option value = "6">Uranus</option>
+				<option value = "7">Neptune</option>
+				<option value = "8">Pluto</option>
+				<option value = "9">Halley's Comet</option>
+				<option value = "10">Custom</option>
+		</select><br></br>
+		<b1>Semimajor Axis: </b1><input type='textbox' id='semimajor' style='width:22%'><br></br>
+		<b1>Eccentricity: </b1><input type='textbox' id='eccentricity' style='width:14%'><br></br>
+		<input type='button' id='playpause' value='Pause'>&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type='button' id='clear' value='Clear'>&nbsp;&nbsp;&nbsp;&nbsp;
+		<input type='button' id='enter' value='Enter' hidden='true'><br></br>
+		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
+		<b1>Sector Size: </b1><input type='range' id='slider' min='5' max ='60' value='15'><br></br>
+		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
+		<b1>Distance from the Sun: </b1>
+		<input type = 'textbox' id='distbox' style='width:28%' disabled>
+		<br></br>
+		
+		<b1>Velocity</b1><br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Currently: </b1>
+		<input type = 'textbox' id='curvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Minimum: </b1>
+		<input type = 'textbox' id='minvel' style='width:30%' disabled>
+		<br></br>
+		
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+		<b1>Maximum: </b1>
+		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
+		<br></br>
+		<input type='button' id='rescale' value='Recalculate Scale'>
+	</form>
+</body>

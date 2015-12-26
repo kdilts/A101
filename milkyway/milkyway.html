@@ -4,7 +4,7 @@
 		<script src="js/three.min.js"></script>
 		<script src="js/Quaternion.js"></script>
 		<script src="js/OrbitControls.js"></script>
-		<form style = "position:absolute; left:1024; top:5">
+		<form style = "position:absolute; left:80%; top:2%">
 			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
 			<b1>Objects</b1><br><hr>
 			<input type="checkbox" id="p1" checked>Population 1</input><br>
@@ -14,39 +14,30 @@
 			<input type="checkbox" id="gc" checked>Globular Star Clusters</input><br>
 			<input type="checkbox" id="neb" checked>Gaseous Nebulae</input><hr>
 			<input type="checkbox" id="sun" checked>Sun</input><br><hr>
-			<b1>Rotate</b1>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;
-			<b1>Move</b1><br>
-			&nbsp;&nbsp;&nbsp;
-			<input type="button" value="^" id="rotateUp"></input>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="button" value="^" id="moveUp"></input><br>
-			<input type="button" value="<-" id="rotateLeft"></input>
-			<input type="button" value="->" id="rotateRight"></input>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;
-			<input type="button" value="<-" id="moveLeft"></input>
-			<input type="button" value="->" id="moveRight"></input><br>
-			&nbsp;&nbsp;&nbsp;
-			<input type="button" value="v" id="rotateDown"></input>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="button" value="v" id="moveDown"></input><br><br>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<b1>Zoom</b1><br>
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-			<input type="button" value="+" id="zoomIn"></input>
-			<input type="button" value="-" id="zoomOut"></input><br>
+	
+			<b1 style = "position:absolute; left:58%; top:97%">Rotate</b1>
+			<input type="button" value="^" id="rotateUp" style = "position:absolute; left:63%; top:106%"></input>
+			<input type="button" value="<-" id="rotateLeft"style = "position:absolute; left:50%; top:116%"></input>
+			<input type="button" value="->" id="rotateRight"style = "position:absolute; left:74%; top:116%"></input>
+			<input type="button" value="v" id="rotateDown"style = "position:absolute; left:63%; top:126%"></input>
+			
+			<b1 style = "position:absolute; left:13%; top:97%">Move</b1>
+			<input type="button" value="^" id="moveUp"style = "position:absolute; left:15%; top:106%"></input>
+			<input type="button" value="<-" id="moveLeft"style = "position:absolute; left:1%; top:116%"></input>
+			<input type="button" value="->" id="moveRight"style = "position:absolute; left:25%; top:116%"></input>
+			<input type="button" value="v" id="moveDown"style = "position:absolute; left:15%; top:126%"></input>
+			
+			<b1 style = "position:absolute; left:40%; top:135%">Zoom</b1>
+			<input type="button" value="-" id="zoomOut"style = "position:absolute; left:35%; top:145%"></input>
+			<input type="button" value="+" id="zoomIn"style = "position:absolute; left:53%; top:145%"></input>
 		</form>
-		
 		<script>
+
+window.onresize = function(){
+	renderer.setSize(window.innerWidth*.77, window.innerHeight*.95);
+	camera.aspect = window.innerWidth*.77/window.innerHeight*.95;
+	camera.updateProjectionMatrix();
+}
 
  Math.randomGaussian = function(mean, standardDeviation) {
  
@@ -82,7 +73,8 @@
 		  	// gaseous - pinkish
 		  	// sun - yellow
 
-			var sceneWidth = 1024*.975; var sceneHeight = 768*.95;
+			//var sceneWidth = 1024*.975; var sceneHeight = 768*.95;
+			var sceneWidth = window.innerWidth*.77; var sceneHeight = window.innerHeight*.95;
 
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(75, sceneWidth/sceneHeight, 0.1, 1000);
@@ -120,14 +112,14 @@
 			}
 
 			// sun -- mesh 1
-			addStar(2,0,-3.25,.35/4,0xffff00);
+			addStar(3.25,0,2,.35/4,0xffff00);
 
 			// population 1
 			var pop1Start = 2; var pop1End = 2;
 			var twist = 0; var twistCount = 0;
 			for(var r = 1; r < 6; r+=.05){
 				for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
-					var tempCoords = cylindricalToXYZ(r,t+twist,0);
+					var tempCoords = cylindricalToXYZ(r,t-twist,0);
 					addStar(
 						tempCoords[0]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
 						tempCoords[1]+(Math.random()*.05-.025),
@@ -137,14 +129,14 @@
 					);
 					pop1End++;
 				}
-				twist += Math.PI/160;
+				twist += Math.PI/100;
 				twistCount+=.075;
 			}
 
 			twist = 0; twistCount = 0;
 			for(var r = 1; r < 3; r+=.05){
 				for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
-					var tempCoords = cylindricalToXYZ(r,t+twist,0);
+					var tempCoords = cylindricalToXYZ(r,t-twist,0);
 					addStar(
 						tempCoords[0]+Math.random()*.3-.15,
 						tempCoords[1]+Math.random()*.05-.025,
@@ -154,13 +146,13 @@
 					);
 					pop1End++;
 				}
-				twist += Math.PI/160;
+				twist += Math.PI/100;
 				twistCount+=.075;
 			}		
 
 			// galactic bar
 			var barStart = pop1End; var barEnd = barStart;
-			var barRot = Math.PI/2;
+			var barRot = Math.PI/2*3;
 			for(var i = 0; i < 100; i++){
 				var tempX = Math.randomGaussian(0,.01)*70;
 				var tempY = Math.randomGaussian(0,.01)*12;
@@ -206,7 +198,7 @@
 				for(var r = 1; r < 6; r+=.05){
 					for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
 						if(alt == 0){
-							var tempCoords = cylindricalToXYZ(r,t+twist,0);
+							var tempCoords = cylindricalToXYZ(r,t-twist,0);
 							addStar(
 								tempCoords[0]+(Math.random()*(spread*twistCount)-(spread/2*twistCount)),
 								tempCoords[1]+(Math.random()*.05-.025),
@@ -222,7 +214,7 @@
 							alt++;
 						}
 					}
-					twist += Math.PI/130;
+					twist += Math.PI/85;
 					twistCount+=.075;
 				}
 				twist = 0; twistCount = 0;
@@ -233,7 +225,7 @@
 				for(var r = 1; r < 3; r+=.05){
 					for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
 						if(alt == 0){
-							var tempCoords = cylindricalToXYZ(r,t+twist,0);
+							var tempCoords = cylindricalToXYZ(r,t-twist,0);
 							addStar(
 								tempCoords[0]+Math.random()*spread-spread/2,
 								tempCoords[1]+Math.random()*.05-.025,
@@ -249,7 +241,7 @@
 							alt++;
 						}
 					}
-					twist += Math.PI/130;
+					twist += Math.PI/85;
 					twistCount+=.075;
 				}
 				twist = 0; twistCount = 0;
@@ -282,7 +274,7 @@
 				for(var r = 1; r < 6; r+=.05){
 					for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
 						if(alt == 0){
-							var tempCoords = cylindricalToXYZ(r,t+twist,0);
+							var tempCoords = cylindricalToXYZ(r,t-twist,0);
 							addStar(
 								tempCoords[0]+(Math.random()*(.2*twistCount)-(.1*twistCount)),
 								tempCoords[1]+(Math.random()*.05-.025),
@@ -298,7 +290,7 @@
 							alt++;
 						}
 					}
-					twist += Math.PI/160;
+					twist += Math.PI/100;
 					twistCount+=.075;
 				}
 				twist = 0; twistCount = 0;
@@ -309,7 +301,7 @@
 				for(var r = 1; r < 3; r+=.05){
 					for(var t = 0; t < Math.PI*2; t += Math.PI*2/4){
 						if(alt == 0){
-							var tempCoords = cylindricalToXYZ(r,t+twist,0);
+							var tempCoords = cylindricalToXYZ(r,t-twist,0);
 							addStar(
 								tempCoords[0]+Math.random()*.3-.15,
 								tempCoords[1]+Math.random()*.05-.025,
@@ -325,15 +317,15 @@
 							alt++;
 						}
 					}
-					twist += Math.PI/160;
+					twist += Math.PI/100;
 					twistCount+=.075;
 				}
 				twist = 0; twistCount = 0;
+			// check boxes
+			var p1 = document.getElementById('p1');
 			}
 
 
-			// check boxes
-			var p1 = document.getElementById('p1');
 			var br = document.getElementById('br');
 			var p2 = document.getElementById('p2');
 			var oc = document.getElementById('oc');
@@ -459,22 +451,22 @@
 			var moveRight = document.getElementById('moveRight');
 
 			moveUp.addEventListener('click', function(){
-				controls.panUp(1);
-				controls.update();
-			});
-
-			moveDown.addEventListener('click', function(){
 				controls.panUp(-1);
 				controls.update();
 			});
 
+			moveDown.addEventListener('click', function(){
+				controls.panUp(1);
+				controls.update();
+			});
+
 			moveLeft.addEventListener('click', function(){
-				controls.panLeft(1);
+				controls.panLeft(-1);
 				controls.update();
 			});
 
 			moveRight.addEventListener('click', function(){
-				controls.panLeft(-1);
+				controls.panLeft(1);
 				controls.update();
 			});
 

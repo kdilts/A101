@@ -100,12 +100,18 @@
 		</form>
 
 		<script>
-			window.onresize = function(){ window.resizeTo(1000,900); }
-			window.onload = function(){ window.onresize(); }
+			window.onresize = function(){
+				canvas.width = window.innerWidth*.70;
+				canvas.height = window.innerHeight*.95+1;
+
+				renderer.setSize(window.innerWidth*.70, window.innerHeight*.95);
+				camera.aspect = window.innerWidth*.70/window.innerHeight*.95;
+				camera.updateProjectionMatrix();
+			}
 
 			// create canvas for text label overlay
 			var canvas = document.createElement('canvas');
-			canvas.width = window.innerWidth*.75;
+			canvas.width = window.innerWidth*.70;
 			canvas.height = window.innerHeight*.95+1;
 			canvas.style.zIndex = 0;
 			canvas.style.position='absolute';
@@ -117,7 +123,7 @@
 			// 3js setup
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(
-				75, window.innerWidth*.75/window.innerHeight*.95, 0.1, 1000);
+				75, window.innerWidth*.70/window.innerHeight*.95, 0.1, 1000);
 			var renderer = new THREE.WebGLRenderer();
 
 			var controls = new THREE.OrbitControls(camera, canvas);
@@ -296,7 +302,7 @@
 			for(var p in lines){ scene.add(lines[p]); }
 			////
 
-			renderer.setSize(window.innerWidth*.75, window.innerHeight*.95);
+			renderer.setSize(window.innerWidth*.70, window.innerHeight*.95);
 			renderer.domElement.style.position='absolute';
 			renderer.domElement.style.left=0;
 			renderer.domElement.style.top=0;
@@ -380,7 +386,7 @@
 
 			        var percX = (v.x + 1) / 2;
 			        var percY = (-v.y + 1) / 2;
-			        var left = percX * window.innerWidth*.75;
+			        var left = percX * window.innerWidth*.70;
 			        var top = percY * window.innerHeight*.95;
 
 			        var pos2d = new THREE.Vector2(left.toFixed(0), top.toFixed(0));

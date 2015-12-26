@@ -45,11 +45,6 @@
 		custom:{ semimajor: null, ecc: null }
 	}
 
-	window.onresize = function(){
-		cwidth = canvas.width = window.innerWidth*.7;
-		cheight = canvas.height = window.innerHeight;
-	}
-
 	window.onload = function(){
 		canvas = document.createElement('canvas');
 		document.body.appendChild(canvas);
@@ -82,10 +77,6 @@
 		semimajorbox.disabled = true; eccbox.disabled = true;
 		minbox.value = ''+planetData.mercury.min + ' km/s';
 		maxbox.value = ''+planetData.mercury.max + ' km/s';
-
-		/*var minr = parseFloat(semimajorbox.value)*(1-parseFloat(ecc));
-		var maxr = parseFloat(semimajorbox.value)*(1+parseFloat(ecc));
-		console.log(minr,maxr);*/
 
 		semimajorbox.onchange = function(){
 			if(isNaN(parseFloat(semimajorbox.value))){ semimajorbox.value = ''; return; }
@@ -270,10 +261,6 @@
 			eccbox.value = ''+planetData[currentPlanet].ecc;
 			minbox.value = ''+planetData[currentPlanet].min + ' km/s';
 			maxbox.value = ''+planetData[currentPlanet].max + ' km/s';
-
-			/*var minr = parseFloat(semimajorbox.value)*(1-parseFloat(ecc));
-			var maxr = parseFloat(semimajorbox.value)*(1+parseFloat(ecc));
-			console.log(minr,maxr);*/
 		}
 	}
 
@@ -304,8 +291,6 @@
 	}
 
 	render = function(){
-
-		// clear screen
 		gfx.fillStyle = 'black';
 		gfx.fillRect(0,0,cwidth,cheight);
 
@@ -317,7 +302,6 @@
 		gfx.fillText('v = ' + v.toFixed(4),10,75);
 		gfx.fillText('p = ' + screenPeriod.toFixed(4),10,95);*/
 
-		// text label and bar on bottom
 		gfx.save();
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.font = '18px verdana';
@@ -330,12 +314,10 @@
 		gfx.fillText(' = Constant Time Interval For Area Sweeps', 20 + wedgeSize*2, cheight-17);
 		gfx.restore();
 
-
 		if(eccbox.value && semimajorbox.value && enterClicked){
 
 			drawWedge();
 
-			// sun
 			gfx.fillStyle = gfx.strokeStyle = 'yellow';
 			gfx.beginPath();
 			gfx.arc(cwidth/2,cheight/2,5,0,Math.PI*2);
@@ -346,7 +328,6 @@
 
 			drawScaleBar();
 
-			// timer bar on cursor
 			if(wedging !== -1){
 				gfx.fillStyle = gfx.strokeStyle = 'red';
 				gfx.fillRect(mx, my+20, wedging*2, 7);
@@ -473,7 +454,7 @@
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.beginPath();
-		gfx.arc(cwidth/2+x,cheight/2+y,6,0,Math.PI*2);
+		gfx.arc(cwidth/2+x,cheight/2+y,3,0,Math.PI*2);
 		gfx.fill(); gfx.stroke();
 
 		if(showvelbox.checked){
