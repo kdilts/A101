@@ -5,18 +5,27 @@ var canvas; var gfx;
 
 var mx; var my;
 
-var orbitDiam = [.3,.5,.7];
-var thetas = [0,Math.PI/2,Math.PI];
+var orbitDiam = [.5*.72,.5,.5*1.5];
+var thetas = [0,0,0];
 
 var lookFrom = 1; var lookAt = 2;
 
 var orbitAdj = 0;
 
-var showTrace = true;
-var showSun = false;
+var showTrace = false;
+var showSun = true;
 var showColoring = false;
 
 var lh = 25;
+
+var paused = false;
+
+var sli1 = .5; var sli2 = .5;
+
+var dragging1 = false;
+var dragging2 = false;
+
+var coords = [];
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -25,6 +34,8 @@ window.onload = function(){
 	canvas.setAttribute('style','position:absolute; left:0; top:0');
 	document.body.appendChild(canvas);
 	gfx = canvas.getContext('2d');
+
+	genCoords();
 
 	setInterval(render, 1000/60);
 }
@@ -37,17 +48,34 @@ window.onresize = function(){
 window.onmousemove = function(e){
 	mx = e.x; my = e.y;
 	if(!mx){ mx = e.clientX; my = e.clientY; }
+
+	if(dragging1){
+		var min = cwidth*1/8-35;
+		var max = cwidth*1/8+145;
+
+		sli1 = lerp(min,max, mx-cwidth*3/5, 0,1);
+
+		if(sli1 < 0){ sli1 = 0; }
+		if(sli1 > 1){ sli1 = 1; }
+	}
+
+	if(dragging2){
+		var min = cwidth*1/8-35;
+		var max = cwidth*1/8+145;
+
+		sli2 = lerp(min,max, mx-cwidth*3/5, 0,1);
+
+		if(sli2 < 0){ sli2 = 0; }
+		if(sli2 > 1){ sli2 = 1; }
+	}
 }
+
+window.onmouseup = function(){ dragging1 = dragging2 = false; }
 
 window.onmousedown = function(e){
 	mx = parseInt(mx); my = parseInt(my);
 
 	if(mx > cwidth*3/5){ mx = mx - cwidth*3/5 }else{ return; }
-
-	console.clear();
-	console.log(mx,my);
-	console.log(Math.abs(mx - (cwidth*1/8+45)),Math.abs(my - (lh*1.8)));
-	console.log(Math.abs(mx - (cwidth*1/8+170)),Math.abs(my - (lh*1.8)));
 
 	// venus orbit
 	if(Math.abs(mx - (cwidth*1/8+45)) < 10){
@@ -62,12 +90,120 @@ window.onmousedown = function(e){
 			orbitAdj = 1;
 		}
 	}
+
+	// look from venus
+	if(Math.abs(mx - (cwidth*1/8)) < 10){
+		if(Math.abs(my - (lh*8.3)) < 10){
+			if(lookAt !== 0){ lookFrom = 0; }
+		}
+	}
+
+	// look from earth
+	if(Math.abs(mx - (cwidth*1/8)) < 10){
+		if(Math.abs(my - (lh*9.8)) < 10){
+			if(lookAt !== 1){ lookFrom = 1; }
+		}
+	}
+
+	// look from mars
+	if(Math.abs(mx - (cwidth*1/8)) < 10){
+		if(Math.abs(my - (lh*11.3)) < 10){
+			if(lookAt !== 2){ lookFrom = 2; }
+		}
+	}
+
+	// look at venus
+	if(Math.abs(mx - (cwidth*1/8+120)) < 10){
+		if(Math.abs(my - (lh*8.3)) < 10){
+			if(lookFrom !== 0){ lookAt = 0; }
+		}
+	}
+
+	// look at earth
+	if(Math.abs(mx - (cwidth*1/8+120)) < 10){
+		if(Math.abs(my - (lh*9.8)) < 10){
+			if(lookFrom !== 1){ lookAt = 1; }
+		}
+	}
+
+	// look at mars
+	if(Math.abs(mx - (cwidth*1/8+120)) < 10){
+		if(Math.abs(my - (lh*11.3)) < 10){
+			if(lookFrom !== 2){ lookAt = 2; }
+		}
+	}
+
+	// show trace
+	if(mx > cwidth*1/8+35 && mx < cwidth*1/8+55){
+		if(my > lh*13.4 && my < lh*13.4+20){
+			if(showTrace){
+				showTrace = false;
+			}else{
+				showTrace = true;
+			}
+		}
+	}
+
+	// show sun
+	if(mx > cwidth*1/8+160 && mx < cwidth*1/8+180){
+		if(my > lh*13.4 && my < lh*13.4+20){
+			if(showSun){
+				showSun = false;
+			}else{
+				showSun = true;
+			}
+		}
+	}
+
+	// use direction coloring
+	if(mx > cwidth*1/8+130 && mx < cwidth*1/8+150){
+		if(my > lh*14.4 && my < lh*14.4+20){
+			if(showColoring){
+				showColoring = false;
+			}else{
+				showColoring = true;
+			}
+		}
+	}
+
+	// reset speed
+	if(mx > cwidth*1/8-5 && mx < cwidth*1/8+129){
+		if(my > lh*18 && my < lh*18+24){
+			sli2 = .5;
+		}
+	}
+
+	// pause / play
+	if(mx > cwidth*1/8-5 && mx < cwidth*1/8+129){
+		if(my > lh*19.2 && my < lh*19.2+24){
+			if(paused){
+				paused = false;
+			}else{
+				paused = true;
+			}
+		}
+	}
+
+	// slider 1
+	if(Math.abs(mx - (cwidth*1/8-35+(180*sli1))) < 10){
+		if(Math.abs(my - (lh*4+12)) < 10){
+			dragging1 = true;
+		}
+	}
+
+	// slider 2
+	if(Math.abs(mx - (cwidth*1/8-35+(180*sli2))) < 10){
+		if(Math.abs(my - (lh*16.5+12)) < 10){
+			dragging2 = true;
+		}
+	}
 }
 
 render = function(){
 	clearCanvas();
 
 	drawSun();
+	drawStars();
 	drawRings();
 	drawPlanets();
 
@@ -79,12 +215,33 @@ clearCanvas = function(){
 	gfx.fillRect(0,0,cwidth,cheight);
 }
 
+genCoords = function(){
+	for(var i = 0; i < 100; i++){
+		var r = Math.random()*.09+.355;
+		var t = Math.random()*Math.PI*2;
+		var x = r*Math.cos(t);
+		var y = r*Math.sin(t);
+		coords[i] = {x:x, y:y};
+	}
+}
+
+drawStars = function(){
+	gfx.save();
+	gfx.translate( (cwidth*3/5)/2,cheight/2 );
+	gfx.fillStyle = gfx.strokeStyle = 'white';
+
+	for(var i in coords){
+		gfx.beginPath();
+		gfx.arc(coords[i].x*cwidth*3/5, coords[i].y*cwidth*3/5, 1, 0,Math.PI*2);
+		gfx.fill(); gfx.stroke();
+	}
+
+	gfx.restore();
+}
+
 drawMenu = function(){
 	gfx.save();
 	gfx.translate(cwidth*3/5, 0);
-
-	//gfx.fillStyle = gfx.strokeStyle = 'grey';
-	//gfx.fillRect(0,0,cwidth,cheight);
 
 	// menu text
 	gfx.fillStyle = gfx.strokeStyle = 'green';
@@ -98,7 +255,12 @@ drawMenu = function(){
 	
 	gfx.fillStyle = gfx.strokeStyle = 'white';
 	gfx.fillText('Reset Speed',cwidth*1/8, lh*18.75);
-	gfx.fillText('Pause',cwidth*1/8+30, lh*20);
+
+	if(!paused){
+		gfx.fillText('Pause',cwidth*1/8+30, lh*20);
+	}else{
+		gfx.fillText('Play',cwidth*1/8+40, lh*20);
+	}
 
 	gfx.font = '16px verdana'
 	gfx.fillText('Venus orbit',cwidth*1/8-70, lh*2);
@@ -271,10 +433,10 @@ drawMenu = function(){
 		// slider button
 	gfx.fillStyle = gfx.strokeStyle = 'blue';
 	gfx.beginPath();
-	gfx.arc(cwidth*1/8+55, lh*4+12, 8, 0, Math.PI*2);
+	gfx.arc(cwidth*1/8-35+(180*sli1), lh*4+12, 8, 0, Math.PI*2);
 	gfx.fill(); gfx.stroke();
 	gfx.beginPath();
-	gfx.arc(cwidth*1/8+55, lh*16.5+12, 8, 0, Math.PI*2);
+	gfx.arc(cwidth*1/8-35+(180*sli2), lh*16.5+12, 8, 0, Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
 	// buttons
@@ -300,7 +462,7 @@ drawRings = function(){
 	
 	// planet rings - variable size
 	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[0] ,0,Math.PI*2);
+	gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[0]*parseFloat(sli1) ,0,Math.PI*2);
 	gfx.stroke();
 	
 	gfx.beginPath();
@@ -324,10 +486,59 @@ drawRings = function(){
 }
 
 drawPlanets = function(){
-	var d = cwidth*3/5*.35;
+	var d = cwidth*3/5*.35; // max diameter of inner planet orbits
+	var outerD = cwidth*3/5*.4; // diameter of outer ring stuff
+
+	// vector calculations for projection
+	var fromPos = new vec2(
+		d*orbitDiam[lookFrom]*Math.cos(thetas[lookFrom]),
+		d*orbitDiam[lookFrom]*Math.sin(thetas[lookFrom])
+	);
+	
+	var toPos = new vec2(
+		d*orbitDiam[lookAt]*Math.cos(thetas[lookAt]),
+		d*orbitDiam[lookAt]*Math.sin(thetas[lookAt])
+	);
+
+	var fromTo = add(fromPos, neg(toPos));
+	fromTo = mult(unit(neg(fromTo)),outerD);
+
+	if(!paused){
+		thetas[0] -= Math.PI/180*3.5*(sli2*2);
+		thetas[1] -= Math.PI/180*1.4*(sli2*2);
+		thetas[2] -= Math.PI/180*.2*(sli2*2);
+
+		for(var i in thetas){
+			if(thetas[i] < 0){
+				thetas[i] += Math.PI*2;
+			}
+		}
+	}
 
 	gfx.save();
 	gfx.translate((cwidth*3/5)/2, cheight/2);
+
+	var d1 = dist(0,0,outerD,0);
+	var d2 = dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y);
+
+	while(d2 > d1){
+		fromTo = mult(fromTo,.999);
+		d2 = dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y);
+	}
+
+	while(d2 < d1){
+		fromTo = mult(fromTo,1.001);
+		d2 = dist(0,0,fromPos.x+fromTo.x,fromPos.y+fromTo.y);
+	}
+
+	// lookAt line
+	gfx.fillStyle = gfx.strokeStyle = 'white';
+	gfx.lineWidth = 2;
+	gfx.beginPath();
+	gfx.moveTo(d*orbitDiam[lookFrom]*Math.cos(thetas[lookFrom]),d*orbitDiam[lookFrom]*Math.sin(thetas[lookFrom]));
+	gfx.lineTo(d*orbitDiam[lookAt]*Math.cos(thetas[lookAt]),d*orbitDiam[lookAt]*Math.sin(thetas[lookAt]));
+	gfx.stroke();
+	gfx.lineWidth = 1;
 
 	// venus
 	gfx.fillStyle = gfx.strokeStyle = 'green';
@@ -347,7 +558,53 @@ drawPlanets = function(){
 	gfx.arc(d*orbitDiam[2]*Math.cos(thetas[2]) ,d*orbitDiam[2]*Math.sin(thetas[2]), cwidth/100 ,0,Math.PI*2);
 	gfx.fill(); gfx.stroke();
 
+	// outer ring sun
+	if(showSun){
+		gfx.fillStyle = gfx.strokeStyle = 'yellow';
+		gfx.beginPath();
+		gfx.arc(outerD*Math.cos(thetas[lookFrom]+Math.PI) ,outerD*Math.sin(thetas[lookFrom]+Math.PI), cwidth/100 ,0,Math.PI*2);
+		gfx.fill(); gfx.stroke();	
+	}
+
+	// outer ring lookAt planet
+	if(lookAt == 0){
+		gfx.fillStyle = gfx.strokeStyle = 'green';
+	}else if(lookAt == 1){
+		gfx.fillStyle = gfx.strokeStyle = 'blue';
+	}else{
+		gfx.fillStyle = gfx.strokeStyle = 'red';
+	}
+
+	gfx.beginPath();
+	gfx.arc(fromPos.x+fromTo.x, fromPos.y+fromTo.y, cwidth/100 ,0,Math.PI*2);
+	gfx.fill();
+	gfx.stroke();
+
+	// lookFrom circle
+	gfx.fillStyle = gfx.strokeStyle = 'white';
+	gfx.lineWidth = 2;
+	gfx.beginPath();
+	gfx.arc(d*orbitDiam[lookFrom]*Math.cos(thetas[lookFrom]) ,d*orbitDiam[lookFrom]*Math.sin(thetas[lookFrom]), cwidth/100+4 ,0,Math.PI*2);
+	gfx.stroke();
+	gfx.lineWidth = 1;
+
 	gfx.restore();
+}
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1,v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+
+dist = function(x1,y1,x2,y2){
+	return Math.sqrt(Math.pow((x1-x2),2)+Math.pow((y1-y2),2));
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
 }
 
 </script></head>
