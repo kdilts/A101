@@ -1,0 +1,212 @@
+<head>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+var mx; var my;
+
+var circHeight; var outerD; var innerD;
+
+var drawProbe = false;
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	setInterval(render,1000/60);
+}
+
+window.onresize = function(){}
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){
+		mx = e.clientX; my = e.clientY;
+	}
+
+	// decide if mouse is in one of the bounding circles
+	drawProbe = false;
+
+	var d1 = dist(new vec2(mx,my), new vec2(cwidth/6, circHeight));
+	var d2 = dist(new vec2(mx,my), new vec2(cwidth/2, circHeight));
+	var d3 = dist(new vec2(mx,my), new vec2(cwidth*5/6, circHeight));
+
+	if(d1 < outerD && d1 > innerD){ drawProbe = true; }
+	if(d2 < outerD && d2 > innerD*2){  drawProbe = true; }
+	if(d3 < outerD && d3 > innerD*3){  drawProbe = true; }
+}
+
+window.onmousedown = function(e){}
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	circHeight = cheight/4;
+	outerD = cwidth/9; innerD = outerD/30;
+
+	changeColor('black');
+	gfx.fillRect(0,0,cwidth,cheight);
+	changeColor('yellow');
+	gfx.font = '20px verdana';
+	gfx.fillText('Simulated Photometry', cwidth/2-100, 22);
+	gfx.fillText('- Light Probe', cwidth*3/4, 22);
+	changeColor('red');
+	arc(cwidth*3/4-12,16,5,true); // light probe
+	arc(cwidth*1/6, circHeight, innerD, true); // red star
+	changeColor('yellow');
+	arc(cwidth/2, circHeight, innerD*2, true); // yellow star
+	changeColor('blue');
+	arc(cwidth*5/6, circHeight, innerD*3, true); // blue star
+
+	// border circles
+	gfx.lineWidth = 3;
+	changeColor('grey');
+	arc(cwidth*1/6, circHeight, outerD, false);
+	arc(cwidth/2, circHeight, outerD, false);
+	arc(cwidth*5/6, circHeight, outerD, false);
+	gfx.lineWidth = 1;
+
+	//graph background
+	gfx.fillRect(0,cheight/2,cwidth,cheight/2);
+
+	// graph borders
+	gfx.lineWidth = 2;
+	changeColor('black');
+	
+	// outer
+	gfx.strokeRect(4,cheight/2+4,cwidth*1/3-8,cheight/2-8);
+	gfx.strokeRect(cwidth*1/3+4,cheight/2+4,cwidth*1/3-8,cheight/2-8);
+	gfx.strokeRect(cwidth*2/3+4,cheight/2+4,cwidth*1/3-8,cheight/2-8);
+	
+	// inner
+	gfx.strokeRect(40,cheight/2+4,cwidth*1/3-44,cheight/2-44);
+	gfx.strokeRect(cwidth*1/3+40,cheight/2+4,cwidth*1/3-44,cheight/2-44);
+	gfx.strokeRect(cwidth*2/3+40,cheight/2+4,cwidth*1/3-44,cheight/2-44);
+
+	// button backgrounds
+	changeColor('rgb(50,50,50)');
+	gfx.fillRect(cwidth*1/3-52,cheight-39,47,34);
+	gfx.fillRect(cwidth*2/3-52,cheight-39,47,34);
+	gfx.fillRect(cwidth-52,cheight-39,47,34);
+	
+	// button boundary
+	changeColor('black');
+	gfx.strokeRect(cwidth*1/3-52,cheight-39,48,34);
+	gfx.strokeRect(cwidth*2/3-52,cheight-39,48,34);
+	gfx.strokeRect(cwidth-52,cheight-39,48,34);
+
+	gfx.lineWidth = 1;
+
+	// button labels
+	gfx.font = '14px verdana';
+	gfx.fillText('Clear',cwidth*1/3-45,cheight-17);
+	gfx.fillText('Clear',cwidth*2/3-45,cheight-17);
+	gfx.fillText('Clear',cwidth-45,cheight-17);
+
+	// axis labels
+	gfx.fillText('Distance',30,cheight-7);
+	gfx.fillText('Distance',cwidth*1/3+30,cheight-7);
+	gfx.fillText('Distance',cwidth*2/3+30,cheight-7);
+
+	// TODO fix spacing
+	for(var i = 0; i < 3; i++){
+		gfx.fillText(''+i*100, 38+i*cwidth/12,cheight-27);
+		gfx.fillText(''+i*100, 38+i*cwidth/12+cwidth/3,cheight-27);
+		gfx.fillText(''+i*100, 38+i*cwidth/12+cwidth*2/3,cheight-27);
+	}
+
+	for(var i = 0; i < 3; i++){
+		gfx.save();
+		gfx.translate(cwidth*i/3+16,cheight-30);
+		gfx.rotate(-Math.PI/2);
+		gfx.fillText('Intensity',0,0);
+		gfx.restore();
+
+		gfx.save();
+		gfx.translate(cwidth*i/3+37,cheight-40);
+		gfx.rotate(-Math.PI/2);
+		for(var z = 0; z < 3; z++){
+			// TODO fix spacing
+			gfx.fillText(''+z*100,z*cwidth/12,0);
+		}
+		gfx.restore();
+	}
+
+	// grid lines
+	changeColor('black');
+	for(var z = 0; z < 3; z++){
+		gfx.save();
+		gfx.translate(cwidth*z/3,0);
+		for(var i = 1; i < 6; i++){
+			line(
+				40+(cwidth*1/3-44)/6*i, cheight/2+4,
+				40+(cwidth*1/3-44)/6*i, cheight-40
+			);
+		}
+		gfx.restore();
+	}
+
+	for(var z = 0; z < 3; z++){
+		gfx.save();
+		gfx.translate(cwidth*z/3,0);
+		for(var i = 1; i < 6; i++){
+			line(
+				40, cheight/2+4+(cheight/2-44)/6*i,
+				cwidth*1/3-4, cheight/2+4+(cheight/2-44)/6*i
+			);
+		}
+		gfx.restore();
+	}
+
+	// graph labels
+	gfx.font = '20px verdana';
+	changeColor('yellow');
+	gfx.fillText('Luminosity: 4.0e+004',cwidth*1/6-100,cheight/2-4);
+	gfx.fillText('Luminosity: 4.0e+005',cwidth/2-100,cheight/2-4);
+	gfx.fillText('Luminosity: 4.0e+006',cwidth*5/6-100,cheight/2-4);
+
+	// draw light probe if mouse is inside circles
+	if(drawProbe){
+		changeColor('red');
+		arc(mx,my,5,true);
+	}
+}
+
+changeColor = function(c){ gfx.fillStyle = gfx.strokeStyle = c; }
+
+line = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
+
+arc = function(x,y,d,fill){
+	gfx.beginPath();
+	gfx.arc(x,y,d,0,Math.PI*2);
+	if(fill){ gfx.fill(); }
+	gfx.stroke();	
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
