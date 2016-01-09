@@ -200,6 +200,8 @@ graph = function(n){
 		gfx.strokeRect(.01*cwidth+(n*.33*cwidth),.5*cheight,.32*cwidth,.49*cheight);
 
 		gfx.lineWidth = 1.5;
+		
+		// gridlines
 		for(var i = 0; i < 6; i++){
 			gfx.beginPath();
 			gfx.moveTo(.035*cwidth+(n*.33*cwidth)+(i*.295*cwidth/6), .5*cheight);
@@ -212,6 +214,7 @@ graph = function(n){
 			gfx.stroke();
 		}
 
+		// lux / dist line
 		var started = false;
 		gfx.save();
 		gfx.lineWidth = 3;
@@ -231,6 +234,7 @@ graph = function(n){
 		gfx.stroke();
 		gfx.restore();
 
+		// lux / dist^2 line
 		started = false;
 		gfx.save();
 		gfx.lineWidth = 3;
