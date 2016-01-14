@@ -603,9 +603,11 @@ drawPlanets = function(){
 
 	// update planet rotations
 	if(!paused){
-		thetas[0] -= Math.PI/180*3.5*(sli2*2);
-		thetas[1] -= Math.PI/180*1.4*(sli2*2);
-		thetas[2] -= Math.PI/180*.2*(sli2*2);
+		//thetas[0] -= Math.PI/180*(1/.723)*2*(sli2*2);
+		thetas[0] -= Math.PI/180*(1/.723)*(sli2*2);
+		thetas[1] -= Math.PI/180*(sli2*2);
+		thetas[2] -= Math.PI/180*(1/1.88)*(sli2*2);
+		//thetas[2] -= Math.PI/180*(1/1.88)/2*(sli2*2);
 
 		// reset theta after each orbit
 		for(var i in thetas){

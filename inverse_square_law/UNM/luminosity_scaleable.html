@@ -6,16 +6,19 @@ var mx; var my;
 
 var circHeight; var outerD; var innerD;
 
+// probe data
 var drawProbe = false;
+var probeDist; var probeIntensity;
+
+// plot data
+var data = [[],[],[]]; // holds user collected data for plotting
+var luxdistsqd = [[],[],[]]; // holds the points for plotting lux/dist^2
+var luxdist = [[],[],[]]; // holds the points for plotting lux/dist
+var plot = -1; // number to show which graph the mouse is currently plotting to
 
 // corners of each graph for plotting
 var minX = 0; var maxX;
 var minY = 0; var maxY;
-
-window.onresize = function(){
-	maxX = cwidth*1/3-44;
-	maxY = -cheight/2+44;
-}
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -28,6 +31,30 @@ window.onload = function(){
 	maxX = cwidth*1/3-44;
 	maxY = -cheight/2+44;
 
+	var step = .01;
+	for(var z = 0; z < 3; z++){
+		for(var d = 0; d < 300; d += step){
+			var tempI = (4*Math.pow(10,4+z)/Math.pow(d,2)).toFixed(2);
+			if(tempI <= 3*Math.pow(10,z+1)){
+				luxdistsqd[z].push({d:d, i:tempI});
+				step = 2;
+			}
+		}
+		step = .01;
+	}
+
+	for(var z = 0; z < 3; z++){
+		for(var d = 0; d < 300; d += step){
+			var tempI = (4*Math.pow(10,4+z)/Math.pow(d,1)).toFixed(2);
+			tempI /= 100;
+			if(tempI <= 3*Math.pow(10,z+1)){
+				luxdist[z].push({d:d, i:tempI});
+				step = 2;
+			}
+		}
+		step = .01;
+	}
+
 	setInterval(render,1000/60);
 }
 
@@ -38,24 +65,80 @@ window.onmousemove = function(e){
 	}
 
 	// decide if mouse is in one of the bounding circles
-	drawProbe = false;
+	drawProbe = false; plot = -1;
 
 	var d1 = dist(new vec2(mx,my), new vec2(cwidth/6, circHeight));
 	var d2 = dist(new vec2(mx,my), new vec2(cwidth/2, circHeight));
 	var d3 = dist(new vec2(mx,my), new vec2(cwidth*5/6, circHeight));
 
-	if(d1 < outerD && d1 > innerD){ drawProbe = true; }
-	if(d2 < outerD && d2 > innerD*2){  drawProbe = true; }
-	if(d3 < outerD && d3 > innerD*3){  drawProbe = true; }
+	if(d1 < outerD){ // mouse in right circle
+		drawProbe = true;
+		if(d1 < innerD){ // mouse inside star
+			probeDist = probeIntensity = '--';
+		}else{ // mouse outside star - display probe data
+			probeDist = lerp(0,outerD, d1-innerD, 0,300+innerD).toFixed(2);
+			probeIntensity = (4*Math.pow(10,4)/Math.pow(probeDist,2)).toFixed(2);
+			plot = 0;
+		}
+	}
+	
+	if(d2 < outerD){ // mouse in center circle
+		drawProbe = true;
+		if(d2 < innerD*2){ // mouse inside star
+			probeDist = probeIntensity = '--';
+		}else{ // mouse outside star - display probe data
+			probeDist = lerp(0,outerD, d2-innerD*2, 0,300+innerD*2).toFixed(2);
+			probeIntensity = (4*Math.pow(10,5)/Math.pow(probeDist,2)).toFixed(2);
+			plot = 1;
+		}
+	}
+	
+	if(d3 < outerD){ // mouse in right circle
+		drawProbe = true;
+		if(d3 < innerD*3){ // mouse inside star
+			probeDist = probeIntensity = '--';
+		}else{ // mouse outside star - display probe data
+			probeDist = lerp(0,outerD, d3-innerD*3, 0,300+innerD*3).toFixed(2);
+			probeIntensity = (4*Math.pow(10,6)/Math.pow(probeDist,2)).toFixed(2);
+			plot = 2;
+		}
+	}
 }
 
-window.onmousedown = function(e){}
+window.onmousedown = function(){
+	// clear buttons
+	if(mx > cwidth*1/3-52 && mx < cwidth*1/3-4){
+		if(my > cheight-39 && my < cheight-4){
+			data[0] = []; return;
+		}
+	}
+
+	if(mx > cwidth*2/3-52 && mx < cwidth*2/3-4){
+		if(my > cheight-39 && my < cheight-4){
+			data[1] = []; return;
+		}
+	}
+
+	if(mx > cwidth-52 && mx < cwidth-4){
+		if(my > cheight-39 && my < cheight-4){
+			data[2] = []; return;
+		}
+	}
+
+	if(plot == -1){ return; } // if mouse is outside of all circles
+
+	data[plot].push({d:probeDist, i:probeIntensity});
+
+}
 
 render = function(){
 	cwidth = canvas.width = window.innerWidth;
 	cheight = canvas.height = window.innerHeight;
 	circHeight = cheight/4;
 	outerD = cwidth/9; innerD = outerD/30;
+
+	maxX = cwidth*1/3-44;
+	maxY = -cheight/2+44;
 
 	changeColor('black');
 	gfx.fillRect(0,0,cwidth,cheight);
@@ -138,7 +221,7 @@ render = function(){
 		gfx.translate(cwidth*i/3+37,cheight-40);
 		gfx.rotate(-Math.PI/2);
 		for(var z = 0; z < 3; z++){
-			gfx.fillText(''+z*100,(cheight/2-74)/3*z,0);
+			gfx.fillText(''+z*Math.pow(10,i+1),(cheight/2-74)/3*z,0);
 		}
 		gfx.restore();
 	}
@@ -176,54 +259,122 @@ render = function(){
 	gfx.fillText('Luminosity: 4.0e+005',cwidth/2-100,cheight/2-4);
 	gfx.fillText('Luminosity: 4.0e+006',cwidth*5/6-100,cheight/2-4);
 
+	// graph legends
+	for(var i = 0; i < 3; i++){
+		gfx.save();
+		gfx.translate(cwidth*i/3,0);
+
+		changeColor('grey');
+		gfx.fillRect(
+			cwidth*1/3-145,cheight/2+14,
+			130,38
+		);
+
+		changeColor('black');
+		gfx.lineWidth = 3;
+		gfx.strokeRect(
+			cwidth*1/3-145,cheight/2+14,
+			130,38	
+		);
+		gfx.lineWidth = 1;
+
+		gfx.font = '16px verdana';
+		changeColor('rgb(50,50,50)');
+		gfx.fillText('- = Lux / Dist', cwidth*1/3-135, cheight/2+30);
+		gfx.font = '10px verdana';
+		gfx.fillText('2', cwidth*1/3-25, cheight/2+24);
+		gfx.font = '16px verdana';
+		changeColor('black');
+		gfx.fillText('- = Lux / Dist', cwidth*1/3-135, cheight/2+46);
+		gfx.restore();
+	}
+	
 	// draw light probe if mouse is inside circles
 	if(drawProbe){
 		changeColor('red');
 		arc(mx,my,5,true);
 		changeColor('white');
 		gfx.font = '16px verdana';
-		gfx.fillText('Distance: ' + 10.22, mx+20,my);
-		gfx.fillText('Intensity: ' + 10.22, mx+20,my+20);
+		gfx.fillText('Distance: ' + probeDist, mx+20,my);
+		gfx.fillText('Intensity: ' + probeIntensity, mx+20,my+20);
 	}
 
 	// plot lux / dist
 	for(var i = 0; i < 3; i++){
 		gfx.save();
 		gfx.lineWidth = 3;
-		changeColor('red');
+		changeColor('black');
 		gfx.translate(cwidth*i/3+40,cheight-40);
 
-		var p1 = getPlotCoords(100,100);
-		var p2 = getPlotCoords(250,50);
-		var p3 = getPlotCoords(0,200);
+		var started = false;
+		gfx.beginPath();
+		for(var p in luxdist[i]){
+			var point = getPlotCoords(luxdist[i][p].d, luxdist[i][p].i,i);
 
-		var p4 = getPlotCoords(0,0);
-		var p5 = getPlotCoords(300,300);
-		var p6 = getPlotCoords(0,300);
-		var p7 = getPlotCoords(300,0);
-
-		arc(p1.x,p1.y,2,true);
-		arc(p2.x,p2.y,2,true);
-		arc(p3.x,p3.y,2,true);
-
-		arc(p4.x,p4.y,2,true);
-		arc(p5.x,p5.y,2,true);
-		arc(p6.x,p6.y,2,true);
-		arc(p7.x,p7.y,2,true);
+			if(!started){
+				gfx.moveTo(point.x,point.y);
+				started = true;
+			}else{
+				gfx.lineTo(point.x,point.y);
+			}
+		}
+		gfx.stroke();
 
 		gfx.restore();
 	}
 
 	// plot lux / dist^2
+	for(var i = 0; i < 3; i++){
+		gfx.save();
+		gfx.lineWidth = 3;
+		changeColor('rgb(50,50,50)');
+		gfx.translate(cwidth*i/3+40,cheight-40);
+
+		var started = false;
+		gfx.beginPath();
+		for(var p in luxdistsqd[i]){
+			var point = getPlotCoords(luxdistsqd[i][p].d, luxdistsqd[i][p].i,i);
+
+			if(!started){
+				gfx.moveTo(point.x,point.y);
+				started = true;
+			}else{
+				gfx.lineTo(point.x,point.y);
+			}
+		}
+		gfx.stroke();
+
+		gfx.restore();
+	}
 
 	// plot user data
+	for(var i = 0; i < 3; i++){
+		gfx.save();
+		gfx.lineWidth = 3;
 
+		if(i == 0){ changeColor('red'); }
+		else if(i == 1){ changeColor('yellow'); }
+		else if(i == 2){ changeColor('blue'); }
+		
+		gfx.translate(cwidth*i/3+40,cheight-40);
+	
+		for(var p in data[i]){
+			var point = getPlotCoords(data[i][p].d, data[i][p].i, i);
+			if(data[i][p].d > 0 && data[i][p].d < 300){
+				if(data[i][p].i > 0 && data[i][p].i < 3*Math.pow(10,i+1)){
+					arc(point.x,point.y,2,true);
+				}
+			}
+		}
+
+		gfx.restore();
+	}
 }
 
-getPlotCoords = function(d,i){
+getPlotCoords = function(d,i,p){
 	return {
 		x:lerp(0,300,d,minX,maxX),
-		y:lerp(0,300,i,minY,maxY)
+		y:lerp(0,3*Math.pow(10,p+1),i,minY,maxY)
 	};
 }
 
