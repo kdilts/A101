@@ -357,7 +357,13 @@
 				//// update the position of each planet
 				for(var p = 0; p < planetData.length; p++){
 					//deltaTheta[p] = const2/(r[p]*r[p])*deltaT;
-					deltaTheta[p] = const2/(Math.pow(r[p],3/2))*deltaT;
+					//deltaTheta[p] = const2/(Math.pow(r[p],3/2))*deltaT;
+					deltaTheta[p] =
+			(const2*(
+				Math.sqrt(planetData[p].semimajor*
+					(1-Math.pow(planetData[p].ecc,2))))/
+						(Math.pow(r[p],2)))*deltaT;
+					
 					if(planetData[p].id === 'Halley'){ deltaTheta[p] *= -1; }
 					theta[p] = theta[p] + deltaTheta[p];
 					if(theta[p] >= Math.PI*2){ theta[p] -= Math.PI*2; }

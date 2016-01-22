@@ -3,17 +3,11 @@
 	<script type="text/javascript" src="is.js"></script>
 	<script type="text/javascript">
 
-// meet tuesday at 2:30
 // limit displacement on spectrum
 // scale graph to work properly for different mass ratios
 
 // magic numbers to prevent skipping at different ecc / sep
 	// works for sep = 1. anything else seems to break it
-
-// changed velocity calculation to have an absolute value
-// preventing taking the sqrt of a negative and gettting NaN
-// may need to rewrite graphing function to use radialVels[1]
-// instead of repeatedly applying mass ratio to radialVels[0]
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -50,6 +44,9 @@ var lMin; var lMax;
 
 var scale = 60;
 
+var sliderSpacing = 10;
+var sliderOffset = 14;
+
 window.onload = function(){
 	
 	if(is.ie()){ ie = true; }
@@ -62,25 +59,7 @@ window.onload = function(){
 		document.body.appendChild(canvases[i]);
 	}
 
-	canvases[0].setAttribute('style','position:absolute; left:0%; top:50%');
-	canvases[0].setAttribute('width',window.innerWidth*.45);
-	canvases[0].setAttribute('height',window.innerHeight*.5);
-
-	canvases[1].setAttribute('style','position:absolute; left:55%; top:50%');
-	canvases[1].setAttribute('width',window.innerWidth*.45);
-	canvases[1].setAttribute('height',window.innerHeight*.5);
-
-	canvases[2].setAttribute('style','position:absolute; left:28%; top:5%');
-	canvases[2].setAttribute('width',window.innerWidth*.60);
-	canvases[2].setAttribute('height',window.innerHeight*.2);
-
-	canvases[3].setAttribute('style','position:absolute; left:28%; top:27.5%');
-	canvases[3].setAttribute('width',window.innerWidth*.60);
-	canvases[3].setAttribute('height',window.innerHeight*.2);
-
-	canvases[4].setAttribute('style','position:absolute; left:0%; top:0%');
-	canvases[4].setAttribute('width',window.innerWidth);
-	canvases[4].setAttribute('height',window.innerHeight*.5);
+	setCanvasAttributes();
 
 	canvases[2].style.zIndex = canvases[3].style.zIndex = 1;
 	canvases[4].style.zIndex = 0;
@@ -92,8 +71,6 @@ window.onload = function(){
 	gfxMenu = canvases[4].getContext('2d');
 
 	// initialize sliders and buttons
-	var sliderSpacing = 10;
-	var sliderOffset = 10;
 	for(var i = 0; i < 12; i++){
 		if(i < 4){
 			sliders[i] = document.createElement('input');
@@ -101,14 +78,14 @@ window.onload = function(){
 
 			if(chr){
 				sliders[i].setAttribute('style',
-					'position:absolute; left:8.5%; top:'+(sliderOffset+i*sliderSpacing)+'%;');
+					'position:absolute; left:10.2%; top:'+(sliderOffset+i*sliderSpacing)+'%; width:12%');
 			}else if(ff){
 				sliders[i].setAttribute('style',
-					'position:absolute; left:8.5%; top:'+(sliderOffset+i*sliderSpacing)+'%; width:12%');
+					'position:absolute; left:10.2%; top:'+(sliderOffset+i*sliderSpacing)+'%; width:12%');
 			}else if(ie){
 
 				sliders[i].setAttribute('style',
-					'position:absolute; left:9.1%; top:'+((sliderOffset-1.5)+i*(sliderSpacing))+'%; width:12%');				
+					'position:absolute; left:10.8%; top:'+((sliderOffset-1.5)+i*(sliderSpacing))+'%; width:12%');				
 			}
 
 			document.body.appendChild(sliders[i]);
@@ -118,11 +95,11 @@ window.onload = function(){
 		buttons[i].type = 'button';
 		if(i > 4 && i%2 == 1){
 			buttons[i-1].setAttribute('style',
-				'position:absolute; left:5.5%; top:'+(sliderOffset+(i-5)/2*sliderSpacing)+'%');
+				'position:absolute; left:7%; top:'+(sliderOffset+(i-5)/2*sliderSpacing)+'%');
 			buttons[i-1].value = '<-';
 
 			buttons[i].setAttribute('style',
-				'position:absolute; left:21.5%; top:'+(sliderOffset+(i-5)/2*sliderSpacing)+'%');
+				'position:absolute; left:23%; top:'+(sliderOffset+(i-5)/2*sliderSpacing)+'%');
 			buttons[i].value = '->';
 		}
 		document.body.appendChild(buttons[i]);
@@ -153,9 +130,9 @@ window.onload = function(){
 
 	// position buttons
 	buttons[0].setAttribute('style','position:absolute; left:0%; top:0%');
-	buttons[1].setAttribute('style','position:absolute; left:5%; top:0%');
-	buttons[2].setAttribute('style','position:absolute; left:46.5%; top:0%');
-	buttons[3].setAttribute('style','position:absolute; left:52%; top:0%');
+	buttons[1].setAttribute('style','position:absolute; left:10%; top:0%');
+	buttons[2].setAttribute('style','position:absolute; left:45%; top:0%');
+	buttons[3].setAttribute('style','position:absolute; left:53%; top:0%');
 
 	// button actions
 	buttons[0].onclick = function(){ // enter values
@@ -255,8 +232,8 @@ window.onload = function(){
 	boxes[0] = document.createElement('input');
 	boxes[1] = document.createElement('input');
 	boxes[0].type = boxes[1].type = 'text';
-	boxes[0].setAttribute('style','position:absolute; left:4%; top:4.5%; width:4%');
-	boxes[1].setAttribute('style','position:absolute; left:15.5%; top:4.5%; width:4%');
+	boxes[0].setAttribute('style','position:absolute; left:6%; top:6%; width:4%');
+	boxes[1].setAttribute('style','position:absolute; left:16%; top:6%; width:4%');
 	document.body.appendChild(boxes[0]);
 	document.body.appendChild(boxes[1]);
 	boxes[0].value = boxes[1].value = 1; // initial masses on launch
@@ -268,7 +245,7 @@ window.onload = function(){
 	setInterval(render,1000/60);
 }
 
-window.onresize = function(){
+setCanvasAttributes = function(){
 	canvases[0].setAttribute('style','position:absolute; left:0%; top:50%');
 	canvases[0].setAttribute('width',window.innerWidth*.45);
 	canvases[0].setAttribute('height',window.innerHeight*.5);
@@ -277,18 +254,20 @@ window.onresize = function(){
 	canvases[1].setAttribute('width',window.innerWidth*.45);
 	canvases[1].setAttribute('height',window.innerHeight*.5);
 
-	canvases[2].setAttribute('style','position:absolute; left:28%; top:5%');
-	canvases[2].setAttribute('width',window.innerWidth*.60);
+	canvases[2].setAttribute('style','position:absolute; left:31%; top:5%');
+	canvases[2].setAttribute('width',window.innerWidth*.55);
 	canvases[2].setAttribute('height',window.innerHeight*.2);
 
-	canvases[3].setAttribute('style','position:absolute; left:28%; top:27.5%');
-	canvases[3].setAttribute('width',window.innerWidth*.60);
+	canvases[3].setAttribute('style','position:absolute; left:31%; top:27.5%');
+	canvases[3].setAttribute('width',window.innerWidth*.55);
 	canvases[3].setAttribute('height',window.innerHeight*.2);
 
 	canvases[4].setAttribute('style','position:absolute; left:0%; top:0%');
 	canvases[4].setAttribute('width',window.innerWidth);
-	canvases[4].setAttribute('height',window.innerHeight*.5);
+	canvases[4].setAttribute('height',window.innerHeight*.5);	
 }
+
+window.onresize = function(){ setCanvasAttributes(); }
 
 calculate = function(){
 	var a = parseFloat(currentA);
@@ -577,29 +556,58 @@ renderMenu = function(){
 	changeColor(gfxMenu,'black');
 	gfxMenu.font = '12pt verdana';
 
-	gfxMenu.fillText('Speed:',410,18);
+	var tempWidth = gfxMenu.measureText('Speed:').width;
+	gfxMenu.fillText('Speed:',window.innerWidth*.45-tempWidth,18);
 	
-	gfxMenu.fillText(''+currentRVMax+' km/s', window.innerWidth-118, 46);
-	gfxMenu.fillText('-'+currentRVMax+' km/s', window.innerWidth-118, 46+canvases[2].height);
-	gfxMenu.fillText('0 km/s', window.innerWidth-118, 46+canvases[2].height/2);
+	gfxMenu.fillText(''+currentRVMax+' km/s', window.innerWidth-105, window.innerHeight*.05);
+	gfxMenu.fillText('-'+currentRVMax+' km/s', window.innerWidth-105, window.innerHeight*.05+canvases[2].height);
+	gfxMenu.fillText('0 km/s', window.innerWidth-105, window.innerHeight*.05+canvases[2].height/2);
 
-	gfxMenu.fillText('M1:', 7,50); gfxMenu.fillText('M2:', 125,50);
+	var tempWidth = gfxMenu.measureText('M1:').width+3;
+	gfxMenu.fillText('M1:', window.innerWidth*.06-tempWidth,window.innerHeight*.06+15);
+	tempWidth = gfxMenu.measureText('M1:').width+3;
+	gfxMenu.fillText('M2:', window.innerWidth*.16-tempWidth,window.innerHeight*.06+15);
 
 	gfxMenu.fillText('Period: '+ currentP +' yrs',window.innerWidth-300,18);
 
-	if(chr){
+	if(chr || (!ff && !ie) ){
 		gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
 
-		gfxMenu.fillText('a: .1',2,95); gfxMenu.fillText('e: 0',2,172);
-		gfxMenu.fillText('i: 0',2,249); gfxMenu.fillText('w: -90',2,326);
+		gfxMenu.fillText('a: .1',2,
+			sliderOffset/100*window.innerHeight+15);
 
-		gfxMenu.fillText('2',255,95); gfxMenu.fillText('.9',255,172);
-		gfxMenu.fillText('90',255,249); gfxMenu.fillText('90',255,326);
+		gfxMenu.fillText('e: 0',2,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
 
-		gfxMenu.fillText(''+sliders[0].value,142,120);
-		gfxMenu.fillText(''+sliders[1].value,142,197);
-		gfxMenu.fillText(''+sliders[2].value,142,274);
-		gfxMenu.fillText(''+sliders[3].value,142,351);
+		gfxMenu.fillText('i: 0',2,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('w: -90',2,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('2',window.innerWidth*.27,
+			sliderOffset/100*window.innerHeight+15);
+
+		gfxMenu.fillText('.9',window.innerWidth*.27,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.27,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.27,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText(''+sliders[0].value,window.innerWidth*.16
+			,sliderOffset/100*window.innerHeight-3);
+
+		gfxMenu.fillText(''+sliders[1].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[2].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*2)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[3].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*3)/100*window.innerHeight-3);
 	}else if(ff){
 		gfxMenu.fillText(''+simSpeed,window.innerWidth/2+6,18);
 
@@ -638,7 +646,8 @@ renderLeft = function(){
 	arc(gfxLeft,center.x,center.y,3,true);
 
 	gfxLeft.font = '12pt verdana';
-	gfxLeft.fillText('Fiducial View', 180, 30);
+	var tempWidth = gfxLeft.measureText('Fiducial View').width;
+	gfxLeft.fillText('Fiducial View', center.x-tempWidth/2, 30);
 
 	gfxLeft.save();
 	gfxLeft.translate(center.x, center.y);
@@ -729,7 +738,8 @@ renderRight = function(){
 	arc(gfxRight,center.x,center.y,3,true);
 
 	gfxRight.font = '12pt verdana';
-	gfxRight.fillText('Earth View', 190, 30);
+	var tempWidth = gfxLeft.measureText('Earth View').width;
+	gfxRight.fillText('Earth View', center.x-tempWidth/2, 30);
 
 	gfxRight.save();
 	gfxRight.translate(center.x, center.y);
@@ -781,7 +791,7 @@ renderGraph = function(){
 
 	// dashed line
 	var dashLength = 39.5;
-	for(var i = 0; i < 17; i++){
+	for(var i = 0; i < 35; i++){
 		drawLine(gfxGraph,i*dashLength,height/2,i*dashLength+dashLength/2,height/2);
 	}
 
