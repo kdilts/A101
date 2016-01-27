@@ -132,6 +132,8 @@ window.onload = function(){
 
 	// button actions
 	buttons[0].onclick = function(){ // enter values
+		console.clear();
+
 		currentA = sliders[0].value; currentE = sliders[1].value;
 		currentI = sliders[2].value; currentW = sliders[3].value;
 
@@ -150,7 +152,7 @@ window.onload = function(){
 
 		scale = 60;
 
-		console.clear();
+		//console.clear();
 
 		calculate();
 	}
@@ -413,8 +415,8 @@ calculateRadVs = function(inc,w){
 			}
 
 			if(max == null){ max = rv; }
-			if(parseFloat(rv) > parseFloat(max)){ max = rv; }
-			//console.log(rv, max);
+			if(Math.abs(parseFloat(rv)) > parseFloat(max)){ max = Math.abs(rv); }
+			console.log(rv, max);
 		}
 	}
 	currentRVMax = max;
@@ -437,7 +439,7 @@ calculatePview = function(a,e,w,m1,m2){
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
 
-		console.log(r,theta);
+		//console.log(r,theta);
 
 	while(theta < Math.PI*2.05){
 		path1.push(rtToxy(r,theta));
@@ -445,7 +447,7 @@ calculatePview = function(a,e,w,m1,m2){
 		theta = theta + deltaTheta;
 		r = a*(1-Math.pow(e,2)) / (1+e*Math.cos(theta));
 		deltaTheta = const2/(r*r)*deltaT;
-		console.log(r,theta);
+		//console.log(r,theta);
 	}
 
 	var p1Valid = true; var p2Valid = true;
