@@ -4,6 +4,7 @@
 		<script src="js/three.min.js"></script>
 		<script src="js/Quaternion.js"></script>
 		<script src="js/OrbitControls.js"></script>
+		<script src="js/is.js"></script>
 
 		<form style='position:absolute; left:76%; top:2%;'>
 
@@ -176,11 +177,20 @@
 
 			pullDown.onchange = function(){}
 
-			spdSlider.oninput = function(){
-				spdBox.value = spdSlider.value;
-				const2 = const2orig * parseFloat(spdSlider.value);
+			if(!is.ie()){
+				spdSlider.oninput = function(){
+					console.log('slider');
+					spdBox.value = spdSlider.value;
+					const2 = const2orig * parseFloat(spdSlider.value);
+				}
+			}else{
+				spdSlider.onchange = function(){
+					console.log('slider');
+					spdBox.value = spdSlider.value;
+					const2 = const2orig * parseFloat(spdSlider.value);
+				}
 			}
-
+			
 			upButton.onclick = function(){
 				controls.rotateUp(Math.PI/180*5);
 				controls.update();

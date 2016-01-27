@@ -3,11 +3,7 @@
 	<script type="text/javascript" src="is.js"></script>
 	<script type="text/javascript">
 
-// limit displacement on spectrum
 // scale graph to work properly for different mass ratios
-
-// magic numbers to prevent skipping at different ecc / sep
-	// works for sep = 1. anything else seems to break it
 
 var G = 6.67*Math.pow(10,-11);
 var kgPerSolarMass = 1.989*Math.pow(10,30);
@@ -76,7 +72,7 @@ window.onload = function(){
 			sliders[i] = document.createElement('input');
 			sliders[i].type = 'range';
 
-			if(chr){
+			if(chr|| (!ie && !ff)){
 				sliders[i].setAttribute('style',
 					'position:absolute; left:10.2%; top:'+(sliderOffset+i*sliderSpacing)+'%; width:12%');
 			}else if(ff){
@@ -138,6 +134,13 @@ window.onload = function(){
 	buttons[0].onclick = function(){ // enter values
 		currentA = sliders[0].value; currentE = sliders[1].value;
 		currentI = sliders[2].value; currentW = sliders[3].value;
+
+		if(parseFloat(boxes[0].value) > parseFloat(boxes[1].value)){
+			tempBox = boxes[1].value;
+			boxes[1].value = boxes[0].value;
+			boxes[0].value = tempBox;
+		}
+
 		currentM1 = parseFloat(boxes[0].value);
 		currentM2 = parseFloat(boxes[1].value);
 
@@ -570,7 +573,7 @@ renderMenu = function(){
 
 	gfxMenu.fillText('Period: '+ currentP +' yrs',window.innerWidth-300,18);
 
-	if(chr || (!ff && !ie) ){
+	if(chr || (!ie && !ff)){
 		gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
 
 		gfxMenu.fillText('a: .1',2,
@@ -609,31 +612,81 @@ renderMenu = function(){
 		gfxMenu.fillText(''+sliders[3].value,window.innerWidth*.16
 			,(sliderOffset+sliderSpacing*3)/100*window.innerHeight-3);
 	}else if(ff){
-		gfxMenu.fillText(''+simSpeed,window.innerWidth/2+6,18);
+		gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
 
-		gfxMenu.fillText('a: .1',2,95); gfxMenu.fillText('e: 0',2,172);
-		gfxMenu.fillText('i: 0',2,249); gfxMenu.fillText('w: -90',2,326);
+		gfxMenu.fillText('a: .1',2,
+			sliderOffset/100*window.innerHeight+15);
 
-		gfxMenu.fillText('2',259,95); gfxMenu.fillText('.9',259,172);
-		gfxMenu.fillText('90',259,249); gfxMenu.fillText('90',259,326);
+		gfxMenu.fillText('e: 0',2,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
 
-		gfxMenu.fillText(''+sliders[0].value,142,120);
-		gfxMenu.fillText(''+sliders[1].value,142,197);
-		gfxMenu.fillText(''+sliders[2].value,142,274);
-		gfxMenu.fillText(''+sliders[3].value,142,351);
+		gfxMenu.fillText('i: 0',2,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('w: -90',2,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('2',window.innerWidth*.28,
+			sliderOffset/100*window.innerHeight+15);
+
+		gfxMenu.fillText('.9',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText(''+sliders[0].value,window.innerWidth*.16
+			,sliderOffset/100*window.innerHeight-3);
+
+		gfxMenu.fillText(''+sliders[1].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[2].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*2)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[3].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*3)/100*window.innerHeight-3);
 	}else if(ie){
-		gfxMenu.fillText(''+simSpeed,window.innerWidth/2+3,18);
+		gfxMenu.fillText(''+simSpeed,window.innerWidth/2,18);
 
-		gfxMenu.fillText('a: .1',2,97); gfxMenu.fillText('e: 0',2,176);
-		gfxMenu.fillText('i: 0',2,255); gfxMenu.fillText('w: -90',2,334);
+		gfxMenu.fillText('a: .1',2,
+			sliderOffset/100*window.innerHeight+15);
 
-		gfxMenu.fillText('2',255,97); gfxMenu.fillText('.9',255,176);
-		gfxMenu.fillText('90',255,255); gfxMenu.fillText('90',255,334);
+		gfxMenu.fillText('e: 0',2,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
 
-		gfxMenu.fillText(''+sliders[0].value,142,120);
-		gfxMenu.fillText(''+sliders[1].value,142,197);
-		gfxMenu.fillText(''+sliders[2].value,142,274);
-		gfxMenu.fillText(''+sliders[3].value,142,351);		
+		gfxMenu.fillText('i: 0',2,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('w: -90',2,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('2',window.innerWidth*.28,
+			sliderOffset/100*window.innerHeight+15);
+
+		gfxMenu.fillText('.9',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing*2)/100*window.innerHeight+15);
+
+		gfxMenu.fillText('90',window.innerWidth*.28,
+			(sliderOffset+sliderSpacing*3)/100*window.innerHeight+15);
+
+		gfxMenu.fillText(''+sliders[0].value,window.innerWidth*.16
+			,sliderOffset/100*window.innerHeight-3);
+
+		gfxMenu.fillText(''+sliders[1].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[2].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*2)/100*window.innerHeight-3);
+		
+		gfxMenu.fillText(''+sliders[3].value,window.innerWidth*.16
+			,(sliderOffset+sliderSpacing*3)/100*window.innerHeight-3);	
 	}
 }
 
@@ -939,8 +992,9 @@ renderSpectrum = function(){
 	drawLine(gfxSpectrum,width/4*3,0,width/4*3,10);
 
 	// red lines
-	var disp1 = lerp(-lMax,lMax,lambdas[0][count1],-15,15);
-	var disp2 = -lerp(-lMax,lMax,lambdas[1][count1],-15,15);
+	var maxDisp = window.innerWidth*.01;
+	var disp1 = lerp(-lMax,lMax,lambdas[0][count1],-maxDisp,maxDisp);
+	var disp2 = -lerp(-lMax,lMax,lambdas[1][count1],-maxDisp,maxDisp);
 
 	changeColor(gfxSpectrum,'red');
 	arc(gfxSpectrum,width/4+disp1,5,3,true);
