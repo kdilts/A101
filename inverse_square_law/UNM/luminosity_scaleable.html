@@ -127,8 +127,21 @@ window.onmousedown = function(){
 
 	if(plot == -1){ return; } // if mouse is outside of all circles
 
-	data[plot].push({d:probeDist, i:probeIntensity});
-
+	if(plot == 0 || plot == 1){
+		data[plot].push({
+			d: probeDist,
+			i: parseFloat(probeIntensity)+
+				((Math.random()-.5)*2*
+					Math.pow(10,plot))
+		});
+	}else if(plot == 2){
+		data[plot].push({
+			d: probeDist,
+			i: parseFloat(probeIntensity)+
+				((Math.random()-.5)*
+					Math.pow(10,plot))
+		});
+	}
 }
 
 render = function(){
