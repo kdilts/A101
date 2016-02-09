@@ -1,5 +1,6 @@
 <head>
 	<script language=javascript>
+// Kevin Dilts 2016
 var canvas; var gfx;
 var cwidth; var cheight;
 var mx; var my;
@@ -127,11 +128,18 @@ window.onmousedown = function(){
 
 	if(plot == -1){ return; } // if mouse is outside of all circles
 
-	if(plot == 0 || plot == 1){
+	if(plot == 0){
 		data[plot].push({
 			d: probeDist,
 			i: parseFloat(probeIntensity)+
-				((Math.random()-.5)*2*
+				((Math.random()-.5)*2*4*
+					Math.pow(10,plot))
+		});
+	}else if(plot == 1){
+		data[plot].push({
+			d: probeDist,
+			i: parseFloat(probeIntensity)+
+				((Math.random()-.5)*2*2*
 					Math.pow(10,plot))
 		});
 	}else if(plot == 2){

@@ -1,10 +1,10 @@
 <head>
 	<script language=javascript>
-
-// TODO remove velocity vector
+// Kevin Dilts 2016
 
 var canvas; var gfx;
 var cwidth; var cheight;
+var cwidthold = null; var cheightold = null;
 
 var pi = Math.PI;
 cos = function(x){ return Math.cos(x); }
@@ -26,7 +26,7 @@ var deltaT = 1000/60; var count = 0;
 var wedging = false; var wedgeCounter;
 var wedges = []; var numWedges = 0;
 
-var ox; var oy; var nx; var ny; // coordinates for velocity vector
+//var ox; var oy; var nx; var ny; // coordinates for velocity vector
 
 var planetData = [
 	// mercury
@@ -72,7 +72,7 @@ window.onmousedown = function(e){
 	}
 }
 
-window.onresize = function(){ scale = 3000; calculateScale(); }
+//window.onresize = function(){  }
 
 window.onload = function(){
 	canvas = document.createElement('canvas');
@@ -89,21 +89,15 @@ window.onload = function(){
 	playpausebutton = document.getElementById('playpause');
 	clearbutton = document.getElementById('clear');
 	enterbutton = document.getElementById('enter');
-	rescalebutton = document.getElementById('rescale');
 	slowmobox = document.getElementById('slowmo');
 	showsectorsbox = document.getElementById('showsectors');
 	slider = document.getElementById('slider');
-	showvelbox = document.getElementById('showvel');
+	//showvelbox = document.getElementById('showvel');
 
 	minbox = document.getElementById('minvel');
 	maxbox = document.getElementById('maxvel');
 	curbox = document.getElementById('curvel');
 	distbox = document.getElementById('distbox');
-
-	rescalebutton.onclick = function(){
-		scale = 3000;
-		calculateScale();
-	}
 
 	playpausebutton.onclick = function(){
 		if(pause){
@@ -345,8 +339,22 @@ rtToxy = function(r,t){
 
 render = function(){
 	// handle resize
+	if(cwidthold){
+		cwidthold = cwidth;
+		cheightold = cheight;
+	}
+
 	cwidth = canvas.width = window.innerWidth*.7;
 	cheight = canvas.height = window.innerHeight;
+
+	if(!cwidthold){
+		cwidthold = cwidth;
+		cheightold = cheight;
+	}
+
+	if(cwidthold !== cwidth || cheightold !== cheight){
+		scale = 3000; calculateScale();
+	}
 
 	// clear screen
 	gfx.fillStyle = 'black';
@@ -401,15 +409,17 @@ render = function(){
 		var len = planetPaths[currentPlanet].length/2;
 		var maxV = planetData[currentPlanet].max;
 		var minV = planetData[currentPlanet].min;
-		var velvecMod;
+		//var velvecMod;
 		if(count < len){
-			velvecMod = curbox.value = lerp(0,len,count,maxV,minV).toFixed(2);
+			//velvecMod = 
+			curbox.value = lerp(0,len,count,maxV,minV).toFixed(2);
 			curbox.value += ' km/s';
-			velvecMod /= 7;
+			//velvecMod /= 7;
 		}else{
-			velvecMod = curbox.value = lerp(len,len*2,count,minV,maxV).toFixed(2);
+			//velvecMod = 
+			curbox.value = lerp(len,len*2,count,minV,maxV).toFixed(2);
 			curbox.value += ' km/s';
-			velvecMod /= 7;
+			//velvecMod /= 7;
 		}
 
 		// draw planet
@@ -425,9 +435,9 @@ render = function(){
 		var px = planetPaths[currentPlanet][count].x*scale;
 		var py = planetPaths[currentPlanet][count].y*scale;
 
-		var velvec = mult(unit(sub(new vec2(px,py),new vec2(opx,opy))),30+velvecMod);
+		//var velvec = mult(unit(sub(new vec2(px,py),new vec2(opx,opy))),30+velvecMod);
 
-		// velocity vector
+		/*/ velocity vector
 		if(showvelbox.checked){
 			gfx.fillStyle = gfx.strokeStyle = 'red';
 			gfx.lineWidth = 3;
@@ -437,7 +447,7 @@ render = function(){
 			gfx.stroke();
 
 			gfx.lineWidth = 1;
-		}
+		}*/
 
 		gfx.fillStyle = gfx.strokeStyle = 'red';
 		gfx.beginPath();
@@ -572,7 +582,6 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 		<input type='button' id='enter' value='Enter' hidden='true'><br></br>
 		<input type='checkbox' id='slowmo'><b1>Slow Motion</b1><br></br>
 		<b1>Sector Size: </b1><input type='range' id='slider' min='5' max ='60' value='15'><br></br>
-		<input type='checkbox' id='showvel'><b1>Show Velocity Vector</b1><br></br>
 		<b1>Distance from the Sun: </b1>
 		<input type = 'textbox' id='distbox' style='width:28%' disabled>
 		<br></br>
@@ -593,6 +602,5 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
 		<b1>Maximum: </b1>
 		<input type = 'textbox' id='maxvel' style='width:30%' disabled>
 		<br></br>
-		<input type='button' id='rescale' value='Recalculate Scale'>
 	</form>
 </body>

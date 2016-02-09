@@ -1,0 +1,246 @@
+<head>
+	<script language=javascript>
+// Kevin Dilts 2016
+var canvas; var gfx;
+var cwidth; var cheight;
+var oldcwidth; var oldcheight;
+var img; var objects = [];
+
+var mx; var my;
+var mousedown = false;
+var drag = -1;
+
+var strings = [
+	'Virgo (?? Mpc, 1400 km/sec)',
+	'Ursa Major I (270 Mpc, 15400 km/sec)',
+	'Pegasus I (?? Mpc, 3700 km/sec)',
+	'Leo (310 Mpc, 19500 km/sec)',
+	'Cancer (80 Mpc, 4800 km/sec)',
+	'Gemini (350 Mpc, 23300 km/sec)',
+	'Perseus (?? Mpc, 5400 km/sec)',
+	'Bootes (650 Mpc, 39400 km/sec)',
+	'Coma (?? Mpc, 6700 km/sec)',
+	'Ursa Major II (680 Mpc, 41000 km/sec)',
+	'Hercules (175 Mpc, 10300 km/sec)',
+	'Hydra (1000 Mpc, 60600  km/sec)'
+];
+
+window.onmousemove = function(e){
+	mx = e.x; my = e.y;
+	if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	mousedown = true;
+}
+
+window.onmouseup = function(e){
+	mousedown = false; drag = -1;
+}
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	oldcheight = cheight; oldcwidth = cwidth;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	img = new Image(); img.src = 'cluster.gif';
+
+	var objI = 0;
+	for(var x = 0; x < 2; x++){
+		for(var y = 0; y < 6; y++){
+			//gfx.fillRect(cwidth-40*x-40,40*y+cheight*.2,30,30);
+			objects.push(new dragableObject(cwidth-40*x-25,15+40*y+cheight*.2,30,30,objI));
+			objI++;
+		}
+	}
+
+	setInterval(render,1000/60);
+}
+
+render = function(){
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	if(oldcwidth !== cwidth || oldcheight !== cheight){
+		for(var i in objects){
+			objects[i].reposition();
+		}
+		oldcheight = cheight; oldcwidth = cwidth;
+	}
+
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	gfx.font = '20px verdana';
+	gfx.fillStyle = 'red';
+	gfx.fillText('Hubble\'s Law',
+		cwidth/2 - gfx.measureText('Hubble\'s Law').width/2,
+		20
+	);
+
+	gfx.font = '13px verdana';
+	gfx.fillStyle = 'yellow';
+	gfx.fillText('Drag each cluster to the appropriate place on the graph.',
+		10,
+		cheight-36
+	);
+
+	gfx.fillText('Note: Some clusters will not have enough information to be plotted until you calculate the distance later in the lab.',
+		10,
+		cheight-12
+	);
+
+	gfx.font = '20px verdana';
+	gfx.fillStyle = 'green';
+	gfx.fillText('Distance (Mpc)',
+		cwidth/2 - gfx.measureText('Distance (Mpc)').width/2,
+		cheight-60
+	);	
+
+	gfx.save();
+	gfx.translate(20,cheight/2);
+	gfx.rotate(-Math.PI/2);
+	gfx.fillText('Velocity (km/sec)',
+		-gfx.measureText('Velocity (km/sec)').width/2,
+		0
+	);
+	gfx.restore()
+
+	// home spots
+	/*gfx.fillStyle = 'grey';
+	for(var x = 0; x < 2; x++){
+		for(var y = 0; y < 6; y++){
+			gfx.fillRect(cwidth-40*x-40,40*y+cheight*.2,30,30);
+		}
+	}*/
+
+	// grid lines
+	gfx.strokeStyle = 'red';
+
+	// vertical
+	var numLines = 20*2;
+	for(var x = 0; x < numLines; x++){
+		line(
+			cwidth*.095+(cwidth*.8/numLines)*x, cheight*.05,
+			cwidth*.095+(cwidth*.8/numLines)*x, cheight*.77
+		);
+	}
+
+	// horizontal
+	numLines = 10*2;
+	for(var x = 0; x < numLines; x++){
+		line(
+			cwidth*.095, cheight*.05+(cheight*.72/numLines)*x,
+			cwidth*.895, cheight*.05+(cheight*.72/numLines)*x
+		);
+	}
+	
+	// grid border
+	gfx.strokeStyle = 'yellow';
+	gfx.strokeRect(cwidth*.095,cheight*.05,cwidth*.8,cheight*.72);
+
+	// tick marks
+	gfx.strokeStyle = gfx.fillStyle = 'white';
+	gfx.font = '13px verdana';
+
+	// horizontal
+	var numMarks = 12;
+	for(var x = 0; x <= numMarks; x++){
+		gfx.fillText(
+			''+(lerp(0,numMarks, x, 0, 1080)).toFixed(0),
+			cwidth*.09+3+(x*cwidth*.8/(numMarks+.5)),
+			cheight*.77+13
+		);
+	}
+
+	// vertical
+	numMarks = 6;
+	gfx.save();
+	gfx.translate(cwidth*.09-42,cheight*.77);
+	//gfx.rotate(-Math.PI/2);
+
+	gfx.fillText('       '+0, 2, 0);
+
+	for(var x = 1; x <= numMarks; x++){
+		gfx.fillText(''+x*10+',000', 0, -x*cheight*.72/numMarks);
+	}
+
+	gfx.restore();
+
+
+	for(var i in objects){ objects[i].draw(); }
+
+}
+
+dragableObject = function(x,y,sx,sy,id){
+	this.x = x; this.y = y;
+	this.sx = sx; this.sy = sy;
+	this.id = id;
+
+	this.reposition = function(){
+		this.cx = this.x/oldcwidth;
+		this.cy = this.y/oldcheight;
+
+		this.x = this.cx*cwidth;
+		this.y = this.cy*cheight;
+	}
+
+	this.draw = function(){
+		gfx.fillStyle = 'white';
+		gfx.drawImage(img, this.x-this.sx/2, this.y - this.sy/2, sx, sy);
+
+		if(drag === this.id){
+			this.x = mx; this.y = my;
+			gfx.font = '15px verdana';
+			gfx.fillText(strings[id], 10, cheight-60);
+		}
+
+		if(mx > this.x-this.sx/2 && mx < this.x+this.sx/2){
+			if(my > this.y-this.sy/2 && my < this.y+this.sy/2){
+				if(!mousedown){
+					//gfx.fillText('hover',20,40);
+					gfx.font = '15px verdana';
+					gfx.fillText(strings[id], 10, cheight-60);
+				}
+				else if(drag === -1){
+					//gfx.fillText('drag',20,40);
+					this.x = mx; this.y = my;
+					drag = id;
+					gfx.font = '15px verdana';
+					gfx.fillText(strings[id], 10, cheight-60);
+				}
+			}
+		}
+	}
+}
+
+line = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+</body>
