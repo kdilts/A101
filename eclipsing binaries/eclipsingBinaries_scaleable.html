@@ -102,6 +102,10 @@ window.onresize = function(){ render(); }
 render = function(){
 	// handle window resize
 	if(cwidthold){
+		if(cwidthold !== cwidth || cheightold !== cheight){
+			clearButton.onclick();
+		}
+
 		cwidthold = cwidth;
 		cheightold = cheight;
 

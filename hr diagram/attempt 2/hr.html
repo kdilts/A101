@@ -1,0 +1,385 @@
+<head>
+	<script type="text/javascript" src="d3/d3.min.js"></script>
+	<script type="text/javascript" src="tinycolor.js"></script>
+	<script language=javascript>
+var canvas; var gfx;
+var cwidth; var cheight;
+
+var initButton; var evolveButton;
+var stopButton; var stepButton;
+
+var timeStep = 200000;
+var currentAge = 0;
+var playing = false;
+
+var minLogT = 3.405; var maxLogT = 4.605;
+var minLogL = -2; var maxLogL = 7;
+
+var stars = [];
+
+var rawData = null;
+
+window.onmousemove = function(e){
+    mx = e.x; my = e.y;
+    if(!mx){ mx = e.clientX; my = e.clientY; }
+}
+
+window.onmousedown = function(e){
+	for(var s in stars){ stars[s].selected = false; }
+
+    for(var s in stars){
+        var coords = stars[s].getCoords();
+
+        //if(stars[s].visible){ console.log(mx,my,' ',coords); }
+        
+        if(stars[s].visible){
+	        if(Math.abs(mx-coords[0]) < 5){
+	        	if(Math.abs(my-coords[1]) < 5){
+	        		stars[s].selected = true;
+	        		break;
+	        	}
+	        }
+    	}
+
+        /*if(Math.abs(mx-coords[0]) < 50 && Math.abs((my+22)-coords[1]) < 50){
+            //if(!stars[s].visible){ return; }
+            stars[s].selected = true;
+            break;
+        }*/
+    }
+}
+
+getColumn = function(csv, column){
+    var col = [];
+    if(csv){
+        for(var x = 0; x < csv.length; x++){
+            col.push(csv[x][column]);
+        }
+        return col;
+    }else{
+        return null;
+    }
+}
+
+findClosest = function(set, value){ // finds index of closest matching value
+    var closest = null; var max = -1;
+    for(var x = 1; x < set.length; x++){
+        if(parseInt(set[x]) > max){ max = set[x]; }
+        //console.log('set max', set[x], max);
+        if(closest == null){ closest = x;}
+        else if(Math.abs(set[x]-value) < Math.abs(set[closest]-value) ){
+        	//if(set[x] != -1){
+        	if(parseInt(set[x]) !== -1){
+            	closest = x;
+        	}
+        }
+        //console.log('x,closest,max',x,closest,max);
+    }
+
+    if(value > max){ return -1; }
+    //console.log('closest: '+closest);
+    return closest;
+}
+
+window.onload = function(){
+	canvas = document.createElement('canvas');
+	canvas.setAttribute('style','position:absolute; left:0; top:0; z-index:-1');
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+	document.body.appendChild(canvas);
+	gfx = canvas.getContext('2d');
+
+	initButton = document.getElementById('init');
+	evolveButton = document.getElementById('evolve');
+	stopButton = document.getElementById('stop');
+	stepButton = document.getElementById('step');
+
+	initButton.setAttribute('style','position:absolute; left:2; top:0');
+	evolveButton.setAttribute('style','position:absolute; left:56; top:0');
+	stopButton.setAttribute('style','position:absolute; left:114; top:0');
+	stepButton.setAttribute('style','position:absolute; left:160; top:0');
+
+	initButton.onclick = function(){
+	    for(var s in stars){
+
+            stars[s].visible = false;
+
+            var tempDat = getColumn(rawData, s*3+2);
+            var lumDat = getColumn(rawData, s*3+1);
+            stars[s].lum = lumDat[1];
+            stars[s].temp = tempDat[1];
+            currentAge = 0;
+            timeStep = 200000;
+            playing = false;
+        }
+
+        for(var i = 0; i < 30; i++){
+            stars[parseInt(Math.random()*stars.length)].visible = true;
+        }
+	}
+
+	evolveButton.onclick = function(){ playing = true; }
+
+	stopButton.onclick = function(){ playing = false; }
+
+	stepButton.onclick = function(){
+	    currentAge += timeStep;
+        //timeStep += timeStep*.03;
+        timeStep += Math.pow(timeStep,.75);
+        for(var s in stars){
+        	//if(stars[s].visible == false){ continue; }
+            var timeDat = getColumn(rawData, s*3);
+            var tempDat = getColumn(rawData, s*3+2);
+            var lumDat = getColumn(rawData, s*3+1);
+            var row = findClosest(timeDat, currentAge);
+            if(row !== -1){
+                //console.log(s,stars[s].lum,stars[s].temp);
+                stars[s].lum = lumDat[row];
+                stars[s].temp = tempDat[row];
+                //console.log('>> ', stars[s].temp, tempDat[row]);
+            }else{
+                //console.log(s);
+                stars[s].visible = false;
+                //console.log('star ' + s + ' visible set to false');
+            }
+        }
+	}
+
+	// Read CSV
+    d3.text("new.csv", data);
+    function data(e){
+        rawData = d3.csv.parseRows(e);
+
+        for(var x = 0; x < 150; x++){
+            stars.push(new star(rawData[1][1+x*3], rawData[1][2+x*3], rawData[0][x*3]));
+        }
+
+        for(var i = 0; i < 30; i++){
+        	var tempRand = parseInt(Math.random()*stars.length-1);
+           stars[tempRand].visible = true;
+        }
+        
+        /*for(var i = -1; i <= 6; i++){
+            var temp = new star(i,4,1,1);
+            stars.push(temp);
+            temp.visible = true;
+        }*/
+    }
+
+
+/*/////////
+	for(var i = minLogL; i <= maxLogL+1; i++){
+		
+		stars.push(new star(i,(minLogT+maxLogT)/2,0,0));
+	}
+//star = function(lum,t,m,life)
+	for(var i = 0; i <= 12; i++){
+		
+		stars.push(new star(2,lerp(0,12,i,minLogT,maxLogT),0,0));
+	}
+	for(var i in stars){ stars[i].visible = true; }
+////*////
+
+	setInterval(render,1000/60);
+}
+
+var star = function(lum,t,m,life){
+    this.mass = m;
+    this.lum = lum;
+    this.temp = t;
+    this.life = life;
+    this.visible = false;
+    this.selected = false;
+
+    this.getCoords = function(){
+
+        //var x = lerp(minLogT,maxLogT, this.temp, 0,cwidth);
+        //var y = lerp(minLogL,maxLogL, this.lum, 0,cheight-22)+22;
+
+		var x = lerp(minLogT,maxLogT, this.temp, cwidth,0);
+		var y = lerp(minLogL,maxLogL, this.lum, cheight-22,0)+22;
+
+        return [x,y];
+    }
+
+    this.plot = function(){
+        if(!this.visible){ return; }
+        plot(this.lum, this.temp);
+        if(this.selected){
+            var coords = this.getCoords();
+            gfx.fillStyle = gfx.strokeStyle = 'white';
+            gfx.beginPath();
+            gfx.arc(coords[0], coords[1], 4, 0, Math.PI*2);
+            gfx.stroke();
+
+            gfx.fillText('Mass: ' + (parseFloat(this.mass).toFixed(2)) + ' Solar Masses', 100, 80);
+
+            gfx.fillText('Luminosity: ' + parseFloat(Math.pow(10,this.lum)).toPrecision(2) + ' Solar Luminosities', 100,100);
+
+            gfx.fillText('Temperature: ' + parseFloat(Math.pow(10,this.temp)).toPrecision(2) + ' K', 100,120);
+
+            gfx.fillText('Main Cycle Life Span: ' + 0 + ' Million Years', 100,140);
+        }
+    }
+}
+
+plot = function(logL, logT){
+	gfx.save();
+	gfx.translate(0,22);
+
+	//var temp = lerp(minLogT,maxLogT, logT, 0,cwidth);
+	var temp = lerp(minLogT,maxLogT, logT, cwidth,0);
+	
+	var colorOffset = .15;
+
+    var c = new tinycolor('hsv('+
+       lerp(0,cwidth-parseInt(colorOffset*cwidth),temp,300,0) +',1,1)');
+
+    var r = parseInt(c._r);
+    var g = parseInt(c._g);
+    var b = parseInt(c._b);
+
+	arc(
+		temp,
+		//lerp(minLogL,maxLogL, logL, 0,cheight-22),
+		lerp(minLogL,maxLogL, logL, cheight-22,0),
+		3,
+		'rgb('+r+','+g+','+b+')',
+		true
+	);
+	gfx.restore();
+}
+
+render = function(){
+	// window resize
+	cwidth = canvas.width = window.innerWidth;
+	cheight = canvas.height = window.innerHeight;
+
+	// clear
+	gfx.fillStyle = 'black';
+	gfx.fillRect(0,0,cwidth,cheight);
+
+	// button bar
+	gfx.fillStyle = 'grey';
+	gfx.fillRect(0,0,cwidth,22);	
+
+	// age display
+	gfx.fillStyle = 'black';
+	gfx.font = '18px verdana';
+	if(currentAge === 0){
+		gfx.fillText('Age = ZAMS', cwidth-gfx.measureText('Age = ZAMS').width-50, 17);
+	}else{
+		gfx.fillText('Age = ' + currentAge.toPrecision(2), cwidth-gfx.measureText('Age = ' + currentAge).width-50, 17);
+	}
+
+	// grid lines
+	gfx.fillStyle = gfx.strokeStyle = 'grey';
+	// vertical
+	for(var i = 0; i < 12; i++){
+		line(cwidth/12*i,22,cwidth/12*i,cheight);
+	}
+
+	// horizontal
+	gfx.save();
+	gfx.translate(0,22);
+
+	for(var i = 0; i < 9; i++){
+		line(0,(cheight-22)/9*i,cwidth,(cheight-22)/9*i);
+	}	
+
+	gfx.restore();
+
+	// axis labels
+	gfx.fillStyle = gfx.strokeStyle = 'yellow';
+	gfx.font = '14px verdana';
+	gfx.fillText('Luminosity (Solar Lum.)', 20,35);
+	gfx.fillText('Temperature (K)', cwidth-gfx.measureText('Temperature (K)').width-20,cheight-22);
+
+	gfx.fillStyle = gfx.strokeStyle = 'grey';
+
+	gfx.save();
+	gfx.translate(0,17);
+	for(var i = 0; i < 9; i++){
+		gfx.fillText(''+Math.pow(10,(9-i)-2), 10, (cheight-22)/9*i);
+	}
+	gfx.restore();
+
+	for(var i = 1; i < 14; i++){
+		gfx.fillText(''+Math.pow(10,3.505+.1*(12-i)).toFixed(0),
+			cwidth/12*(i-1)+5, cheight-4);
+	}
+
+	// draw stars
+	for(var i in stars){ stars[i].plot(); }
+
+	if(playing){
+            stepButton.onclick();
+    }
+
+	// plot test data
+	/*plot(minLogL,minLogT);
+	plot(maxLogL,minLogT);
+	plot(minLogL,maxLogT);
+	plot(maxLogL,maxLogT);
+
+//var minLogL = -2; var maxLogL = 7;
+//var minLogT = 3.505; var maxLogT = 4.505;
+
+/*	for(var i = minLogL; i <= maxLogL+1; i++){
+		plot(
+			i,
+			(minLogT+maxLogT)/2
+		);
+		stars.push(new star(i,(minLogT+maxLogT)/2,0,0));
+	}
+//star = function(lum,t,m,life)
+	for(var i = 0; i <= 12; i++){
+		plot(
+			2,
+			lerp(0,12,i,minLogT,maxLogT)
+		);
+		stars.push(new star(2,lerp(0,12,i,minLogT,maxLogT),0,0));
+	}*/
+}
+
+arc = function(x,y,r,c,f){
+	gfx.fillStyle = gfx.strokeStyle = c;
+	gfx.beginPath();
+	gfx.arc(x,y,r,0,Math.PI*2);
+	if(f){ gfx.fill(); }
+	gfx.stroke();
+}
+
+line = function(x1,y1,x2,y2){
+	gfx.beginPath();
+	gfx.moveTo(x1,y1);
+	gfx.lineTo(x2,y2);
+	gfx.stroke();
+}
+
+lerp = function(oldMin,oldMax,oldVal,newMin,newMax){
+	return (oldVal-oldMin)/(oldMax-oldMin)*(newMax-newMin)+newMin;
+}
+
+dist = function(v1,v2){ return mag(add(v1,neg(v2))); }
+
+vec2 = function(x,y){ this.x = x; this.y = y; }
+add = function(v1, v2){ return new vec2(v1.x+v2.x, v1.y+v2.y); }
+sub = function(v1, v2){ return new vec2(v1.x-v2.x, v1.y-v2.y); }
+neg = function(v){ return new vec2(-v.x, -v.y); }
+mag = function(v){ return Math.sqrt(Math.pow(v.x,2) + Math.pow(v.y,2)); }
+dot = function(v1,v2){ return v1.x*v2.x + v1.y*v2.y; }
+unit = function(v){ return new vec2(v.x/mag(v), v.y/mag(v)); }
+mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
+
+	</script>
+</head>
+<body bgcolor="grey">
+	<input type='button' id='init' value='Reset' style='position:absolute;'>
+
+    <input type='button' id='evolve' value='Evolve' style='position:absolute;'>
+
+    <input type='button' id='stop' value='Stop' style='position:absolute;'>
+
+    <input type='button' id='step' value='Step' style='position:absolute;'>
+</body>
