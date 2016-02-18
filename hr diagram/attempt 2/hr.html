@@ -2,6 +2,7 @@
 	<script type="text/javascript" src="d3/d3.min.js"></script>
 	<script type="text/javascript" src="tinycolor.js"></script>
 	<script language=javascript>
+	// Kevin Dilts 2016
 var canvas; var gfx;
 var cwidth; var cheight;
 
@@ -18,6 +19,7 @@ var minLogL = -2; var maxLogL = 7;
 var stars = [];
 
 var rawData = null;
+var ageData = null;
 
 window.onmousemove = function(e){
     mx = e.x; my = e.y;
@@ -93,11 +95,13 @@ window.onload = function(){
 	evolveButton = document.getElementById('evolve');
 	stopButton = document.getElementById('stop');
 	stepButton = document.getElementById('step');
+	spdControl = document.getElementById('spdControl');
 
 	initButton.setAttribute('style','position:absolute; left:2; top:0');
 	evolveButton.setAttribute('style','position:absolute; left:56; top:0');
 	stopButton.setAttribute('style','position:absolute; left:114; top:0');
 	stepButton.setAttribute('style','position:absolute; left:160; top:0');
+	spdControl.setAttribute('style','position:absolute; left:290; top:-2');
 
 	initButton.onclick = function(){
 	    for(var s in stars){
@@ -124,8 +128,7 @@ window.onload = function(){
 
 	stepButton.onclick = function(){
 	    currentAge += timeStep;
-        //timeStep += timeStep*.03;
-        timeStep += Math.pow(timeStep,.75);
+        timeStep += Math.pow(timeStep,.75)*parseFloat(spdControl.value);
         for(var s in stars){
         	//if(stars[s].visible == false){ continue; }
             var timeDat = getColumn(rawData, s*3);
@@ -146,7 +149,7 @@ window.onload = function(){
 	}
 
 	// Read CSV
-    d3.text("new.csv", data);
+    d3.text("hrdata.csv", data);
     function data(e){
         rawData = d3.csv.parseRows(e);
 
@@ -165,6 +168,11 @@ window.onload = function(){
             temp.visible = true;
         }*/
     }
+
+	d3.text("hrmslifetimes.csv", maincycledata);
+	function maincycledata(e){
+		ageData = d3.csv.parseRows(e);
+	}
 
 
 /*/////////
@@ -218,9 +226,23 @@ var star = function(lum,t,m,life){
 
             gfx.fillText('Temperature: ' + parseFloat(Math.pow(10,this.temp)).toPrecision(2) + ' K', 100,120);
 
-            gfx.fillText('Main Cycle Life Span: ' + 0 + ' Million Years', 100,140);
+            gfx.fillText('Main Sequence Life Span: ' + 
+            	parseFloat(searchAge(this.mass)).toFixed(0) + 
+            	' Million Years', 100,140);
         }
     }
+}
+
+searchAge = function(age){
+	var closest = null; var idx = null;
+	for(var i in ageData[0]){
+		if(closest === null){ closest = ageData[0][i]; idx = i; }
+		if(Math.abs(parseFloat(ageData[0][i])-parseFloat(age)) < 
+			Math.abs(parseFloat(closest)-parseFloat(age)) ){
+			closest = ageData[0][i]; idx = i;
+		}
+	}
+	return ageData[1][idx];
 }
 
 plot = function(logL, logT){
@@ -269,8 +291,10 @@ render = function(){
 	if(currentAge === 0){
 		gfx.fillText('Age = ZAMS', cwidth-gfx.measureText('Age = ZAMS').width-50, 17);
 	}else{
-		gfx.fillText('Age = ' + currentAge.toPrecision(2), cwidth-gfx.measureText('Age = ' + currentAge).width-50, 17);
+		gfx.fillText('Age = ' + currentAge.toPrecision(2), cwidth-gfx.measureText('Age = ' + currentAge.toPrecision(2)).width-50, 17);
 	}
+
+	gfx.fillText('Speed:',220,15)
 
 	// grid lines
 	gfx.fillStyle = gfx.strokeStyle = 'grey';
@@ -382,4 +406,6 @@ mult = function(v,s){ return new vec2(v.x*s, v.y*s); }
     <input type='button' id='stop' value='Stop' style='position:absolute;'>
 
     <input type='button' id='step' value='Step' style='position:absolute;'>
+
+    <input type='range' id='spdControl' value='1' min='0' max='2' step='.1' style='position:absolute'>
 </body>
