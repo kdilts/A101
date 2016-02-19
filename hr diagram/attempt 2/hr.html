@@ -1,6 +1,7 @@
 <head>
 	<script type="text/javascript" src="d3/d3.min.js"></script>
 	<script type="text/javascript" src="tinycolor.js"></script>
+	<script type="text/javascript" src="is.js"></script>
 	<script language=javascript>
 	// Kevin Dilts 2016
 var canvas; var gfx;
@@ -101,7 +102,12 @@ window.onload = function(){
 	evolveButton.setAttribute('style','position:absolute; left:56; top:0');
 	stopButton.setAttribute('style','position:absolute; left:114; top:0');
 	stepButton.setAttribute('style','position:absolute; left:160; top:0');
-	spdControl.setAttribute('style','position:absolute; left:290; top:-2');
+	
+	if(!is.ie()){
+		spdControl.setAttribute('style','position:absolute; left:290; top:-2');
+	}else{
+		spdControl.setAttribute('style','position:absolute; left:290; top:-12');
+	}
 
 	initButton.onclick = function(){
 	    for(var s in stars){

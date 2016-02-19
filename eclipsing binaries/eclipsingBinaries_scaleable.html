@@ -1,4 +1,5 @@
 <head>
+	<script src="is.js"></script>
 	<script language=javascript>
 // Kevin Dilts 2016
 var canvas; var gfx;
@@ -158,8 +159,13 @@ render = function(){
 
 	// sliders
 	var sliderLeft = cwidth*.02+downButtonWidth;
-	angleSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+aButtonTop+'%; width: 150');
-	separationSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+sButtonTop+'%; width: 150');
+	if(!is.ie()){
+		angleSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+aButtonTop+'%; width: 150');
+		separationSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+sButtonTop+'%; width: 150');
+	}else{
+		angleSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+(aButtonTop-1.5)+'%; width: 150');
+		separationSlider.setAttribute('style','position:absolute; left:'+sliderLeft+'; top:'+(sButtonTop-1.5)+'%; width: 150');
+	}
 
 	// text
 	gfx.fillStyle = gfx.strokeStyle = 'black';

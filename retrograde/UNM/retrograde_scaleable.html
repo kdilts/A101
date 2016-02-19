@@ -264,7 +264,12 @@ traceDot = function(x,y,c,s){
 	this.x = x; this.y = y;
 	this.c = c; this.s = s;
 	this.draw = function(){
-		var d = cwidth*3/5*.35
+		var d;
+		if(cwidth*3/5*.45 <= cheight/2){
+			d = cwidth*3/5*.35;
+		}else{
+			d = cheight*.4;
+		}
 		gfx.fillStyle = gfx.strokeStyle = c;
 		gfx.beginPath();
 		gfx.arc(this.x*d,this.y*d,s,0,Math.PI*2);
@@ -292,10 +297,18 @@ drawStars = function(){
 	gfx.translate( (cwidth*3/5)/2,cheight/2 );
 	gfx.fillStyle = gfx.strokeStyle = 'white';
 
-	for(var i in coords){
-		gfx.beginPath();
-		gfx.arc(coords[i].x*cwidth*3/5, coords[i].y*cwidth*3/5, 1, 0,Math.PI*2);
-		gfx.fill(); gfx.stroke();
+	if(cwidth*3/5*.45 <= cheight/2){
+		for(var i in coords){
+			gfx.beginPath();
+			gfx.arc(coords[i].x*cwidth*3/5, coords[i].y*cwidth*3/5, 1, 0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+		}
+	}else{
+		for(var i in coords){
+			gfx.beginPath();
+			gfx.arc(coords[i].x*cheight*1.125, coords[i].y*cheight*1.125, 1, 0,Math.PI*2);
+			gfx.fill(); gfx.stroke();
+		}		
 	}
 
 	gfx.restore();
@@ -540,35 +553,64 @@ drawRings = function(){
 	gfx.lineWidth = 2;
 	gfx.fillStyle = gfx.strokeStyle = 'white';
 	
-	// planet rings - variable size
-	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[0]*venusMod ,0,Math.PI*2);
-	gfx.stroke();
-	
-	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[1] ,0,Math.PI*2);
-	gfx.stroke();
+	if(cwidth*3/5*.45 <= cheight/2){
+		// planet rings - variable size
+		gfx.beginPath();
+		gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[0]*venusMod ,0,Math.PI*2);
+		gfx.stroke();
+		
+		gfx.beginPath();
+		gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[1] ,0,Math.PI*2);
+		gfx.stroke();
 
-	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[2]*marsMod ,0,Math.PI*2);
-	gfx.stroke();
+		gfx.beginPath();
+		gfx.arc(0,0, cwidth*3/5*.35*orbitDiam[2]*marsMod ,0,Math.PI*2);
+		gfx.stroke();
 
-	// outer 2 rings - fixed
-	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.35 ,0,Math.PI*2);
-	gfx.stroke();
+		// outer 2 rings - fixed
+		gfx.beginPath();
+		gfx.arc(0,0, cwidth*3/5*.35 ,0,Math.PI*2);
+		gfx.stroke();
 
-	gfx.beginPath();
-	gfx.arc(0,0, cwidth*3/5*.45,0,Math.PI*2);
-	gfx.stroke();
+		gfx.beginPath();
+		gfx.arc(0,0, cwidth*3/5*.45,0,Math.PI*2);
+		gfx.stroke();
+	}else{
+		// planet rings - variable size
+		gfx.beginPath();
+		gfx.arc(0,0, cheight*.4*orbitDiam[0]*venusMod ,0,Math.PI*2);
+		gfx.stroke();
+		
+		gfx.beginPath();
+		gfx.arc(0,0, cheight*.4*orbitDiam[1] ,0,Math.PI*2);
+		gfx.stroke();
+
+		gfx.beginPath();
+		gfx.arc(0,0, cheight*.4*orbitDiam[2]*marsMod ,0,Math.PI*2);
+		gfx.stroke();
+
+		// outer 2 rings - fixed
+		gfx.beginPath();
+		gfx.arc(0,0, cheight*.4 ,0,Math.PI*2);
+		gfx.stroke();
+
+		gfx.beginPath();
+		gfx.arc(0,0, cheight*.5,0,Math.PI*2);
+		gfx.stroke();
+	}
 
 	gfx.restore();
 }
 
 drawPlanets = function(){
-	var d = cwidth*3/5*.35; // max diameter of inner planet orbits
-	var outerD = cwidth*3/5*.4; // diameter of outer ring stuff
-
+	var d; var outerD;
+	if(cwidth*3/5*.45 <= cheight/2){
+		d = cwidth*3/5*.35; // max diameter of inner planet orbits
+		outerD = cwidth*3/5*.4; // diameter of outer ring stuff
+	}else{
+		d = cheight*.4; // max diameter of inner planet orbits
+		outerD = cheight*.45; // diameter of outer ring stuff
+	}
 	// calculate planet positions
 	var positions = [
 		{
